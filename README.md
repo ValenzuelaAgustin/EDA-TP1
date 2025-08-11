@@ -2,9 +2,9 @@
 
 ## Integrantes del grupo y contribución al trabajo de cada integrante
 
-* [Nombre]: [contribución]
-
-[completar]
+* Valenzuela Tomás Agustín 
+* Paredes Alonso Francisco
+* Capiel Sofia
 
 ## Verificación del timestep
 
