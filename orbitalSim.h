@@ -13,7 +13,7 @@
  */
 struct OrbitalBody
 {
-    // Fill in your code here...
+	// Fill in your code here...
 
 
 };
@@ -23,14 +23,13 @@ struct OrbitalBody
  */
 struct OrbitalSim
 {
-    // Fill in your code here...
+	// Fill in your code here...
 
 
 };
 
-OrbitalSim *constructOrbitalSim(float timeStep);
-void destroyOrbitalSim(OrbitalSim *sim);
-
-void updateOrbitalSim(OrbitalSim *sim);
+OrbitalSim* constructOrbitalSim(float timeStep);
+void destroyOrbitalSim(OrbitalSim* sim);
+void updateOrbitalSim(OrbitalSim* sim);
 
 #endif

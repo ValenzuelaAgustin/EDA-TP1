@@ -26,7 +26,7 @@
  */
 float getRandomFloat(float min, float max)
 {
-    return min + (max - min) * rand() / (float)RAND_MAX;
+	return min + (max - min) * rand() / (float)RAND_MAX;
 }
 
 /**
@@ -37,27 +37,27 @@ float getRandomFloat(float min, float max)
  */
 void configureAsteroid(OrbitalBody *body, float centerMass)
 {
-    // Logit distribution
-    float x = getRandomFloat(0, 1);
-    float l = logf(x) - logf(1 - x) + 1;
+	// Logit distribution
+	float x = getRandomFloat(0, 1);
+	float l = logf(x) - logf(1 - x) + 1;
 
-    // https://mathworld.wolfram.com/DiskPointPicking.html
-    float r = ASTEROIDS_MEAN_RADIUS * sqrtf(fabsf(l));
-    float phi = getRandomFloat(0, 2.0F * (float)M_PI);
+	// https://mathworld.wolfram.com/DiskPointPicking.html
+	float r = ASTEROIDS_MEAN_RADIUS * sqrtf(fabsf(l));
+	float phi = getRandomFloat(0, 2.0F * (float)M_PI);
 
-    // Surprise!
-    // phi = 0;
+	// Surprise!
+	// phi = 0;
 
-    // https://en.wikipedia.org/wiki/Circular_orbit#Velocity
-    float v = sqrtf(GRAVITATIONAL_CONSTANT * centerMass / r) * getRandomFloat(0.6F, 1.2F);
-    float vy = getRandomFloat(-1E2F, 1E2F);
+	// https://en.wikipedia.org/wiki/Circular_orbit#Velocity
+	float v = sqrtf(GRAVITATIONAL_CONSTANT * centerMass / r) * getRandomFloat(0.6F, 1.2F);
+	float vy = getRandomFloat(-1E2F, 1E2F);
 
-    // Fill in with your own fields:
-    // body->mass = 1E12F;  // Typical asteroid weight: 1 billion tons
-    // body->radius = 2E3F; // Typical asteroid radius: 2km
-    // body->color = GRAY;
-    // body->position = {r * cosf(phi), 0, r * sinf(phi)};
-    // body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};
+	// Fill in with your own fields:
+	// body->mass = 1E12F;  // Typical asteroid weight: 1 billion tons
+	// body->radius = 2E3F; // Typical asteroid radius: 2km
+	// body->color = GRAY;
+	// body->position = {r * cosf(phi), 0, r * sinf(phi)};
+	// body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};
 }
 
 /**
@@ -68,11 +68,11 @@ void configureAsteroid(OrbitalBody *body, float centerMass)
  */
 OrbitalSim *constructOrbitalSim(float timeStep)
 {
-    // Your code goes here...
+	// Your code goes here...
 
 
 
-    return NULL; // This should return your orbital sim
+	return NULL; // This should return your orbital sim
 }
 
 /**
@@ -80,7 +80,7 @@ OrbitalSim *constructOrbitalSim(float timeStep)
  */
 void destroyOrbitalSim(OrbitalSim *sim)
 {
-    // Your code goes here...
+	// Your code goes here...
 
 
 }
@@ -92,7 +92,7 @@ void destroyOrbitalSim(OrbitalSim *sim)
  */
 void updateOrbitalSim(OrbitalSim *sim)
 {
-    // Your code goes here...
+	// Your code goes here...
 
 
 }

@@ -5,33 +5,32 @@
  * @copyright Copyright (c) 2022-2023
  */
 
-#include <time.h>
-
 #include "View.h"
+#include <time.h>
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
 
 /**
  * @brief Converts a timestamp (number of seconds since 1/1/2022)
- *        to an ISO date ("YYYY-MM-DD")
+ *		to an ISO date ("YYYY-MM-DD")
  *
  * @param timestamp the timestamp
  * @return The ISO date (a raylib string)
  */
 const char *getISODate(float timestamp)
 {
-    // Timestamp epoch: 1/1/2022
-    struct tm unichEpochTM = {0, 0, 0, 1, 0, 122};
+	// Timestamp epoch: 1/1/2022
+	struct tm unichEpochTM = {0, 0, 0, 1, 0, 122};
 
-    // Convert timestamp to UNIX timestamp (number of seconds since 1/1/1970)
-    time_t unixEpoch = mktime(&unichEpochTM);
-    time_t unixTimestamp = unixEpoch + (time_t)timestamp;
+	// Convert timestamp to UNIX timestamp (number of seconds since 1/1/1970)
+	time_t unixEpoch = mktime(&unichEpochTM);
+	time_t unixTimestamp = unixEpoch + (time_t)timestamp;
 
-    // Returns ISO date
-    struct tm *localTM = localtime(&unixTimestamp);
-    return TextFormat("%04d-%02d-%02d",
-                      1900 + localTM->tm_year, localTM->tm_mon + 1, localTM->tm_mday);
+	// Returns ISO date
+	struct tm *localTM = localtime(&unixTimestamp);
+	return TextFormat("%04d-%02d-%02d",
+					1900 + localTM->tm_year, localTM->tm_mon + 1, localTM->tm_mday);
 }
 
 /**
@@ -42,19 +41,19 @@ const char *getISODate(float timestamp)
  */
 View *constructView(int fps)
 {
-    View *view = new View();
+	View *view = new View();
 
-    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "EDA Orbital Simulation");
-    SetTargetFPS(fps);
-    DisableCursor();
+	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "EDA Orbital Simulation");
+	SetTargetFPS(fps);
+	DisableCursor();
 
-    view->camera.position = {10.0f, 10.0f, 10.0f};
-    view->camera.target = {0.0f, 0.0f, 0.0f};
-    view->camera.up = {0.0f, 1.0f, 0.0f};
-    view->camera.fovy = 45.0f;
-    view->camera.projection = CAMERA_PERSPECTIVE;
+	view->camera.position = {10.0f, 10.0f, 10.0f};
+	view->camera.target = {0.0f, 0.0f, 0.0f};
+	view->camera.up = {0.0f, 1.0f, 0.0f};
+	view->camera.fovy = 45.0f;
+	view->camera.projection = CAMERA_PERSPECTIVE;
 
-    return view;
+	return view;
 }
 
 /**
@@ -64,9 +63,9 @@ View *constructView(int fps)
  */
 void destroyView(View *view)
 {
-    CloseWindow();
+	CloseWindow();
 
-    delete view;
+	delete view;
 }
 
 /**
@@ -76,7 +75,7 @@ void destroyView(View *view)
  */
 bool isViewRendering(View *view)
 {
-    return !WindowShouldClose();
+	return !WindowShouldClose();
 }
 
 /**
@@ -87,23 +86,23 @@ bool isViewRendering(View *view)
  */
 void renderView(View *view, OrbitalSim *sim)
 {
-    UpdateCamera(&view->camera, CAMERA_FREE);
+	UpdateCamera(&view->camera, CAMERA_FREE);
 
-    BeginDrawing();
+	BeginDrawing();
 
-    ClearBackground(BLACK);
-    BeginMode3D(view->camera);
+	ClearBackground(BLACK);
+	BeginMode3D(view->camera);
 
-    // Fill in your 3D drawing code here:
-
-
-
-    DrawGrid(10, 10.0f);
-    EndMode3D();
-
-    // Fill in your 2D drawing code here:
+	// Fill in your 3D drawing code here:
 
 
 
-    EndDrawing();
+	DrawGrid(10, 10.0f);
+	EndMode3D();
+
+	// Fill in your 2D drawing code here:
+
+
+
+	EndDrawing();
 }
