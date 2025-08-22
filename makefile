@@ -2,12 +2,12 @@ HEADERS_DIR := include
 RAYLIB_HEADERS_DIR := C:/dev/vcpkg/installed/x64-windows/include
 RAYLIB_LIB_DIR := C:/dev/vcpkg/installed/x64-windows/lib
 SRC_DIR := src
-OBJ_DIR := obj
+BIN_DIR := bin
 OUT_DIR := out
 
-MAIN_OBJ := ${OBJ_DIR}/main.o
-ORBITALSIM_OBJ := ${OBJ_DIR}/orbitalSim.o
-VIEW_OBJ := ${OBJ_DIR}/view.o
+MAIN_OBJ := ${BIN_DIR}/main.o
+ORBITALSIM_OBJ := ${BIN_DIR}/orbitalSim.o
+VIEW_OBJ := ${BIN_DIR}/view.o
 ORBITALSIM_EXE := ${OUT_DIR}/orbitalSim.exe
 
 MAIN_DEPENDENCIES := ${SRC_DIR}/main.cpp ${HEADERS_DIR}/orbitalSim.h ${HEADERS_DIR}/view.h
@@ -31,5 +31,5 @@ ${VIEW_OBJ}: ${VIEW_DEPENDENCIES}
 	${CC} ${CFLAGS} -c ${SRC_DIR}/view.cpp -o ${VIEW_OBJ}
 
 clean:
-	del ${OBJ_DIR}\*.o
+	del ${BIN_DIR}\*.o
 	del ${OUT_DIR}\*.exe
