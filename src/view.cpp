@@ -18,7 +18,7 @@
  * @param timestamp the timestamp
  * @return The ISO date (a raylib string)
  */
-const char *getISODate(float timestamp)
+const char* getISODate(float timestamp)
 {
 	// Timestamp epoch: 1/1/2022
 	struct tm unichEpochTM = {0, 0, 0, 1, 0, 122};
@@ -28,7 +28,7 @@ const char *getISODate(float timestamp)
 	time_t unixTimestamp = unixEpoch + (time_t)timestamp;
 
 	// Returns ISO date
-	struct tm *localTM = localtime(&unixTimestamp);
+	struct tm* localTM = localtime(&unixTimestamp);
 	return TextFormat("%04d-%02d-%02d",
 					1900 + localTM->tm_year, localTM->tm_mon + 1, localTM->tm_mday);
 }
@@ -39,9 +39,9 @@ const char *getISODate(float timestamp)
  * @param fps Frames per second for the view
  * @return The view
  */
-View *constructView(int fps)
+view_t* constructView(int fps)
 {
-	View *view = new View();
+	view_t* view = new view_t();
 
 	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "EDA Orbital Simulation");
 	SetTargetFPS(fps);
@@ -61,7 +61,7 @@ View *constructView(int fps)
  *
  * @param view The view
  */
-void destroyView(View *view)
+void destroyView(view_t* view)
 {
 	CloseWindow();
 
@@ -73,7 +73,7 @@ void destroyView(View *view)
  *
  * @return Should rendering continue?
  */
-bool isViewRendering(View *view)
+bool isViewRendering(view_t* view)
 {
 	return !WindowShouldClose();
 }
@@ -84,7 +84,7 @@ bool isViewRendering(View *view)
  * @param view The view
  * @param sim The orbital sim
  */
-void renderView(View *view, OrbitalSim *sim)
+void renderView(view_t* view, OrbitalSim_t* sim)
 {
 	//Vector3 default_rotation_axis = {0.0f, 0.0f, 1.0f};
 

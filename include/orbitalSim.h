@@ -7,29 +7,18 @@
 
 #ifndef ORBITALSIM_H
 #define ORBITALSIM_H
-
-/**
- * @brief Orbital body definition
- */
-struct OrbitalBody
-{
-	// Fill in your code here...
-
-
-};
+#include "ephemerides.h"
 
 /**
  * @brief Orbital simulation definition
  */
-struct OrbitalSim
+typedef struct
 {
-	// Fill in your code here...
+	//
+} OrbitalSim_t;
 
-
-};
-
-OrbitalSim* constructOrbitalSim(float timeStep);
-void destroyOrbitalSim(OrbitalSim* sim);
-void updateOrbitalSim(OrbitalSim* sim);
+OrbitalSim_t* constructOrbitalSim(float timeStep);
+void destroyOrbitalSim(OrbitalSim_t* sim);
+void updateOrbitalSim(OrbitalSim_t* sim);
 
 #endif

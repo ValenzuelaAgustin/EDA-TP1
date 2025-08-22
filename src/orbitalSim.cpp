@@ -8,11 +8,9 @@
 // Enables M_PI #define in Windows
 #define _USE_MATH_DEFINES
 
+#include "OrbitalSim.h"
 #include <stdlib.h>
 #include <math.h>
-
-#include "OrbitalSim.h"
-#include "ephemerides.h"
 
 #define GRAVITATIONAL_CONSTANT 6.6743E-11F
 #define ASTEROIDS_MEAN_RADIUS 4E11F
@@ -35,7 +33,7 @@ float getRandomFloat(float min, float max)
  * @param body An orbital body
  * @param centerMass The mass of the most massive object in the star system
  */
-void configureAsteroid(OrbitalBody *body, float centerMass)
+/*void configureAsteroid(OrbitalBody* body, float centerMass)
 {
 	// Logit distribution
 	float x = getRandomFloat(0, 1);
@@ -58,7 +56,7 @@ void configureAsteroid(OrbitalBody *body, float centerMass)
 	// body->color = GRAY;
 	// body->position = {r * cosf(phi), 0, r * sinf(phi)};
 	// body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};
-}
+}*/
 
 /**
  * @brief Constructs an orbital simulation
@@ -66,7 +64,7 @@ void configureAsteroid(OrbitalBody *body, float centerMass)
  * @param float The time step
  * @return The orbital simulation
  */
-OrbitalSim *constructOrbitalSim(float timeStep)
+OrbitalSim_t* constructOrbitalSim(float timeStep)
 {
 	// Your code goes here...
 
@@ -78,7 +76,7 @@ OrbitalSim *constructOrbitalSim(float timeStep)
 /**
  * @brief Destroys an orbital simulation
  */
-void destroyOrbitalSim(OrbitalSim *sim)
+void destroyOrbitalSim(OrbitalSim_t* sim)
 {
 	// Your code goes here...
 
@@ -90,7 +88,7 @@ void destroyOrbitalSim(OrbitalSim *sim)
  *
  * @param sim The orbital simulation
  */
-void updateOrbitalSim(OrbitalSim *sim)
+void updateOrbitalSim(OrbitalSim_t* sim)
 {
 	// Your code goes here...
 

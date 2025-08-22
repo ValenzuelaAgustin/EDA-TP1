@@ -5,7 +5,7 @@
  * 
  * @cite https://ssd.jpl.nasa.gov/horizons/app.html#/
 */
-EphemeridesBody solarSystem[] =
+EphemeridesBody_t solarSystem[] =
 {
 	{
 		"Sol",
@@ -88,7 +88,7 @@ const int SOLARSYSTEM_BODYNUM = sizeof(solarSystem) / sizeof(EphemeridesBody);
  * 
  * @cite https://ssd.jpl.nasa.gov/horizons/app.html#/
 */
-EphemeridesBody alphaCentauriSystem[] =
+EphemeridesBody_t alphaCentauriSystem[] =
 {
 	{
 		"Alfa Centauri A",

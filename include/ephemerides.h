@@ -19,11 +19,11 @@ typedef struct
 	Vector3 position;	// [m]
 	Vector3 velocity;	// [m/s]
 	Vector3 acceleration;	// [m/s^2]
-} EphemeridesBody;
+} EphemeridesBody_t;
 
-extern EphemeridesBody solarSystem[];
+extern EphemeridesBody_t solarSystem[];
 extern const int SOLARSYSTEM_BODYNUM;
-extern EphemeridesBody alphaCentauriSystem[];
+extern EphemeridesBody_t alphaCentauriSystem[];
 extern const int ALPHACENTAURISYSTEM_BODYNUM;
 
 #endif

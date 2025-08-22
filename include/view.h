@@ -14,15 +14,15 @@
 /**
  * The view data
  */
-struct View
+typedef struct
 {
 	Camera3D camera;
-};
+} view_t;
 
-View* constructView(int fps);
-void destroyView(View* view);
+view_t* constructView(int fps);
+void destroyView(view_t* view);
 
-bool isViewRendering(View* view);
-void renderView(View* view, OrbitalSim* sim);
+bool isViewRendering(view_t* view);
+void renderView(view_t* view, OrbitalSim_t* sim);
 
 #endif
