@@ -8,11 +8,13 @@ OUT_DIR := out
 MAIN_OBJ := ${BIN_DIR}/main.o
 ORBITALSIM_OBJ := ${BIN_DIR}/orbitalSim.o
 VIEW_OBJ := ${BIN_DIR}/view.o
+NMATH_OBJ := ${BIN_DIR}/nmath.o
 ORBITALSIM_EXE := ${OUT_DIR}/orbitalSim.exe
 
 MAIN_DEPENDENCIES := ${SRC_DIR}/main.cpp ${HEADERS_DIR}/orbitalSim.h ${HEADERS_DIR}/view.h
 ORBITALSIM_DEPENDENCIES := ${SRC_DIR}/orbitalSim.cpp ${HEADERS_DIR}/orbitalSim.h ${HEADERS_DIR}/ephemerides.h
 VIEW_DEPENDENCIES := ${SRC_DIR}/view.cpp ${HEADERS_DIR}/view.h ${HEADERS_DIR}/orbitalSim.h
+NMATH_DEPENDENCIES := ${SRC_DIR}/nmath.c ${HEADERS_DIR}/nmath.h
 
 CC := g++
 CFLAGS := -Wall -O3 -I${HEADERS_DIR} -I${RAYLIB_HEADERS_DIR}
@@ -29,6 +31,9 @@ ${ORBITALSIM_OBJ}: ${ORBITALSIM_DEPENDENCIES}
 
 ${VIEW_OBJ}: ${VIEW_DEPENDENCIES}
 	${CC} ${CFLAGS} -c ${SRC_DIR}/view.cpp -o ${VIEW_OBJ}
+
+${NMATH_OBJ}: ${NMATH_DEPENDENCIES}
+	${CC} ${CFLAGS} -c ${SRC_DIR}/nmath.c -o ${NMATH_OBJ}
 
 clean:
 	del ${BIN_DIR}\*.o

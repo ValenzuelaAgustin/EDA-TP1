@@ -14,7 +14,9 @@
  */
 typedef struct
 {
-	//
+	float dt;
+	EphemeridesBody_t* EphemeridesBody;
+	int bodyNum;
 } OrbitalSim_t;
 
 OrbitalSim_t* constructOrbitalSim(float timeStep);
