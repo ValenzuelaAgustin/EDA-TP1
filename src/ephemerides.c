@@ -81,7 +81,7 @@ EphemeridesBody_t solarSystem[] =
 	},
 };
 
-const int SOLARSYSTEM_BODYNUM = sizeof(solarSystem) / sizeof(EphemeridesBody);
+const int SOLARSYSTEM_BODYNUM = sizeof(solarSystem) / sizeof(EphemeridesBody_t);
 
 /**
  * Alpha Centauri system ephermerides for 2022-01-01T00:00:00Z
@@ -108,4 +108,4 @@ EphemeridesBody_t alphaCentauriSystem[] =
 	},
 };
 
-const int ALPHACENTAURISYSTEM_BODYNUM = (sizeof(alphaCentauriSystem) / sizeof(EphemeridesBody));
+const int ALPHACENTAURISYSTEM_BODYNUM = sizeof(alphaCentauriSystem) / sizeof(EphemeridesBody_t);
