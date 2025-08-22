@@ -5,7 +5,7 @@
  * @copyright Copyright (c) 2022-2023
  */
 
-#include "View.h"
+#include "view.h"
 #include <time.h>
 
 #define WINDOW_WIDTH 1280
@@ -86,6 +86,8 @@ bool isViewRendering(View *view)
  */
 void renderView(View *view, OrbitalSim *sim)
 {
+	//Vector3 default_rotation_axis = {0.0f, 0.0f, 1.0f};
+
 	UpdateCamera(&view->camera, CAMERA_FREE);
 
 	BeginDrawing();
@@ -95,7 +97,7 @@ void renderView(View *view, OrbitalSim *sim)
 
 	// Fill in your 3D drawing code here:
 
-
+	//DrawCircle3D();
 
 	DrawGrid(10, 10.0f);
 	EndMode3D();

@@ -1,26 +1,35 @@
+HEADERS_DIR := include
+RAYLIB_HEADERS_DIR := C:/dev/vcpkg/installed/x64-windows/include
+RAYLIB_LIB_DIR := C:/dev/vcpkg/installed/x64-windows/lib
+SRC_DIR := src
+OBJ_DIR := obj
+OUT_DIR := out
+
+MAIN_OBJ := ${OBJ_DIR}/main.o
+ORBITALSIM_OBJ := ${OBJ_DIR}/orbitalSim.o
+VIEW_OBJ := ${OBJ_DIR}/view.o
+ORBITALSIM_EXE := ${OUT_DIR}/orbitalSim.exe
+
+MAIN_DEPENDENCIES := ${SRC_DIR}/main.cpp ${HEADERS_DIR}/orbitalSim.h ${HEADERS_DIR}/view.h
+ORBITALSIM_DEPENDENCIES := ${SRC_DIR}/orbitalSim.cpp ${HEADERS_DIR}/orbitalSim.h ${HEADERS_DIR}/ephemerides.h
+VIEW_DEPENDENCIES := ${SRC_DIR}/view.cpp ${HEADERS_DIR}/view.h ${HEADERS_DIR}/orbitalSim.h
+
 CC := g++
-CFLAGS := -Wall -O3 -IC:/dev/vcpkg/installed/x64-windows/include
-LDFLAGS := -LC:/dev/vcpkg/installed/x64-windows/lib -lraylib -lopengl32 -lgdi32 -lwinmm
-OBJDIR := obj
-OUTDIR := out
+CFLAGS := -Wall -O3 -I${HEADERS_DIR} -I${RAYLIB_HEADERS_DIR}
+LDFLAGS := -L${RAYLIB_LIB_DIR} -lraylib -lopengl32 -lgdi32 -lwinmm
 
-MAIN_OBJ := ${OBJDIR}/main.o
-ORBITALSIM_OBJ := ${OBJDIR}/orbitalSim.o
-VIEW_OBJ := ${OBJDIR}/view.o
-ORBITAL_SIM := ${OUTDIR}/orbitalSim.exe
+${ORBITALSIM_EXE}: ${MAIN_OBJ} ${ORBITALSIM_OBJ} ${VIEW_OBJ}
+	${CC} ${CFLAGS} -o ${ORBITALSIM_EXE} ${MAIN_OBJ} ${ORBITALSIM_OBJ} ${VIEW_OBJ} ${LDFLAGS}
 
-${ORBITAL_SIM}: ${MAIN_OBJ} ${ORBITALSIM_OBJ} ${VIEW_OBJ}
-	${CC} ${CFLAGS} -o ${ORBITAL_SIM} ${MAIN_OBJ} ${ORBITALSIM_OBJ} ${VIEW_OBJ} ${LDFLAGS}
+${MAIN_OBJ}: ${MAIN_DEPENDENCIES}
+	${CC} ${CFLAGS} -c ${SRC_DIR}/main.cpp -o ${MAIN_OBJ}
 
-${MAIN_OBJ}: main.cpp orbitalSim.h view.h
-	${CC} ${CFLAGS} -c main.cpp -o ${MAIN_OBJ}
+${ORBITALSIM_OBJ}: ${ORBITALSIM_DEPENDENCIES}
+	${CC} ${CFLAGS} -c ${SRC_DIR}/orbitalSim.cpp -o ${ORBITALSIM_OBJ}
 
-${ORBITALSIM_OBJ}: orbitalSim.cpp orbitalSim.h ephemerides.h
-	${CC} ${CFLAGS} -c orbitalSim.cpp -o ${ORBITALSIM_OBJ}
-
-${VIEW_OBJ}: view.cpp view.h orbitalSim.h
-	${CC} ${CFLAGS} -c view.cpp -o ${VIEW_OBJ}
+${VIEW_OBJ}: ${VIEW_DEPENDENCIES}
+	${CC} ${CFLAGS} -c ${SRC_DIR}/view.cpp -o ${VIEW_OBJ}
 
 clean:
-	del ${OBJDIR}\*.o
-	del ${OUTDIR}\*.exe
+	del ${OBJ_DIR}\*.o
+	del ${OUT_DIR}\*.exe
