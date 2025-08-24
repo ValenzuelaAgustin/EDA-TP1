@@ -6,10 +6,12 @@
  */
 
 #include "view.h"
+#include "raymath.h"
+#include "nmath.h"
 #include <time.h>
 
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
+#define WINDOW_WIDTH 1920
+#define WINDOW_HEIGHT 1080
 
 /**
  * @brief Converts a timestamp (number of seconds since 1/1/2022)
@@ -86,8 +88,6 @@ bool isViewRendering(view_t* view)
  */
 void renderView(view_t* view, OrbitalSim_t* sim)
 {
-	//Vector3 default_rotation_axis = {0.0f, 0.0f, 1.0f};
-
 	UpdateCamera(&view->camera, CAMERA_FREE);
 
 	BeginDrawing();
@@ -97,9 +97,34 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 
 	// Fill in your 3D drawing code here:
 
-	//DrawCircle3D();
+	//DrawGrid(10, 10.0f);
 
-	DrawGrid(10, 10.0f);
+	Vector3 position, velocity, acceleration;
+
+	for (int i = 0; i < sim->bodyNum; i++) //
+	{
+		position.x = sim->EphemeridesBody[i].position[X];
+		position.y = sim->EphemeridesBody[i].position[Y];
+		position.z = sim->EphemeridesBody[i].position[Z];
+
+		velocity.x = sim->EphemeridesBody[i].velocity[X];
+		velocity.y = sim->EphemeridesBody[i].velocity[Y];
+		velocity.z = sim->EphemeridesBody[i].velocity[Z];
+
+		acceleration.x = sim->EphemeridesBody[i].acceleration[X];
+		acceleration.y = sim->EphemeridesBody[i].acceleration[Y];
+		acceleration.z = sim->EphemeridesBody[i].acceleration[Z];
+
+		DrawSphere(Vector3Scale(position, 1E-11), 0.005F * logf(sim->EphemeridesBody[i].radius), sim->EphemeridesBody[i].color);
+		//DrawLine3D(	Vector3Scale(position, 1E-11),
+		//		Vector3Scale(Vector3Add(position, Vector3Scale(acceleration, 1E14)), 1E-11),
+		//		RED);
+		//DrawLine3D(	Vector3Scale(position, 1E-11),
+		//		Vector3Scale(Vector3Add(position, Vector3Scale(velocity, 1E7)), 1E-11),
+		//		BLUE);
+		DrawPoint3D(Vector3Scale(position, 1E-11), sim->EphemeridesBody[i].color);
+	}
+
 	EndMode3D();
 
 	// Fill in your 2D drawing code here:

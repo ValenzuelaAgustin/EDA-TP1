@@ -12,9 +12,9 @@ EPHEMERIDES_OBJ := ${BIN_DIR}/ephemerides.o
 NMATH_OBJ := ${BIN_DIR}/nmath.o
 ORBITALSIM_EXE := ${OUT_DIR}/orbitalSim.exe
 
-MAIN_DEPENDENCIES := ${SRC_DIR}/main.cpp ${HEADERS_DIR}/orbitalSim.h ${HEADERS_DIR}/view.h
+MAIN_DEPENDENCIES := ${SRC_DIR}/main.cpp ${HEADERS_DIR}/orbitalSim.h ${HEADERS_DIR}/view.h ${HEADERS_DIR}/ephemerides.h
 ORBITALSIM_DEPENDENCIES := ${SRC_DIR}/orbitalSim.cpp ${HEADERS_DIR}/orbitalSim.h ${HEADERS_DIR}/ephemerides.h ${HEADERS_DIR}/nmath.h
-VIEW_DEPENDENCIES := ${SRC_DIR}/view.cpp ${HEADERS_DIR}/view.h ${HEADERS_DIR}/orbitalSim.h
+VIEW_DEPENDENCIES := ${SRC_DIR}/view.cpp ${HEADERS_DIR}/view.h ${HEADERS_DIR}/orbitalSim.h ${HEADERS_DIR}/ephemerides.h ${HEADERS_DIR}/nmath.h
 EPHEMERIDES_DEPENDENCIES := ${SRC_DIR}/ephemerides.c ${HEADERS_DIR}/ephemerides.h
 NMATH_DEPENDENCIES := ${SRC_DIR}/nmath.c ${HEADERS_DIR}/nmath.h
 
