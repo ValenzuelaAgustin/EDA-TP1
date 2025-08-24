@@ -127,9 +127,9 @@ void updateOrbitalSim(OrbitalSim_t* sim)
 			sim->EphemeridesBody[i].acceleration.y += sim->EphemeridesBody[j].mass * acceleration.y;
 			sim->EphemeridesBody[i].acceleration.z += sim->EphemeridesBody[j].mass * acceleration.z;
 
-			sim->EphemeridesBody[j].acceleration.x += sim->EphemeridesBody[i].mass * acceleration.x;
-			sim->EphemeridesBody[j].acceleration.y += sim->EphemeridesBody[i].mass * acceleration.y;
-			sim->EphemeridesBody[j].acceleration.z += sim->EphemeridesBody[i].mass * acceleration.z;
+			sim->EphemeridesBody[j].acceleration.x -= sim->EphemeridesBody[i].mass * acceleration.x;
+			sim->EphemeridesBody[j].acceleration.y -= sim->EphemeridesBody[i].mass * acceleration.y;
+			sim->EphemeridesBody[j].acceleration.z -= sim->EphemeridesBody[i].mass * acceleration.z;
 		}
 	}
 
