@@ -14,12 +14,12 @@
  */
 typedef struct
 {
-	float dt;
+	double dt;
 	EphemeridesBody_t* EphemeridesBody;
 	int bodyNum;
 } OrbitalSim_t;
 
-OrbitalSim_t* constructOrbitalSim(float timeStep);
+OrbitalSim_t* constructOrbitalSim(double timeStep);
 void destroyOrbitalSim(OrbitalSim_t* sim);
 void updateOrbitalSim(OrbitalSim_t* sim);
 

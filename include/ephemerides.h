@@ -13,12 +13,12 @@
 typedef struct
 {
 	const char* name;	// Name
-	float mass;		// [kg]
+	double mass;		// [kg]
 	float radius;		// [m]
 	Color color;		// Raylib color
-	Vector3 position;	// [m]
-	Vector3 velocity;	// [m/s]
-	Vector3 acceleration;	// [m/s^2]
+	double position[3];	// [m]
+	double velocity[3];	// [m/s]
+	double acceleration[3];	// [m/s^2]
 } EphemeridesBody_t;
 
 extern EphemeridesBody_t solarSystem[];

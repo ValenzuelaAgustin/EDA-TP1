@@ -65,7 +65,7 @@ float getRandomFloat(float min, float max)
  * @param float The time step
  * @return The orbital simulation
  */
-OrbitalSim_t* constructOrbitalSim(float timeStep)
+OrbitalSim_t* constructOrbitalSim(double timeStep)
 {
 	OrbitalSim_t* ptr = new OrbitalSim_t;
 	if (!ptr)
@@ -97,50 +97,50 @@ void updateOrbitalSim(OrbitalSim_t* sim)
 	//	return;
 
 	int i, j;
-	Vector3 acceleration;
-	float inverse_distance_cubed;
+	double acceleration[3];
+	double inverse_distance_cubed;
 
 	for (i = 0; i < sim->bodyNum; i++)
 	{
-		sim->EphemeridesBody[i].acceleration.x = 0;
-		sim->EphemeridesBody[i].acceleration.y = 0;
-		sim->EphemeridesBody[i].acceleration.z = 0;
+		sim->EphemeridesBody[i].acceleration[X] = 0;
+		sim->EphemeridesBody[i].acceleration[Y] = 0;
+		sim->EphemeridesBody[i].acceleration[Z] = 0;
 	}
 
 	for (i = 0; i < sim->bodyNum - 1; i++)
 	{
 		for (j = i + 1; j < sim->bodyNum; j++)
 		{
-			acceleration.x = sim->EphemeridesBody[j].position.x - sim->EphemeridesBody[i].position.x;
-			acceleration.y = sim->EphemeridesBody[j].position.y - sim->EphemeridesBody[i].position.y;
-			acceleration.z = sim->EphemeridesBody[j].position.z - sim->EphemeridesBody[i].position.z;
+			acceleration[X] = sim->EphemeridesBody[j].position[X] - sim->EphemeridesBody[i].position[X];
+			acceleration[Y] = sim->EphemeridesBody[j].position[Y] - sim->EphemeridesBody[i].position[Y];
+			acceleration[Z] = sim->EphemeridesBody[j].position[Z] - sim->EphemeridesBody[i].position[Z];
 
 			inverse_distance_cubed = Q_rsqrt(DOT_PRODUCT(acceleration, acceleration));
 			inverse_distance_cubed = inverse_distance_cubed * inverse_distance_cubed * inverse_distance_cubed;
 			inverse_distance_cubed *= GRAVITATIONAL_CONSTANT;
 
-			acceleration.x *= inverse_distance_cubed;
-			acceleration.y *= inverse_distance_cubed;
-			acceleration.z *= inverse_distance_cubed;
+			acceleration[X] *= inverse_distance_cubed;
+			acceleration[Y] *= inverse_distance_cubed;
+			acceleration[Z] *= inverse_distance_cubed;
 
-			sim->EphemeridesBody[i].acceleration.x += sim->EphemeridesBody[j].mass * acceleration.x;
-			sim->EphemeridesBody[i].acceleration.y += sim->EphemeridesBody[j].mass * acceleration.y;
-			sim->EphemeridesBody[i].acceleration.z += sim->EphemeridesBody[j].mass * acceleration.z;
+			sim->EphemeridesBody[i].acceleration[X] += sim->EphemeridesBody[j].mass * acceleration[X];
+			sim->EphemeridesBody[i].acceleration[Y] += sim->EphemeridesBody[j].mass * acceleration[Y];
+			sim->EphemeridesBody[i].acceleration[Z] += sim->EphemeridesBody[j].mass * acceleration[Z];
 
-			sim->EphemeridesBody[j].acceleration.x -= sim->EphemeridesBody[i].mass * acceleration.x;
-			sim->EphemeridesBody[j].acceleration.y -= sim->EphemeridesBody[i].mass * acceleration.y;
-			sim->EphemeridesBody[j].acceleration.z -= sim->EphemeridesBody[i].mass * acceleration.z;
+			sim->EphemeridesBody[j].acceleration[X] -= sim->EphemeridesBody[i].mass * acceleration[X];
+			sim->EphemeridesBody[j].acceleration[Y] -= sim->EphemeridesBody[i].mass * acceleration[Y];
+			sim->EphemeridesBody[j].acceleration[Z] -= sim->EphemeridesBody[i].mass * acceleration[Z];
 		}
 	}
 
 	for (i = 0; i < sim->bodyNum; i++)
 	{
-		sim->EphemeridesBody[i].velocity.x += sim->EphemeridesBody[i].acceleration.x * sim->dt;
-		sim->EphemeridesBody[i].velocity.y += sim->EphemeridesBody[i].acceleration.y * sim->dt;
-		sim->EphemeridesBody[i].velocity.z += sim->EphemeridesBody[i].acceleration.z * sim->dt;
+		sim->EphemeridesBody[i].velocity[X] += sim->EphemeridesBody[i].acceleration[X] * sim->dt;
+		sim->EphemeridesBody[i].velocity[Y] += sim->EphemeridesBody[i].acceleration[Y] * sim->dt;
+		sim->EphemeridesBody[i].velocity[Z] += sim->EphemeridesBody[i].acceleration[Z] * sim->dt;
 
-		sim->EphemeridesBody[i].position.x += sim->EphemeridesBody[i].velocity.x * sim->dt;
-		sim->EphemeridesBody[i].position.y += sim->EphemeridesBody[i].velocity.y * sim->dt;
-		sim->EphemeridesBody[i].position.z += sim->EphemeridesBody[i].velocity.z * sim->dt;
+		sim->EphemeridesBody[i].position[X] += sim->EphemeridesBody[i].velocity[X] * sim->dt;
+		sim->EphemeridesBody[i].position[Y] += sim->EphemeridesBody[i].velocity[Y] * sim->dt;
+		sim->EphemeridesBody[i].position[Z] += sim->EphemeridesBody[i].velocity[Z] * sim->dt;
 	}
 }
