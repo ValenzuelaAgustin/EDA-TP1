@@ -99,7 +99,11 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 
 	//DrawGrid(10, 10.0f);
 
-	Vector3 position, velocity, acceleration;
+	Vector3 position;
+
+	#ifdef SHOW_VECT
+		Vector3 velocity, acceleration;
+	#endif
 
 	for (int i = 0; i < sim->bodyNum; i++) //
 	{
@@ -107,22 +111,25 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 		position.y = sim->EphemeridesBody[i].position[Y];
 		position.z = sim->EphemeridesBody[i].position[Z];
 
-		velocity.x = sim->EphemeridesBody[i].velocity[X];
-		velocity.y = sim->EphemeridesBody[i].velocity[Y];
-		velocity.z = sim->EphemeridesBody[i].velocity[Z];
-
-		acceleration.x = sim->EphemeridesBody[i].acceleration[X];
-		acceleration.y = sim->EphemeridesBody[i].acceleration[Y];
-		acceleration.z = sim->EphemeridesBody[i].acceleration[Z];
-
 		DrawSphere(Vector3Scale(position, 1E-11), 0.005F * logf(sim->EphemeridesBody[i].radius), sim->EphemeridesBody[i].color);
-		//DrawLine3D(	Vector3Scale(position, 1E-11),
-		//		Vector3Scale(Vector3Add(position, Vector3Scale(acceleration, 1E14)), 1E-11),
-		//		RED);
-		//DrawLine3D(	Vector3Scale(position, 1E-11),
-		//		Vector3Scale(Vector3Add(position, Vector3Scale(velocity, 1E7)), 1E-11),
-		//		BLUE);
 		DrawPoint3D(Vector3Scale(position, 1E-11), sim->EphemeridesBody[i].color);
+
+		#ifdef SHOW_VECT
+			velocity.x = sim->EphemeridesBody[i].velocity[X];
+			velocity.y = sim->EphemeridesBody[i].velocity[Y];
+			velocity.z = sim->EphemeridesBody[i].velocity[Z];
+
+			acceleration.x = sim->EphemeridesBody[i].acceleration[X];
+			acceleration.y = sim->EphemeridesBody[i].acceleration[Y];
+			acceleration.z = sim->EphemeridesBody[i].acceleration[Z];
+
+			DrawLine3D(	Vector3Scale(position, 1E-11),
+					Vector3Scale(Vector3Add(position, Vector3Scale(acceleration, 1E14)), 1E-11),
+					RED);
+			DrawLine3D(	Vector3Scale(position, 1E-11),
+					Vector3Scale(Vector3Add(position, Vector3Scale(velocity, 1E7)), 1E-11),
+					BLUE);
+		#endif
 	}
 
 	EndMode3D();

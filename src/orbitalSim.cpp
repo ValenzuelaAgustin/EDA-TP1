@@ -15,6 +15,7 @@
 
 #define GRAVITATIONAL_CONSTANT 6.6743E-11F
 #define ASTEROIDS_MEAN_RADIUS 4E11F
+#define ASTEROIDS_AMMOUNT 500
 
 /**
  * @brief Gets a uniform random value in a range
@@ -34,7 +35,7 @@ float getRandomFloat(float min, float max)
  * @param body An orbital body
  * @param centerMass The mass of the most massive object in the star system
  */
-/*void configureAsteroid(OrbitalBody* body, float centerMass)
+void configureAsteroid(EphemeridesBody_t* body, float centerMass)
 {
 	// Logit distribution
 	float x = getRandomFloat(0, 1);
@@ -52,12 +53,17 @@ float getRandomFloat(float min, float max)
 	float vy = getRandomFloat(-1E2F, 1E2F);
 
 	// Fill in with your own fields:
-	// body->mass = 1E12F;  // Typical asteroid weight: 1 billion tons
-	// body->radius = 2E3F; // Typical asteroid radius: 2km
-	// body->color = GRAY;
-	// body->position = {r * cosf(phi), 0, r * sinf(phi)};
-	// body->velocity = {-v * sinf(phi), vy, v * cosf(phi)};
-}*/
+	body->mass = 1E12F;  // Typical asteroid weight: 1 billion tons
+	body->radius = 2E3F; // Typical asteroid radius: 2km
+	body->color = GRAY;
+	body->position[X] = r * cosf(phi);
+	body->position[Y] = 0;
+	body->position[Z] = r * sinf(phi);
+
+	body->velocity[X] = -v * sinf(phi);
+	body->velocity[Y] = vy;
+	body->velocity[Z] = v * cosf(phi);
+}
 
 /**
  * @brief Constructs an orbital simulation
@@ -71,9 +77,25 @@ OrbitalSim_t* constructOrbitalSim(double timeStep)
 	if (!ptr)
 		return NULL;
 
+	ptr->bodyNum = SOLARSYSTEM_BODYNUM + ASTEROIDS_AMMOUNT;
+	ptr->EphemeridesBody = (EphemeridesBody_t*)malloc(sizeof(EphemeridesBody_t) * ptr->bodyNum);
+	if (!ptr->EphemeridesBody)
+	{
+		delete ptr;
+		return NULL;
+	}
+
 	ptr->dt = timeStep;
-	ptr->bodyNum = SOLARSYSTEM_BODYNUM;
-	ptr->EphemeridesBody = solarSystem;
+	int i;
+	for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
+	{
+		ptr->EphemeridesBody[i] = solarSystem[i];
+
+	}
+	for (i = SOLARSYSTEM_BODYNUM; i < ptr->bodyNum; i++)
+	{
+		configureAsteroid(ptr->EphemeridesBody + i, solarSystem[0].mass);
+	}
 
 	return ptr; // This should return your orbital sim
 }
