@@ -8,7 +8,7 @@
 // Enables M_PI #define in Windows
 #define _USE_MATH_DEFINES
 
-#include "OrbitalSim.h"
+#include "orbitalSim.h"
 #include "nmath.h"
 #include <stdlib.h>
 #include <math.h>
@@ -65,12 +65,6 @@ static void configureAsteroid(EphemeridesBody_t* body, float centerMass)
 	body->velocity[Z] = v * cosf(phi);
 }
 
-/**
- * @brief Constructs an orbital simulation
- *
- * @param float The time step
- * @return The orbital simulation
- */
 OrbitalSim_t* constructOrbitalSim(double timeStep)
 {
 	OrbitalSim_t* ptr = new OrbitalSim_t;
@@ -100,19 +94,15 @@ OrbitalSim_t* constructOrbitalSim(double timeStep)
 	return ptr; // This should return your orbital sim
 }
 
-/**
- * @brief Destroys an orbital simulation
- */
 void destroyOrbitalSim(OrbitalSim_t* sim)
 {
+	if (!sim)
+		return;
+	if (sim->EphemeridesBody)
+		free(sim->EphemeridesBody);
 	delete sim;
 }
 
-/**
- * @brief Simulates a timestep
- *
- * @param sim The orbital simulation
- */
 void updateOrbitalSim(OrbitalSim_t* sim)
 {
 	//if (!sim || !sim->EphemeridesBody || sim->bodyNum < 1 || sim->dt <= 0)

@@ -9,7 +9,7 @@
 #define ORBITALSIMVIEW_H
 
 #include <raylib.h>
-#include "OrbitalSim.h"
+#include "orbitalSim.h"
 
 /**
  * The view data
@@ -19,10 +19,34 @@ typedef struct
 	Camera3D camera;
 } view_t;
 
+/**
+ * @brief Constructs an orbital simulation view
+ *
+ * @param fps Frames per second for the view
+ * @return The view
+ */
 view_t* constructView(int fps);
+
+/**
+ * @brief Destroys an orbital simulation view
+ *
+ * @param view The view
+ */
 void destroyView(view_t* view);
 
+/**
+ * @brief Should the view still render?
+ *
+ * @return Should rendering continue?
+ */
 bool isViewRendering(view_t* view);
+
+/**
+ * Renders an orbital simulation
+ *
+ * @param view The view
+ * @param sim The orbital sim
+ */
 void renderView(view_t* view, OrbitalSim_t* sim);
 
 #endif

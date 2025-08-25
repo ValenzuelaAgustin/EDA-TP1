@@ -21,8 +21,19 @@ typedef struct
 	double acceleration[3];	// [m/s^2]
 } EphemeridesBody_t;
 
+/**
+ * @brief Solay system ephermerides for 2022-01-01T00:00:00Z
+ * 
+ * @cite https://ssd.jpl.nasa.gov/horizons/app.html#/
+*/
 extern EphemeridesBody_t solarSystem[];
 extern const int SOLARSYSTEM_BODYNUM;
+
+/**
+ * Alpha Centauri system ephermerides for 2022-01-01T00:00:00Z
+ * 
+ * @cite https://ssd.jpl.nasa.gov/horizons/app.html#/
+*/
 extern EphemeridesBody_t alphaCentauriSystem[];
 extern const int ALPHACENTAURISYSTEM_BODYNUM;
 

@@ -10,8 +10,8 @@
 #include "nmath.h"
 #include <time.h>
 
-#define WINDOW_WIDTH 1024
-#define WINDOW_HEIGHT 720
+#define WINDOW_WIDTH 1920
+#define WINDOW_HEIGHT 1080
 //#define SHOW_VECT
 
 /**
@@ -21,7 +21,7 @@
  * @param timestamp the timestamp
  * @return The ISO date (a raylib string)
  */
-const char* getISODate(float timestamp)
+static const char* getISODate(float timestamp)
 {
 	// Timestamp epoch: 1/1/2022
 	struct tm unichEpochTM = {0, 0, 0, 1, 0, 122};
@@ -36,12 +36,6 @@ const char* getISODate(float timestamp)
 					1900 + localTM->tm_year, localTM->tm_mon + 1, localTM->tm_mday);
 }
 
-/**
- * @brief Constructs an orbital simulation view
- *
- * @param fps Frames per second for the view
- * @return The view
- */
 view_t* constructView(int fps)
 {
 	view_t* view = new view_t();
@@ -59,11 +53,6 @@ view_t* constructView(int fps)
 	return view;
 }
 
-/**
- * @brief Destroys an orbital simulation view
- *
- * @param view The view
- */
 void destroyView(view_t* view)
 {
 	CloseWindow();
@@ -71,22 +60,11 @@ void destroyView(view_t* view)
 	delete view;
 }
 
-/**
- * @brief Should the view still render?
- *
- * @return Should rendering continue?
- */
 bool isViewRendering(view_t* view)
 {
 	return !WindowShouldClose();
 }
 
-/**
- * Renders an orbital simulation
- *
- * @param view The view
- * @param sim The orbital sim
- */
 void renderView(view_t* view, OrbitalSim_t* sim)
 {
 	UpdateCamera(&view->camera, CAMERA_FREE);
