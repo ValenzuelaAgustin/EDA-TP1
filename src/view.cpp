@@ -12,6 +12,7 @@
 
 #define WINDOW_WIDTH 1920
 #define WINDOW_HEIGHT 1080
+// #define SHOW_VECT
 
 /**
  * @brief Converts a timestamp (number of seconds since 1/1/2022)
@@ -112,7 +113,7 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 		position.z = sim->EphemeridesBody[i].position[Z];
 
 		DrawSphere(Vector3Scale(position, 1E-11), 0.005F * logf(sim->EphemeridesBody[i].radius), sim->EphemeridesBody[i].color);
-		DrawPoint3D(Vector3Scale(position, 1E-11), sim->EphemeridesBody[i].color);
+		//DrawPoint3D(Vector3Scale(position, 1E-11), sim->EphemeridesBody[i].color);
 
 		#ifdef SHOW_VECT
 			velocity.x = sim->EphemeridesBody[i].velocity[X];

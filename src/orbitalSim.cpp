@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define GRAVITATIONAL_CONSTANT 6.6743E-11F
+#define GRAVITATIONAL_CONSTANT 6.6743E-11
 #define ASTEROIDS_MEAN_RADIUS 4E11F
 #define ASTEROIDS_AMMOUNT 500
 
