@@ -87,11 +87,13 @@ OrbitalSim_t* constructOrbitalSim(double timeStep)
 
 	ptr->dt = timeStep;
 	int i;
-	for (i = 0; i < ptr->bodyNum; i++)
+	for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
 	{
-		if(i < SOLARSYSTEM_BODYNUM)
 		ptr->EphemeridesBody[i] = solarSystem[i];
-		else
+
+	}
+	for (i = SOLARSYSTEM_BODYNUM; i < ptr->bodyNum; i++)
+	{
 		configureAsteroid(ptr->EphemeridesBody + i, solarSystem[0].mass);
 	}
 
