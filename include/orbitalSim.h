@@ -19,8 +19,24 @@ typedef struct
 	int bodyNum;
 } OrbitalSim_t;
 
+/**
+ * @brief Constructs an orbital simulation
+ *
+ * @param float The time step
+ * @return The orbital simulation
+ */
 OrbitalSim_t* constructOrbitalSim(double timeStep);
+
+/**
+ * @brief Destroys an orbital simulation
+ */
 void destroyOrbitalSim(OrbitalSim_t* sim);
+
+/**
+ * @brief Simulates a timestep
+ *
+ * @param sim The orbital simulation
+ */
 void updateOrbitalSim(OrbitalSim_t* sim);
 
 #endif

@@ -1,10 +1,5 @@
 #include "ephemerides.h"
 
-/**
- * @brief Solay system ephermerides for 2022-01-01T00:00:00Z
- * 
- * @cite https://ssd.jpl.nasa.gov/horizons/app.html#/
-*/
 EphemeridesBody_t solarSystem[] =
 {
 	{
@@ -83,11 +78,6 @@ EphemeridesBody_t solarSystem[] =
 
 const int SOLARSYSTEM_BODYNUM = sizeof(solarSystem) / sizeof(EphemeridesBody_t);
 
-/**
- * Alpha Centauri system ephermerides for 2022-01-01T00:00:00Z
- * 
- * @cite https://ssd.jpl.nasa.gov/horizons/app.html#/
-*/
 EphemeridesBody_t alphaCentauriSystem[] =
 {
 	{

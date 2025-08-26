@@ -8,7 +8,7 @@
 // Enables M_PI #define in Windows
 #define _USE_MATH_DEFINES
 
-#include "OrbitalSim.h"
+#include "orbitalSim.h"
 #include "nmath.h"
 #include <stdlib.h>
 #include <math.h>
@@ -24,7 +24,7 @@
  * @param max Maximum value
  * @return The random value
  */
-float getRandomFloat(float min, float max)
+static float getRandomFloat(float min, float max)
 {
 	return min + (max - min) * rand() / (float)RAND_MAX;
 }
@@ -35,7 +35,7 @@ float getRandomFloat(float min, float max)
  * @param body An orbital body
  * @param centerMass The mass of the most massive object in the star system
  */
-void configureAsteroid(EphemeridesBody_t* body, float centerMass)
+static void configureAsteroid(EphemeridesBody_t* body, float centerMass)
 {
 	// Logit distribution
 	float x = getRandomFloat(0, 1);
@@ -49,11 +49,11 @@ void configureAsteroid(EphemeridesBody_t* body, float centerMass)
 	// phi = 0;
 
 	// https://en.wikipedia.org/wiki/Circular_orbit#Velocity
-	float v = sqrtf(GRAVITATIONAL_CONSTANT * centerMass / r) * getRandomFloat(0.6F, 1.2F);
+	float v = sqrtf(centerMass / r) * getRandomFloat(0.6F, 1.2F);
 	float vy = getRandomFloat(-1E2F, 1E2F);
 
 	// Fill in with your own fields:
-	body->mass = 1E12F;  // Typical asteroid weight: 1 billion tons
+	body->mass = 1E12F * GRAVITATIONAL_CONSTANT;  // Typical asteroid weight: 1 billion tons
 	body->radius = 2E3F; // Typical asteroid radius: 2km
 	body->color = GRAY;
 	body->position[X] = r * cosf(phi);
@@ -65,12 +65,6 @@ void configureAsteroid(EphemeridesBody_t* body, float centerMass)
 	body->velocity[Z] = v * cosf(phi);
 }
 
-/**
- * @brief Constructs an orbital simulation
- *
- * @param float The time step
- * @return The orbital simulation
- */
 OrbitalSim_t* constructOrbitalSim(double timeStep)
 {
 	OrbitalSim_t* ptr = new OrbitalSim_t;
@@ -90,29 +84,25 @@ OrbitalSim_t* constructOrbitalSim(double timeStep)
 	for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
 	{
 		ptr->EphemeridesBody[i] = solarSystem[i];
-
+		ptr->EphemeridesBody[i].mass *= GRAVITATIONAL_CONSTANT;
 	}
 	for (i = SOLARSYSTEM_BODYNUM; i < ptr->bodyNum; i++)
 	{
-		configureAsteroid(ptr->EphemeridesBody + i, solarSystem[0].mass);
+		configureAsteroid(ptr->EphemeridesBody + i, ptr->EphemeridesBody[0].mass);
 	}
 
 	return ptr; // This should return your orbital sim
 }
 
-/**
- * @brief Destroys an orbital simulation
- */
 void destroyOrbitalSim(OrbitalSim_t* sim)
 {
+	if (!sim)
+		return;
+	if (sim->EphemeridesBody)
+		free(sim->EphemeridesBody);
 	delete sim;
 }
 
-/**
- * @brief Simulates a timestep
- *
- * @param sim The orbital simulation
- */
 void updateOrbitalSim(OrbitalSim_t* sim)
 {
 	//if (!sim || !sim->EphemeridesBody || sim->bodyNum < 1 || sim->dt <= 0)
@@ -139,7 +129,7 @@ void updateOrbitalSim(OrbitalSim_t* sim)
 
 			inverse_distance_cubed = Q_rsqrt(DOT_PRODUCT(acceleration, acceleration));
 			inverse_distance_cubed = inverse_distance_cubed * inverse_distance_cubed * inverse_distance_cubed;
-			inverse_distance_cubed *= GRAVITATIONAL_CONSTANT;
+			//inverse_distance_cubed *= GRAVITATIONAL_CONSTANT;
 
 			acceleration[X] *= inverse_distance_cubed;
 			acceleration[Y] *= inverse_distance_cubed;
