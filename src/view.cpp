@@ -10,8 +10,9 @@
 #include "nmath.h"
 #include <time.h>
 
-#define WINDOW_WIDTH 1920
-#define WINDOW_HEIGHT 1080
+#define WINDOW_WIDTH 1024
+#define WINDOW_HEIGHT 720
+#define SHOW_VECT
 
 /**
  * @brief Converts a timestamp (number of seconds since 1/1/2022)
@@ -98,7 +99,6 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	// Fill in your 3D drawing code here:
 
 	//DrawGrid(10, 10.0f);
-
 	Vector3 position;
 
 	#ifdef SHOW_VECT
@@ -112,8 +112,8 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 		position.z = sim->EphemeridesBody[i].position[Z];
 
 		DrawSphere(Vector3Scale(position, 1E-11), 0.005F * logf(sim->EphemeridesBody[i].radius), sim->EphemeridesBody[i].color);
-		DrawPoint3D(Vector3Scale(position, 1E-11), sim->EphemeridesBody[i].color);
-
+		//DrawPoint3D(Vector3Scale(position, 1E-11), sim->EphemeridesBody[i].color);
+		
 		#ifdef SHOW_VECT
 			velocity.x = sim->EphemeridesBody[i].velocity[X];
 			velocity.y = sim->EphemeridesBody[i].velocity[Y];
@@ -135,8 +135,8 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	EndMode3D();
 
 	// Fill in your 2D drawing code here:
-
-
+	DrawFPS(10,10);
+	DrawText(getISODate(clock()),10, 30, 20, RAYWHITE);
 
 	EndDrawing();
 }
