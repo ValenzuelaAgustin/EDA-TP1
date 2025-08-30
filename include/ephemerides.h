@@ -29,6 +29,19 @@ typedef struct
 extern EphemeridesBody_t solarSystem[];
 extern const int SOLARSYSTEM_BODYNUM;
 
+enum
+{
+	SOL,
+	MERCURIO,
+	VENUS,
+	TIERRA,
+	MARTE,
+	JUPITER,
+	SATURNO,
+	URANO,
+	NEPTUNO
+};
+
 /**
  * Alpha Centauri system ephermerides for 2022-01-01T00:00:00Z
  * 
@@ -36,5 +49,11 @@ extern const int SOLARSYSTEM_BODYNUM;
 */
 extern EphemeridesBody_t alphaCentauriSystem[];
 extern const int ALPHACENTAURISYSTEM_BODYNUM;
+
+enum
+{
+	ALFA_CENTAURI_A,
+	ALFA_CENTAURI_B
+};
 
 #endif

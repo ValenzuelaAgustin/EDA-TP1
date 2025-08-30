@@ -9,6 +9,7 @@
 #include "view.h"
 
 #define SECONDS_PER_DAY 86400
+#define ASTEROIDS_AMMOUNT 10000
 
 int main()
 {
@@ -16,7 +17,7 @@ int main()
 	double timeMultiplier = 50 * SECONDS_PER_DAY;	// Simulation speed: 100 days per simulation second
 	double timeStep = timeMultiplier / fps;
 
-	OrbitalSim_t* sim = constructOrbitalSim(timeStep);
+	OrbitalSim_t* sim = constructOrbitalSim(timeStep, ASTEROIDS_AMMOUNT);
 	view_t* view = constructView(fps);
 
 	while (isViewRendering(view))

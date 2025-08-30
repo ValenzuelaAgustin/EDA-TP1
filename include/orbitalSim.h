@@ -16,7 +16,9 @@ typedef struct
 {
 	double dt;
 	EphemeridesBody_t* EphemeridesBody;
-	int bodyNum;
+	EphemeridesBody_t* Asteroids;
+	unsigned int bodyNum;
+	unsigned int asteroidsNum;
 } OrbitalSim_t;
 
 /**
@@ -25,7 +27,7 @@ typedef struct
  * @param float The time step
  * @return The orbital simulation
  */
-OrbitalSim_t* constructOrbitalSim(double timeStep);
+OrbitalSim_t* constructOrbitalSim(double timeStep, unsigned int asteroidsNum);
 
 /**
  * @brief Destroys an orbital simulation
