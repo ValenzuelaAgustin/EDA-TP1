@@ -31,12 +31,12 @@ const launchOptions_t launchOptions[] =
 		0
 	},
 	{
-		"-show_velocity",
+		"-show_velocity_vectors",
 		0,
 		0
 	},
 	{
-		"-show_acceleration",
+		"-show_acceleration_vectors",
 		0,
 		0
 	}

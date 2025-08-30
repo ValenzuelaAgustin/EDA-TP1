@@ -15,7 +15,13 @@
 #define DEFAULT_WINDOW_WIDTH 1280
 #define DEFAULT_WINDOW_HEIGHT 720
 #define WINDOW_TITLE "EDA Orbital Simulation"
-#define SHOW_VECT
+
+#define FULLSCREEN_KEY KEY_F11
+#define TOGGLE_SHOW_VELOCITY KEY_F9
+#define TOGGLE_SHOW_ACCELERATION KEY_F10
+
+static int show_velocity_v = 0;
+static int show_acceleration_v = 0;
 
 static void drawBody(EphemeridesBody_t* body);
 
@@ -41,7 +47,7 @@ static const char* getISODate(float timestamp)
 					1900 + localTM->tm_year, localTM->tm_mon + 1, localTM->tm_mday);
 }
 
-view_t* constructView(int fps, int fullscreen, int width, int height)
+view_t* constructView(int fps, int fullscreen, int width, int height, int show_velocity_vectors, int show_acceleration_vectors)
 {
 	if (width < MIN_WIDTH)
 		width = DEFAULT_WINDOW_WIDTH;
@@ -56,9 +62,11 @@ view_t* constructView(int fps, int fullscreen, int width, int height)
 	if (fullscreen)
 		ToggleFullscreen();
 
+	show_velocity_v = show_velocity_vectors;
+	show_acceleration_v = show_acceleration_vectors;
 	SetTargetFPS(fps);
-	DisableCursor();
 
+	DisableCursor();
 	view->camera.position = {10.0f, 10.0f, 10.0f};
 	view->camera.target = {0.0f, 0.0f, 0.0f};
 	view->camera.up = {0.0f, 1.0f, 0.0f};
@@ -82,10 +90,7 @@ bool isViewRendering(view_t* view)
 
 static void drawBody(EphemeridesBody_t* body)
 {
-	Vector3 position;
-	#ifdef SHOW_VECT
-		Vector3 velocity, acceleration;
-	#endif
+	Vector3 position, velocity, acceleration;
 
 	position.x = body->position[X];
 	position.y = body->position[Y];
@@ -94,11 +99,18 @@ static void drawBody(EphemeridesBody_t* body)
 	DrawSphereEx(Vector3Scale(position, 1E-11), 0.005F * logf(body->radius), 5, 7, body->color);
 	//DrawPoint3D(Vector3Scale(position, 1E-11), body->color);
 
-	#ifdef SHOW_VECT
+	if (show_velocity)
+	{
 		velocity.x = body->velocity[X];
 		velocity.y = body->velocity[Y];
 		velocity.z = body->velocity[Z];
 
+		DrawLine3D(	Vector3Scale(position, 1E-11),
+				Vector3Scale(Vector3Add(position, Vector3Scale(velocity, 1E7)), 1E-11),
+				BLUE);
+	}
+	if (show_acceleration)
+	{
 		acceleration.x = body->acceleration[X];
 		acceleration.y = body->acceleration[Y];
 		acceleration.z = body->acceleration[Z];
@@ -106,14 +118,24 @@ static void drawBody(EphemeridesBody_t* body)
 		DrawLine3D(	Vector3Scale(position, 1E-11),
 				Vector3Scale(Vector3Add(position, Vector3Scale(acceleration, 1E14)), 1E-11),
 				RED);
-		DrawLine3D(	Vector3Scale(position, 1E-11),
-				Vector3Scale(Vector3Add(position, Vector3Scale(velocity, 1E7)), 1E-11),
-				BLUE);
-	#endif
+	}
 }
 
 void renderView(view_t* view, OrbitalSim_t* sim)
 {
+	if (IsKeyReleased(KEY_F11))
+	{
+		ToggleFullscreen();
+	}
+	if (IsKeyReleased(TOGGLE_SHOW_VELOCITY))
+	{
+		show_velocity_v = !show_velocity_v;
+	}
+	if (IsKeyReleased(TOGGLE_SHOW_ACCELERATION))
+	{
+		show_acceleration_v = !show_acceleration_v;
+	}
+
 	UpdateCamera(&view->camera, CAMERA_FREE);
 
 	BeginDrawing();

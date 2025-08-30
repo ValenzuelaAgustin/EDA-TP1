@@ -14,7 +14,9 @@
 // #define WINDOW_WIDTH 2560
 // #define WINDOW_HEIGHT 1600
 
-// +fps_max 0 -fullscreen -w 2560 -h 1600 -asteroids_ammount 500 -show_velocity -show_acceleration
+/*
++fps_max 0 -fullscreen -w 2560 -h 1600 -asteroids_ammount 500 -show_velocity_vectors -show_acceleration_veectors
+*/
 
 int main(int argc, char* argv[])
 {
@@ -27,7 +29,9 @@ int main(int argc, char* argv[])
 	view_t* view = constructView(	launchOptionsValues[FPS_MAX],
 					launchOptionsValues[FULLSCREEN],
 					launchOptionsValues[WIDTH],
-					launchOptionsValues[HEIGHT]);
+					launchOptionsValues[HEIGHT],
+					launchOptionsValues[SHOW_VELOCITY_VECTORS],
+					launchOptionsValues[SHOW_ACCELERATION_VECTORS]);
 
 	while (isViewRendering(view))
 	{

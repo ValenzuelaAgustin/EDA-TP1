@@ -18,8 +18,8 @@ enum
 	WIDTH,
 	HEIGHT,
 	ASTEROIDS_AMMOUNT,
-	SHOW_VELOCITY,
-	SHOW_ACCELERATION
+	SHOW_VELOCITY_VECTORS,
+	SHOW_ACCELERATION_VECTORS
 };
 
 void searchLaunchOptions(int argc, char* argv[], int* launchOptionsValues);
