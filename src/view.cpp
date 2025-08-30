@@ -99,7 +99,7 @@ static void drawBody(EphemeridesBody_t* body)
 	DrawSphereEx(Vector3Scale(position, 1E-11), 0.005F * logf(body->radius), 5, 7, body->color);
 	//DrawPoint3D(Vector3Scale(position, 1E-11), body->color);
 
-	if (show_velocity)
+	if (show_velocity_v)
 	{
 		velocity.x = body->velocity[X];
 		velocity.y = body->velocity[Y];
@@ -109,7 +109,7 @@ static void drawBody(EphemeridesBody_t* body)
 				Vector3Scale(Vector3Add(position, Vector3Scale(velocity, 1E7)), 1E-11),
 				BLUE);
 	}
-	if (show_acceleration)
+	if (show_acceleration_v)
 	{
 		acceleration.x = body->acceleration[X];
 		acceleration.y = body->acceleration[Y];
