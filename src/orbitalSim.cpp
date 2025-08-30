@@ -56,6 +56,7 @@ static void configureAsteroid(EphemeridesBody_t* body, float centerMass)
 	float vy = getRandomFloat(-1E2F, 1E2F);
 
 	// Fill in with your own fields:
+	body->name = NULL;
 	body->mass = 1E12F * GRAVITATIONAL_CONSTANT;  // Typical asteroid weight: 1 billion tons
 	body->radius = 2E3F; // Typical asteroid radius: 2km
 	body->color = GRAY;

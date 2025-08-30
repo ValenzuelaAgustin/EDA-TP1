@@ -17,13 +17,23 @@
 #define WINDOW_TITLE "EDA Orbital Simulation"
 
 #define FULLSCREEN_KEY KEY_F11
+#define TOGGLE_EBODIES_RENDER_MODE KEY_F7
+#define TOGGLE_ASTEROIDS_RENDER_MODE KEY_F8
 #define TOGGLE_SHOW_VELOCITY KEY_F9
 #define TOGGLE_SHOW_ACCELERATION KEY_F10
 
+enum
+{
+	QUALITY,
+	PERFORMANCE
+};
+
+static int EBodies_render_mode = QUALITY;
+static int Asteroids_render_mode = PERFORMANCE;
 static int show_velocity_v = 0;
 static int show_acceleration_v = 0;
 
-static void drawBody(EphemeridesBody_t* body);
+static void drawBody(EphemeridesBody_t* body, int render_mode);
 
 /**
  * @brief Converts a timestamp (number of seconds since 1/1/2022)
@@ -88,36 +98,40 @@ bool isViewRendering(view_t* view)
 	return !WindowShouldClose();
 }
 
-static void drawBody(EphemeridesBody_t* body)
+static void drawBody(EphemeridesBody_t* body, int render_mode)
 {
 	Vector3 position, velocity, acceleration;
 
-	position.x = body->position[X];
-	position.y = body->position[Y];
-	position.z = body->position[Z];
+	position.x = body->position[X] * 1E-11;
+	position.y = body->position[Y] * 1E-11;
+	position.z = body->position[Z] * 1E-11;
 
-	DrawSphereEx(Vector3Scale(position, 1E-11), 0.005F * logf(body->radius), 5, 7, body->color);
-	//DrawPoint3D(Vector3Scale(position, 1E-11), body->color);
+	switch (render_mode)
+	{
+	default:
+	case QUALITY:
+		DrawSphereEx(position, 0.005F * logf(body->radius), 5, 7, body->color);
+		break;
+	case PERFORMANCE:
+		DrawPoint3D(position, body->color);
+		break;
+	}
 
 	if (show_velocity_v)
 	{
-		velocity.x = body->velocity[X];
-		velocity.y = body->velocity[Y];
-		velocity.z = body->velocity[Z];
+		velocity.x = body->velocity[X] * 1E-4 + position.x;
+		velocity.y = body->velocity[Y] * 1E-4 + position.y;
+		velocity.z = body->velocity[Z] * 1E-4 + position.z;
 
-		DrawLine3D(	Vector3Scale(position, 1E-11),
-				Vector3Scale(Vector3Add(position, Vector3Scale(velocity, 1E7)), 1E-11),
-				BLUE);
+		DrawLine3D(position, velocity, BLUE);
 	}
 	if (show_acceleration_v)
 	{
-		acceleration.x = body->acceleration[X];
-		acceleration.y = body->acceleration[Y];
-		acceleration.z = body->acceleration[Z];
+		acceleration.x = body->acceleration[X] * 1E3 + position.x;
+		acceleration.y = body->acceleration[Y] * 1E3 + position.y;
+		acceleration.z = body->acceleration[Z] * 1E3 + position.z;
 
-		DrawLine3D(	Vector3Scale(position, 1E-11),
-				Vector3Scale(Vector3Add(position, Vector3Scale(acceleration, 1E14)), 1E-11),
-				RED);
+		DrawLine3D(position, acceleration, RED);
 	}
 }
 
@@ -135,6 +149,14 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	{
 		show_acceleration_v = !show_acceleration_v;
 	}
+	if (IsKeyReleased(TOGGLE_EBODIES_RENDER_MODE))
+	{
+		EBodies_render_mode = !EBodies_render_mode;
+	}
+	if (IsKeyReleased(TOGGLE_ASTEROIDS_RENDER_MODE))
+	{
+		Asteroids_render_mode = !Asteroids_render_mode;
+	}
 
 	UpdateCamera(&view->camera, CAMERA_FREE);
 
@@ -147,9 +169,13 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 
 	//DrawGrid(10, 10.0f);
 
-	for (unsigned int i = 0; i < sim->bodyNum + sim->asteroidsNum; i++) 
+	for (unsigned int i = 0; i < sim->bodyNum; i++) 
 	{
-		drawBody(sim->EphemeridesBody + i);
+		drawBody(sim->EphemeridesBody + i, EBodies_render_mode);
+	}
+	for (unsigned int i = 0; i < sim->asteroidsNum; i++) 
+	{
+		drawBody(sim->Asteroids + i, Asteroids_render_mode);
 	}
 
 	EndMode3D();
