@@ -68,9 +68,9 @@ static void configureAsteroid(EphemeridesBody_t* body, float centerMass)
 	body->velocity[Z] = v * cosf(phi);
 }
 
-OrbitalSim_t* constructOrbitalSim(double timeStep, unsigned int asteroidsNum)
+OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroidsNum)
 {
-	if (timeStep <= 0)
+	if (simulationSpeed <= 0)
 		return NULL;
 
 	OrbitalSim_t* ptr = new OrbitalSim_t;
@@ -89,7 +89,9 @@ OrbitalSim_t* constructOrbitalSim(double timeStep, unsigned int asteroidsNum)
 		return NULL;
 	}
 
-	ptr->dt = timeStep;
+	ptr->dt = 0;
+	ptr->simulationSpeed = simulationSpeed;
+
 	unsigned int i;
 	for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
 	{

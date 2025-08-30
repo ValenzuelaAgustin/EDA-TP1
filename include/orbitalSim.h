@@ -14,7 +14,8 @@
  */
 typedef struct
 {
-	double dt;
+	double simulationSpeed;		// In simulated seconds per real second
+	double dt;			// In seconds ( has to be updated with the frametime to match the simulation speed )
 	EphemeridesBody_t* EphemeridesBody;
 	EphemeridesBody_t* Asteroids;
 	unsigned int bodyNum;
@@ -27,7 +28,7 @@ typedef struct
  * @param float The time step
  * @return The orbital simulation
  */
-OrbitalSim_t* constructOrbitalSim(double timeStep, unsigned int asteroidsNum);
+OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroidsNum);
 
 /**
  * @brief Destroys an orbital simulation
