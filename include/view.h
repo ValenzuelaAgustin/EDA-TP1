@@ -25,7 +25,7 @@ typedef struct
  * @param fps Frames per second for the view
  * @return The view
  */
-view_t* constructView(int fps);
+view_t* constructView(int fps, int fullscreen, int width, int height);
 
 /**
  * @brief Destroys an orbital simulation view

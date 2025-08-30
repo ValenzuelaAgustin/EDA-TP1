@@ -10,9 +10,12 @@
 #include "nmath.h"
 #include <time.h>
 
-#define WINDOW_WIDTH 1920
-#define WINDOW_HEIGHT 1080
-//#define SHOW_VECT
+#define MIN_WIDTH 800
+#define MIN_HEIGHT 600
+#define DEFAULT_WINDOW_WIDTH 1280
+#define DEFAULT_WINDOW_HEIGHT 720
+#define WINDOW_TITLE "EDA Orbital Simulation"
+#define SHOW_VECT
 
 static void drawBody(EphemeridesBody_t* body);
 
@@ -38,11 +41,21 @@ static const char* getISODate(float timestamp)
 					1900 + localTM->tm_year, localTM->tm_mon + 1, localTM->tm_mday);
 }
 
-view_t* constructView(int fps)
+view_t* constructView(int fps, int fullscreen, int width, int height)
 {
-	view_t* view = new view_t();
+	if (width < MIN_WIDTH)
+		width = DEFAULT_WINDOW_WIDTH;
+	if (height < MIN_HEIGHT)
+		height = DEFAULT_WINDOW_HEIGHT;
 
-	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "EDA Orbital Simulation");
+	view_t* view = new view_t();
+	if (!view)
+		return NULL;
+
+	InitWindow(width, height, WINDOW_TITLE);
+	if (fullscreen)
+		ToggleFullscreen();
+
 	SetTargetFPS(fps);
 	DisableCursor();
 
