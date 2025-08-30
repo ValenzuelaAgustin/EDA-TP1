@@ -8,7 +8,7 @@ const launchOptions_t launchOptions[] =
 	{
 		"+fps_max",
 		1,
-		60
+		0
 	},
 	{
 		"-fullscreen",
