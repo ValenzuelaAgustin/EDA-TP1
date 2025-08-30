@@ -90,7 +90,7 @@ OrbitalSim_t* constructOrbitalSim(double timeStep, unsigned int asteroidsNum)
 	}
 
 	ptr->dt = timeStep;
-	int i;
+	unsigned int i;
 	for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
 	{
 		ptr->EphemeridesBody[i] = solarSystem[i];
@@ -155,7 +155,7 @@ void updateOrbitalSim(OrbitalSim_t* sim)
 	//if (!sim || !sim->EphemeridesBody || sim->bodyNum < 1 || sim->dt <= 0)
 	//	return;
 
-	int i, j;
+	unsigned int i, j;
 
 	for (i = 0, j = sim->bodyNum + sim->asteroidsNum; i < j; i++)
 	{

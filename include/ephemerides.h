@@ -27,7 +27,7 @@ typedef struct
  * @cite https://ssd.jpl.nasa.gov/horizons/app.html#/
 */
 extern EphemeridesBody_t solarSystem[];
-extern const int SOLARSYSTEM_BODYNUM;
+extern const unsigned int SOLARSYSTEM_BODYNUM;
 
 enum
 {
@@ -48,7 +48,7 @@ enum
  * @cite https://ssd.jpl.nasa.gov/horizons/app.html#/
 */
 extern EphemeridesBody_t alphaCentauriSystem[];
-extern const int ALPHACENTAURISYSTEM_BODYNUM;
+extern const unsigned int ALPHACENTAURISYSTEM_BODYNUM;
 
 enum
 {

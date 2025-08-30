@@ -112,7 +112,7 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 
 	//DrawGrid(10, 10.0f);
 
-	for (int i = 0; i < sim->bodyNum + sim->asteroidsNum; i++) 
+	for (unsigned int i = 0; i < sim->bodyNum + sim->asteroidsNum; i++) 
 	{
 		drawBody(sim->EphemeridesBody + i);
 	}
