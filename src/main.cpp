@@ -9,6 +9,8 @@
 #include "orbitalSim.h"
 #include "view.h"
 
+#define DAYS_PER_SECOND 10
+
 #define INITIAL_SIM_UPDATES_PER_FRAME 100
 #define DEFAULT_FPS_TARGET 60
 #define SECONDS_PER_DAY ( 24 * 60 * 60 )
@@ -21,18 +23,18 @@
 +fps_max 0 -fullscreen -w 2560 -h 1600 -asteroids_ammount 500 -show_velocity_vectors -show_acceleration_vectors
 */
 
-int getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime);
-int frametime_PID(double target_frametime, double frametime);
+double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime);
+double frametime_PID(double target_frametime, double frametime);
 
 int main(int argc, char* argv[])
 {
 	int launchOptionsValues[launchOptionsAmmount];
-	double simulationSpeed = 50 * SECONDS_PER_DAY;	// Simulation speed: 100 days per simulation second
+	double simulationSpeed = DAYS_PER_SECOND * SECONDS_PER_DAY;	// Simulation speed: 100 days per simulation second
 
 	double target_frametime;
 	double frametime;
 	int i;
-	int sim_updates_per_frame;
+	double sim_updates_per_frame;
 
 	searchLaunchOptions(argc, argv, launchOptionsValues);
 	OrbitalSim_t* sim = constructOrbitalSim(simulationSpeed, launchOptionsValues[ASTEROIDS_AMMOUNT]);
@@ -64,10 +66,10 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-int getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime)
+double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime)
 {
 	double frametime = 0;
-	int sim_updates_per_frame = INITIAL_SIM_UPDATES_PER_FRAME;
+	double sim_updates_per_frame = INITIAL_SIM_UPDATES_PER_FRAME;
 	int i;
 	int end_condition = 0;
 
@@ -89,7 +91,7 @@ int getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_
 	return sim_updates_per_frame;
 }
 
-int frametime_PID(double target_frametime, double frametime)
+double frametime_PID(double target_frametime, double frametime)
 {
 	static double PC = 10;
 	static double IC = 10;
