@@ -21,6 +21,7 @@
 +fps_max 0 -fullscreen -w 2560 -h 1600 -asteroids_ammount 500 -show_velocity_vectors -show_acceleration_vectors
 */
 
+int getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime);
 int frametime_PID(double target_frametime, double frametime);
 
 int main(int argc, char* argv[])
@@ -43,7 +44,7 @@ int main(int argc, char* argv[])
 					launchOptionsValues[SHOW_ACCELERATION_VECTORS]);
 
 	target_frametime = (launchOptionsValues[FPS_MAX] == 0) ? MAX_FRAME_TIME : (1.0F / launchOptionsValues[FPS_MAX]);
-	sim_updates_per_frame = INITIAL_SIM_UPDATES_PER_FRAME;
+	sim_updates_per_frame = getInitialSimUpdatesPerFrame(sim, view, target_frametime);
 
 	while (isViewRendering(view))
 	{
@@ -61,6 +62,31 @@ int main(int argc, char* argv[])
 	destroyOrbitalSim(sim);
 
 	return 0;
+}
+
+int getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime)
+{
+	double frametime = 0;
+	int sim_updates_per_frame = INITIAL_SIM_UPDATES_PER_FRAME;
+	int i;
+	int end_condition = 0;
+
+	sim->dt = 0;
+
+	while (isViewRendering(view) && end_condition < 100)
+	{
+		for (i = 0; i < sim_updates_per_frame; i++)
+			updateOrbitalSim(sim);
+		renderView(view, sim);
+
+		frametime = GetFrameTime();
+		sim_updates_per_frame += frametime_PID(target_frametime, frametime);
+		sim_updates_per_frame = (sim_updates_per_frame > 1) ? sim_updates_per_frame : 1;
+
+		end_condition = (frametime >= 0.9 * target_frametime && frametime <= 1.1 * target_frametime) ? end_condition + 1 : 0;
+	}
+
+	return sim_updates_per_frame;
 }
 
 int frametime_PID(double target_frametime, double frametime)
