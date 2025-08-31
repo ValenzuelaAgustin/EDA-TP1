@@ -9,8 +9,10 @@
 #include "orbitalSim.h"
 #include "view.h"
 
-#define SECONDS_PER_DAY ( 24 * 60 * 60)
-#define MAX_FRAME_TIME ( 1.0f / 60.0f )
+#define INITIAL_SIM_UPDATES_PER_FRAME 100
+#define DEFAULT_FPS_TARGET 60
+#define SECONDS_PER_DAY ( 24 * 60 * 60 )
+#define MAX_FRAME_TIME ( 1.0 / DEFAULT_FPS_TARGET )
 
 // #define WINDOW_WIDTH 2560
 // #define WINDOW_HEIGHT 1600
@@ -19,11 +21,17 @@
 +fps_max 0 -fullscreen -w 2560 -h 1600 -asteroids_ammount 500 -show_velocity_vectors -show_acceleration_vectors
 */
 
+int frametime_PID(double target_frametime, double frametime);
+
 int main(int argc, char* argv[])
 {
 	int launchOptionsValues[launchOptionsAmmount];
 	double simulationSpeed = 50 * SECONDS_PER_DAY;	// Simulation speed: 100 days per simulation second
-	float frametime;
+
+	double target_frametime;
+	double frametime;
+	int i;
+	int sim_updates_per_frame;
 
 	searchLaunchOptions(argc, argv, launchOptionsValues);
 	OrbitalSim_t* sim = constructOrbitalSim(simulationSpeed, launchOptionsValues[ASTEROIDS_AMMOUNT]);
@@ -34,19 +42,41 @@ int main(int argc, char* argv[])
 					launchOptionsValues[SHOW_VELOCITY_VECTORS],
 					launchOptionsValues[SHOW_ACCELERATION_VECTORS]);
 
+	target_frametime = (launchOptionsValues[FPS_MAX] == 0) ? MAX_FRAME_TIME : (1.0F / launchOptionsValues[FPS_MAX]);
+	sim_updates_per_frame = INITIAL_SIM_UPDATES_PER_FRAME;
+
 	while (isViewRendering(view))
 	{
-		updateOrbitalSim(sim);
+		for (i = 0; i < sim_updates_per_frame; i++)
+			updateOrbitalSim(sim);
 		renderView(view, sim);
-		if ((frametime = GetFrameTime()) > MAX_FRAME_TIME)
-		{
-			frametime = MAX_FRAME_TIME;
-		}
-		sim->dt = sim->simulationSpeed * frametime;
+
+		frametime = GetFrameTime();
+		sim_updates_per_frame += frametime_PID(target_frametime, frametime);
+		sim_updates_per_frame = (sim_updates_per_frame > 1) ? sim_updates_per_frame : 1;
+		sim->dt = sim->simulationSpeed * frametime / sim_updates_per_frame;
 	}
 
 	destroyView(view);
 	destroyOrbitalSim(sim);
 
 	return 0;
+}
+
+int frametime_PID(double target_frametime, double frametime)
+{
+	static double PC = 10;
+	static double IC = 10;
+	static double DC = 10;
+
+	static double I = 0;
+	static double prev_dif = 0;
+
+	double dif = target_frametime - frametime;
+	double D = dif - prev_dif;
+
+	prev_dif = dif;
+	I += dif;
+
+	return dif * PC + I * IC + D * DC;
 }
