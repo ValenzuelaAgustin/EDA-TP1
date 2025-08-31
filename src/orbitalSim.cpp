@@ -22,15 +22,19 @@
 #define SPACESHIP_XN_KEY KEY_J
 #define SPACESHIP_YN_KEY KEY_K
 #define SPACESHIP_ZN_KEY KEY_L
-#define SPACESHIP_ACCELERATION 5.
+#define SPACESHIP_ACCELERATION 1.0
+
+static const int movement_keys[] =
+{
+	SPACESHIP_XP_KEY, SPACESHIP_YP_KEY, SPACESHIP_ZP_KEY,
+	SPACESHIP_XN_KEY, SPACESHIP_YN_KEY, SPACESHIP_ZN_KEY
+};
 
 static inline void calculateAccelerations(EphemeridesBody_t* body0, EphemeridesBody_t* body1);
 
 static inline void updateSpeedAndPosition(EphemeridesBody_t* body, double dt);
 
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim);
-
-static inline void addSpaceshipAcceleration(int key, int axis, EphemeridesBody_t* spaceship, bool positive);
 
 /**
  * @brief Gets a uniform random value in a range
@@ -168,32 +172,17 @@ static inline void updateSpeedAndPosition(EphemeridesBody_t* body, double dt)
 	body->position[Z] += body->velocity[Z] * dt;
 }
 
-static inline void addSpaceshipAcceleration(int key, int axis, EphemeridesBody_t* spaceship, bool positive){
-	int dir;
-	positive ? dir = 1 : dir = -1; 
-	if(IsKeyPressed(key)){
-		spaceship->acceleration[axis] += dir * SPACESHIP_ACCELERATION;
-	}
-	if(IsKeyReleased(key)){
-		spaceship->acceleration[axis] -= dir * SPACESHIP_ACCELERATION;
-	}
-}
-
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
 {
-	// Aca tenemos que actualizaar la aceleracion de sim->spaceship a partir del input del usuario
-	int keys[] = {
-		SPACESHIP_XP_KEY, SPACESHIP_YP_KEY, SPACESHIP_ZP_KEY,
-		SPACESHIP_XN_KEY, SPACESHIP_YN_KEY, SPACESHIP_ZN_KEY 
-	};
 	int i, axis;
-	for(i = 0, axis = 0; i < 6; i++, i < 3 ? axis = i : axis = i-3){
-		// Para los ejes en sentido "positivo" (teclas U, I y O)
-		if(i < 3)
-		addSpaceshipAcceleration(keys[i], axis, &(sim->spaceship), true);
-		// Para los ejes en sentido opuesto (teclas J, K y L)
-		else
-		addSpaceshipAcceleration(keys[i], axis, &(sim->spaceship), false);
+	for (i = 0, axis = 0; i < 6; i++, axis = i % 3)
+	{
+		// i = 0,1,2 Para los ejes en sentido positivo (teclas U, I y O)
+		// i = 3,4,5 Para los ejes en sentido negativo (teclas J, K y L)
+		if (IsKeyDown(movement_keys[i]))
+		{
+			sim->spaceship.acceleration[axis] += (i < 3) ? SPACESHIP_ACCELERATION : -SPACESHIP_ACCELERATION;
+		}
 	}
 }
 
