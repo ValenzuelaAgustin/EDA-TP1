@@ -16,6 +16,10 @@
 #define DEFAULT_WINDOW_HEIGHT 720
 #define WINDOW_TITLE "EDA Orbital Simulation"
 
+// Controls
+#define CONTROLS_X_MARGIN 370
+#define CONTROLS_COLOR CLITERAL(Color){0, 228, 48, 150} 
+
 enum
 {
 	QUALITY,
@@ -27,6 +31,7 @@ static int Asteroids_render_mode = PERFORMANCE;
 static int Spaceship_render_mode = QUALITY;
 static int show_velocity_v = 0;
 static int show_acceleration_v = 0;
+static int show_controls = 1;
 
 static void drawBody(EphemeridesBody_t* body, int render_mode);
 
@@ -77,6 +82,8 @@ view_t* constructView(int fps, int fullscreen, int width, int height, int show_v
 	view->camera.up = {0.0f, 1.0f, 0.0f};
 	view->camera.fovy = 45.0f;
 	view->camera.projection = CAMERA_PERSPECTIVE;
+	view->width = width;
+	view->height = height;
 
 	return view;
 }
@@ -152,6 +159,9 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	{
 		Asteroids_render_mode = !Asteroids_render_mode;
 	}
+	if(IsKeyReleased(TOGGLE_SHOW_CONTROLS)){
+		show_controls = !show_controls;
+	}
 
 	UpdateCamera(&view->camera, CAMERA_FREE);
 
@@ -179,6 +189,15 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	// Fill in your 2D drawing code here:
 	DrawFPS(10,10);
 	DrawText(getISODate(clock()),10, 30, 20, RAYWHITE);
-
+	// Show or hide controls menu
+	DrawText("Show/Hide Controls: F6", view->width-CONTROLS_X_MARGIN, 10, 20, CONTROLS_COLOR);
+	if(show_controls){
+		DrawText("Move Spaceship: U, I, O, J, K, L", view->width-CONTROLS_X_MARGIN, 30, 20, CONTROLS_COLOR);
+		DrawText("Toggle Bodies Render Mode: F7", view->width-CONTROLS_X_MARGIN, 50, 20, CONTROLS_COLOR);
+		DrawText("Toggle Asteroids Render Mode: F8", view->width-CONTROLS_X_MARGIN, 70, 20, CONTROLS_COLOR);
+		DrawText("Show/Hide Velocities: F9", view->width-CONTROLS_X_MARGIN, 90, 20, CONTROLS_COLOR);
+		DrawText("Show/Hide Accelerations: F10", view->width-CONTROLS_X_MARGIN, 110, 20, CONTROLS_COLOR);
+		DrawText("Toggle Fullscreen: F11", view->width-CONTROLS_X_MARGIN, 130, 20, CONTROLS_COLOR);
+	}
 	EndDrawing();
 }
