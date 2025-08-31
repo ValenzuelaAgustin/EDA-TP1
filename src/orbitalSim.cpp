@@ -16,9 +16,12 @@
 #define ASTEROIDS_MEAN_RADIUS 4E11F
 
 // Spaceship defines
-#define SPACESHIP_X_KEY KEY_J
-#define SPACESHIP_Y_KEY KEY_K
-#define SPACESHIP_Z_KEY KEY_L
+#define SPACESHIP_XP_KEY KEY_U
+#define SPACESHIP_YP_KEY KEY_I
+#define SPACESHIP_ZP_KEY KEY_O
+#define SPACESHIP_XN_KEY KEY_J
+#define SPACESHIP_YN_KEY KEY_K
+#define SPACESHIP_ZN_KEY KEY_L
 #define SPACESHIP_ACCELERATION 5.
 
 static inline void calculateAccelerations(EphemeridesBody_t* body0, EphemeridesBody_t* body1);
@@ -26,6 +29,8 @@ static inline void calculateAccelerations(EphemeridesBody_t* body0, EphemeridesB
 static inline void updateSpeedAndPosition(EphemeridesBody_t* body, double dt);
 
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim);
+
+static inline void addSpaceshipAcceleration(int key, int axis, EphemeridesBody_t* spaceship, bool positive);
 
 /**
  * @brief Gets a uniform random value in a range
@@ -163,18 +168,38 @@ static inline void updateSpeedAndPosition(EphemeridesBody_t* body, double dt)
 	body->position[Z] += body->velocity[Z] * dt;
 }
 
+static inline void addSpaceshipAcceleration(int key, int axis, EphemeridesBody_t* spaceship, bool positive){
+	int dir;
+	positive ? dir = 1 : dir = -1; 
+	if(IsKeyPressed(key)){
+		spaceship->acceleration[axis] += dir * SPACESHIP_ACCELERATION;
+	}
+	else if(IsKeyReleased(key)){
+		spaceship->acceleration[axis] -= dir * SPACESHIP_ACCELERATION;
+	}
+}
+
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
 {
 	// Aca tenemos que actualizaar la aceleracion de sim->spaceship a partir del input del usuario
-	if(IsKeyPressed(SPACESHIP_X_KEY)){
-		sim->spaceship.acceleration[X] += SPACESHIP_ACCELERATION; 
-	}
-	if(IsKeyPressed(SPACESHIP_Y_KEY)){
-		sim->spaceship.acceleration[Y] += SPACESHIP_ACCELERATION;
-	}
-	if(IsKeyPressed(SPACESHIP_Z_KEY)){
-		sim->spaceship.acceleration[Z] += SPACESHIP_ACCELERATION;
-	}
+	// int keys[] = {
+	// 	SPACESHIP_XP_KEY, SPACESHIP_YP_KEY, SPACESHIP_ZP_KEY,
+	// 	SPACESHIP_XN_KEY, SPACESHIP_YN_KEY, SPACESHIP_ZN_KEY 
+	// };
+	// int i, j ;
+	// for(i = 0; i < 3; i++){
+	// 	addSpaceshipAcceleration(keys[i], i, &(sim->spaceship), true);
+	// }
+	// for(j = 3; j < 6; j++){
+	// 	addSpaceshipAcceleration(j, j-3, &(sim->spaceship), false);
+	// }
+	addSpaceshipAcceleration(SPACESHIP_XP_KEY, X, &(sim->spaceship), true);
+	addSpaceshipAcceleration(SPACESHIP_YP_KEY, Y, &(sim->spaceship), true);
+	addSpaceshipAcceleration(SPACESHIP_ZP_KEY, Z, &(sim->spaceship), true);
+	// Para los ejes en sentido opuesto (J, K y L)
+	addSpaceshipAcceleration(SPACESHIP_XN_KEY, X, &(sim->spaceship), false);
+	addSpaceshipAcceleration(SPACESHIP_YN_KEY, Y, &(sim->spaceship), false);
+	addSpaceshipAcceleration(SPACESHIP_ZN_KEY, Z, &(sim->spaceship), false);
 }
 
 void updateOrbitalSim(OrbitalSim_t* sim)
