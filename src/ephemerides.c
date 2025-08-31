@@ -4,7 +4,7 @@ EphemeridesBody_t solarSystem[] =
 {
 	{
 		"Sol",
-		1988500E24,
+		1988500E24 * GRAVITATIONAL_CONSTANT,
 		695700E3,
 		GOLD,
 		{-1.283674643550172E+09, 2.589397504295033E+07, 5.007104996950605E+08},
@@ -12,7 +12,7 @@ EphemeridesBody_t solarSystem[] =
 	},
 	{
 		"Mercurio",
-		0.3302E24,
+		0.330103E24 * GRAVITATIONAL_CONSTANT,
 		2440E3,
 		GRAY,
 		{5.242617205495467E+10, -5.398976570474024E+09, -5.596063357617276E+09},
@@ -20,7 +20,7 @@ EphemeridesBody_t solarSystem[] =
 	},
 	{
 		"Venus",
-		4.8685E24,
+		4.86731E24 * GRAVITATIONAL_CONSTANT,
 		6051.84E3,
 		BEIGE,
 		{-1.143612889654620E+10, 2.081921801192194E+09, 1.076180391552140E+11},
@@ -28,7 +28,7 @@ EphemeridesBody_t solarSystem[] =
 	},
 	{
 		"Tierra",
-		5.97219E24,
+		5.97217E24 * GRAVITATIONAL_CONSTANT,
 		6371.01E3,
 		BLUE,
 		{-2.741147560901964E+10, 1.907499306293577E+07, 1.452697499646169E+11},
@@ -36,7 +36,7 @@ EphemeridesBody_t solarSystem[] =
 	},
 	{
 		"Marte",
-		0.64171E24,
+		0.641691E24 * GRAVITATIONAL_CONSTANT,
 		3389.92E3,
 		RED,
 		{-1.309510737126251E+11, -7.714450109843910E+08, -1.893127398896606E+11},
@@ -44,7 +44,7 @@ EphemeridesBody_t solarSystem[] =
 	},
 	{
 		"Jupiter",
-		1898.18722E24,
+		1898.125E24 * GRAVITATIONAL_CONSTANT,
 		69911E3,
 		BEIGE,
 		{6.955554713494443E+11, -1.444959769995748E+10, -2.679620040967891E+11},
@@ -52,7 +52,7 @@ EphemeridesBody_t solarSystem[] =
 	},
 	{
 		"Saturno",
-		568.34E24,
+		568.317E24 * GRAVITATIONAL_CONSTANT,
 		58232E3,
 		LIGHTGRAY,
 		{1.039929189378534E+12, -2.303100000185490E+10, -1.056650101932204E+12},
@@ -60,7 +60,7 @@ EphemeridesBody_t solarSystem[] =
 	},
 	{
 		"Urano",
-		86.813E24,
+		86.8099E24 * GRAVITATIONAL_CONSTANT,
 		25362E3,
 		SKYBLUE,
 		{2.152570437700128E+12, -2.039611192913723E+10, 2.016888245555490E+12},
@@ -68,7 +68,7 @@ EphemeridesBody_t solarSystem[] =
 	},
 	{
 		"Neptuno",
-		102.409E24,
+		102.4092E24 * GRAVITATIONAL_CONSTANT,
 		24624E3,
 		DARKBLUE,
 		{4.431790029686977E+12, -8.954348456482631E+10, -6.114486878028781E+11},
@@ -76,13 +76,13 @@ EphemeridesBody_t solarSystem[] =
 	}
 };
 
-const int SOLARSYSTEM_BODYNUM = sizeof(solarSystem) / sizeof(EphemeridesBody_t);
+const unsigned int SOLARSYSTEM_BODYNUM = sizeof(solarSystem) / sizeof(EphemeridesBody_t);
 
 EphemeridesBody_t alphaCentauriSystem[] =
 {
 	{
 		"Alfa Centauri A",
-		2167000E24,
+		2167000E24 * GRAVITATIONAL_CONSTANT,
 		834840.,
 		YELLOW,
 		{7.76412948E+11, 0, 0},
@@ -90,7 +90,7 @@ EphemeridesBody_t alphaCentauriSystem[] =
 	},
 	{
 		"Ala Centauri B",
-		1789000E24,
+		1789000E24 * GRAVITATIONAL_CONSTANT,
 		626130,
 		GOLD,
 		{-9.20026904E+11, 0, 0},
@@ -98,4 +98,4 @@ EphemeridesBody_t alphaCentauriSystem[] =
 	}
 };
 
-const int ALPHACENTAURISYSTEM_BODYNUM = sizeof(alphaCentauriSystem) / sizeof(EphemeridesBody_t);
+const unsigned int ALPHACENTAURISYSTEM_BODYNUM = sizeof(alphaCentauriSystem) / sizeof(EphemeridesBody_t);

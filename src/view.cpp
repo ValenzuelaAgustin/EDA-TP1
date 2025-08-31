@@ -10,9 +10,25 @@
 #include "nmath.h"
 #include <time.h>
 
-#define WINDOW_WIDTH 1920
-#define WINDOW_HEIGHT 1080
-//#define SHOW_VECT
+#define MIN_WIDTH 800
+#define MIN_HEIGHT 600
+#define DEFAULT_WINDOW_WIDTH 1280
+#define DEFAULT_WINDOW_HEIGHT 720
+#define WINDOW_TITLE "EDA Orbital Simulation"
+
+enum
+{
+	QUALITY,
+	PERFORMANCE
+};
+
+static int EBodies_render_mode = QUALITY;
+static int Asteroids_render_mode = PERFORMANCE;
+static int Spaceship_render_mode = QUALITY;
+static int show_velocity_v = 0;
+static int show_acceleration_v = 0;
+
+static void drawBody(EphemeridesBody_t* body, int render_mode);
 
 /**
  * @brief Converts a timestamp (number of seconds since 1/1/2022)
@@ -36,14 +52,26 @@ static const char* getISODate(float timestamp)
 					1900 + localTM->tm_year, localTM->tm_mon + 1, localTM->tm_mday);
 }
 
-view_t* constructView(int fps)
+view_t* constructView(int fps, int fullscreen, int width, int height, int show_velocity_vectors, int show_acceleration_vectors)
 {
+	if (width < MIN_WIDTH)
+		width = DEFAULT_WINDOW_WIDTH;
+	if (height < MIN_HEIGHT)
+		height = DEFAULT_WINDOW_HEIGHT;
+
 	view_t* view = new view_t();
+	if (!view)
+		return NULL;
 
-	InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "EDA Orbital Simulation");
+	InitWindow(width, height, WINDOW_TITLE);
+	if (fullscreen)
+		ToggleFullscreen();
+
+	show_velocity_v = show_velocity_vectors;
+	show_acceleration_v = show_acceleration_vectors;
 	SetTargetFPS(fps);
-	DisableCursor();
 
+	DisableCursor();
 	view->camera.position = {10.0f, 10.0f, 10.0f};
 	view->camera.target = {0.0f, 0.0f, 0.0f};
 	view->camera.up = {0.0f, 1.0f, 0.0f};
@@ -65,8 +93,66 @@ bool isViewRendering(view_t* view)
 	return !WindowShouldClose();
 }
 
+static void drawBody(EphemeridesBody_t* body, int render_mode)
+{
+	Vector3 position, velocity, acceleration;
+
+	position.x = body->position[X] * 1E-11;
+	position.y = body->position[Y] * 1E-11;
+	position.z = body->position[Z] * 1E-11;
+
+	switch (render_mode)
+	{
+	default:
+	case QUALITY:
+		DrawSphereEx(position, 0.005F * logf(body->radius), 5, 7, body->color);
+		break;
+	case PERFORMANCE:
+		DrawPoint3D(position, body->color);
+		break;
+	}
+
+	if (show_velocity_v)
+	{
+		velocity.x = body->velocity[X] * 1E-4 + position.x;
+		velocity.y = body->velocity[Y] * 1E-4 + position.y;
+		velocity.z = body->velocity[Z] * 1E-4 + position.z;
+
+		DrawLine3D(position, velocity, BLUE);
+	}
+	if (show_acceleration_v)
+	{
+		acceleration.x = body->acceleration[X] * 1E3 + position.x;
+		acceleration.y = body->acceleration[Y] * 1E3 + position.y;
+		acceleration.z = body->acceleration[Z] * 1E3 + position.z;
+
+		DrawLine3D(position, acceleration, RED);
+	}
+}
+
 void renderView(view_t* view, OrbitalSim_t* sim)
 {
+	if (IsKeyReleased(FULLSCREEN_KEY))
+	{
+		ToggleFullscreen();
+	}
+	if (IsKeyReleased(TOGGLE_SHOW_VELOCITY))
+	{
+		show_velocity_v = !show_velocity_v;
+	}
+	if (IsKeyReleased(TOGGLE_SHOW_ACCELERATION))
+	{
+		show_acceleration_v = !show_acceleration_v;
+	}
+	if (IsKeyReleased(TOGGLE_EBODIES_RENDER_MODE))
+	{
+		EBodies_render_mode = !EBodies_render_mode;
+	}
+	if (IsKeyReleased(TOGGLE_ASTEROIDS_RENDER_MODE))
+	{
+		Asteroids_render_mode = !Asteroids_render_mode;
+	}
+
 	UpdateCamera(&view->camera, CAMERA_FREE);
 
 	BeginDrawing();
@@ -77,38 +163,16 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	// Fill in your 3D drawing code here:
 
 	//DrawGrid(10, 10.0f);
-	Vector3 position;
 
-	#ifdef SHOW_VECT
-		Vector3 velocity, acceleration;
-	#endif
-
-	for (int i = 0; i < sim->bodyNum; i++) 
+	for (unsigned int i = 0; i < sim->bodyNum; i++) 
 	{
-		position.x = sim->EphemeridesBody[i].position[X];
-		position.y = sim->EphemeridesBody[i].position[Y];
-		position.z = sim->EphemeridesBody[i].position[Z];
-
-		DrawSphereEx(Vector3Scale(position, 1E-11), 0.005F * logf(sim->EphemeridesBody[i].radius), 5, 7, sim->EphemeridesBody[i].color);
-		// DrawPoint3D(Vector3Scale(position, 1E-11), sim->EphemeridesBody[i].color);
-
-		#ifdef SHOW_VECT
-			velocity.x = sim->EphemeridesBody[i].velocity[X];
-			velocity.y = sim->EphemeridesBody[i].velocity[Y];
-			velocity.z = sim->EphemeridesBody[i].velocity[Z];
-
-			acceleration.x = sim->EphemeridesBody[i].acceleration[X];
-			acceleration.y = sim->EphemeridesBody[i].acceleration[Y];
-			acceleration.z = sim->EphemeridesBody[i].acceleration[Z];
-
-			DrawLine3D(	Vector3Scale(position, 1E-11),
-					Vector3Scale(Vector3Add(position, Vector3Scale(acceleration, 1E14)), 1E-11),
-					RED);
-			DrawLine3D(	Vector3Scale(position, 1E-11),
-					Vector3Scale(Vector3Add(position, Vector3Scale(velocity, 1E7)), 1E-11),
-					BLUE);
-		#endif
+		drawBody(sim->EphemeridesBody + i, EBodies_render_mode);
 	}
+	for (unsigned int i = 0; i < sim->asteroidsNum; i++) 
+	{
+		drawBody(sim->Asteroids + i, Asteroids_render_mode);
+	}
+	drawBody(&sim->spaceship, Spaceship_render_mode);
 
 	EndMode3D();
 
