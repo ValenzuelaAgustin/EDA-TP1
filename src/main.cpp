@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 
 	searchLaunchOptions(argc, argv, launchOptionsValues);
 	OrbitalSim_t* sim = constructOrbitalSim(simulationSpeed, launchOptionsValues[ASTEROIDS_AMMOUNT]);
-	view_t* view = constructView(	launchOptionsValues[FPS_MAX],
+	view_t* view = constructView(	launchOptionsValues[TARGET_FPS],
 					launchOptionsValues[FULLSCREEN],
 					launchOptionsValues[WIDTH],
 					launchOptionsValues[HEIGHT],
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 	PIDC = (sim->asteroidsNum == 0) ? 1E4 : 1E4 / sim->asteroidsNum;
 	PIDC = (PIDC < 1) ? 1 : PIDC;
 
-	target_frametime = (launchOptionsValues[FPS_MAX] == 0) ? DEFAULT_FRAME_TIME : (1.0F / launchOptionsValues[FPS_MAX]);
+	target_frametime = (launchOptionsValues[TARGET_FPS] == 0) ? DEFAULT_FRAME_TIME : (1.0F / launchOptionsValues[TARGET_FPS]);
 	sim_updates_per_frame = getInitialSimUpdatesPerFrame(sim, view, target_frametime, PIDC);
 
 	while (isViewRendering(view))

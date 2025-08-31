@@ -6,7 +6,7 @@
 const launchOptions_t launchOptions[] =
 {
 	{
-		"+fps_max",
+		"+fps_target",
 		1,
 		0
 	},
@@ -37,6 +37,16 @@ const launchOptions_t launchOptions[] =
 	},
 	{
 		"-show_acceleration_vectors",
+		0,
+		0
+	},
+	{
+		"-massive_jupiter",
+		0,
+		0
+	},
+	{
+		"-spawn_blackhole",
 		0,
 		0
 	}

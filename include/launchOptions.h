@@ -13,13 +13,15 @@ extern const int launchOptionsAmmount;
 
 enum
 {
-	FPS_MAX,
+	TARGET_FPS,
 	FULLSCREEN,
 	WIDTH,
 	HEIGHT,
 	ASTEROIDS_AMMOUNT,
 	SHOW_VELOCITY_VECTORS,
-	SHOW_ACCELERATION_VECTORS
+	SHOW_ACCELERATION_VECTORS,
+	MASSIVE_JUPITER,
+	SPAWN_BLACKHOLE
 };
 
 void searchLaunchOptions(int argc, char* argv[], int* launchOptionsValues);
