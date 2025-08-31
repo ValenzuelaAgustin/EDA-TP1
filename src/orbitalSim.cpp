@@ -174,7 +174,7 @@ static inline void addSpaceshipAcceleration(int key, int axis, EphemeridesBody_t
 	if(IsKeyPressed(key)){
 		spaceship->acceleration[axis] += dir * SPACESHIP_ACCELERATION;
 	}
-	else if(IsKeyReleased(key)){
+	if(IsKeyReleased(key)){
 		spaceship->acceleration[axis] -= dir * SPACESHIP_ACCELERATION;
 	}
 }
@@ -182,24 +182,19 @@ static inline void addSpaceshipAcceleration(int key, int axis, EphemeridesBody_t
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
 {
 	// Aca tenemos que actualizaar la aceleracion de sim->spaceship a partir del input del usuario
-	// int keys[] = {
-	// 	SPACESHIP_XP_KEY, SPACESHIP_YP_KEY, SPACESHIP_ZP_KEY,
-	// 	SPACESHIP_XN_KEY, SPACESHIP_YN_KEY, SPACESHIP_ZN_KEY 
-	// };
-	// int i, j ;
-	// for(i = 0; i < 3; i++){
-	// 	addSpaceshipAcceleration(keys[i], i, &(sim->spaceship), true);
-	// }
-	// for(j = 3; j < 6; j++){
-	// 	addSpaceshipAcceleration(j, j-3, &(sim->spaceship), false);
-	// }
-	addSpaceshipAcceleration(SPACESHIP_XP_KEY, X, &(sim->spaceship), true);
-	addSpaceshipAcceleration(SPACESHIP_YP_KEY, Y, &(sim->spaceship), true);
-	addSpaceshipAcceleration(SPACESHIP_ZP_KEY, Z, &(sim->spaceship), true);
-	// Para los ejes en sentido opuesto (J, K y L)
-	addSpaceshipAcceleration(SPACESHIP_XN_KEY, X, &(sim->spaceship), false);
-	addSpaceshipAcceleration(SPACESHIP_YN_KEY, Y, &(sim->spaceship), false);
-	addSpaceshipAcceleration(SPACESHIP_ZN_KEY, Z, &(sim->spaceship), false);
+	int keys[] = {
+		SPACESHIP_XP_KEY, SPACESHIP_YP_KEY, SPACESHIP_ZP_KEY,
+		SPACESHIP_XN_KEY, SPACESHIP_YN_KEY, SPACESHIP_ZN_KEY 
+	};
+	int i, axis;
+	for(i = 0, axis = 0; i < 6; i++, i < 3 ? axis = i : axis = i-3){
+		// Para los ejes en sentido "positivo" (teclas U, I y O)
+		if(i < 3)
+		addSpaceshipAcceleration(keys[i], axis, &(sim->spaceship), true);
+		// Para los ejes en sentido opuesto (teclas J, K y L)
+		else
+		addSpaceshipAcceleration(keys[i], axis, &(sim->spaceship), false);
+	}
 }
 
 void updateOrbitalSim(OrbitalSim_t* sim)
