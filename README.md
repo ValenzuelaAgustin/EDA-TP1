@@ -14,7 +14,8 @@ Se pudo obtener un valor adecuado de timeStep al realizar diversas simulaciones 
 
 ## Verificación del tipo de datos float
 
-[completar]
+Para almacenar las masas, aceleraciones, velocidades y posiciones se optó por el tipo de dato double en lugar de float. Esto permitió evitar casteos implícitos y errores de redondeo, ya que las propiedades de los cuerpos se utilizan en cálculos junto con otras variables de tipo double. Es esencial evitar dichos casteos, dado que en algunas funciones, como por ejemplo calculateAcceleration y updateSpeedAndPosition, se requiere de precisión para evitar la acumulación de errores durante las iteraciones de updateOrbitalSim. La falta de exactitud en los cálculos puede causar órbitas inestables y movimientos erráticos de los cuerpos en la simulación.
+
 
 ## Complejidad computacional con asteroides
 
