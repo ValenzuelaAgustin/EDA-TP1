@@ -132,7 +132,7 @@ static void drawBody(EphemeridesBody_t* body, int render_mode)
 
 void renderView(view_t* view, OrbitalSim_t* sim)
 {
-	if (IsKeyReleased(KEY_F11))
+	if (IsKeyReleased(FULLSCREEN_KEY))
 	{
 		ToggleFullscreen();
 	}
