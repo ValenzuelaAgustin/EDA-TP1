@@ -16,12 +16,6 @@
 #define DEFAULT_WINDOW_HEIGHT 720
 #define WINDOW_TITLE "EDA Orbital Simulation"
 
-#define FULLSCREEN_KEY KEY_F11
-#define TOGGLE_EBODIES_RENDER_MODE KEY_F7
-#define TOGGLE_ASTEROIDS_RENDER_MODE KEY_F8
-#define TOGGLE_SHOW_VELOCITY KEY_F9
-#define TOGGLE_SHOW_ACCELERATION KEY_F10
-
 enum
 {
 	QUALITY,
@@ -30,6 +24,7 @@ enum
 
 static int EBodies_render_mode = QUALITY;
 static int Asteroids_render_mode = PERFORMANCE;
+static int Spaceship_render_mode = QUALITY;
 static int show_velocity_v = 0;
 static int show_acceleration_v = 0;
 
@@ -177,6 +172,7 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	{
 		drawBody(sim->Asteroids + i, Asteroids_render_mode);
 	}
+	drawBody(&sim->spaceship, Spaceship_render_mode);
 
 	EndMode3D();
 

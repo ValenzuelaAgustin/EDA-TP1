@@ -19,6 +19,8 @@ static inline void calculateAccelerations(EphemeridesBody_t* body0, EphemeridesB
 
 static inline void updateSpeedAndPosition(EphemeridesBody_t* body, double dt);
 
+static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim);
+
 /**
  * @brief Gets a uniform random value in a range
  *
@@ -102,6 +104,11 @@ OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroids
 		configureAsteroid(ptr->Asteroids + i, ptr->EphemeridesBody[SOL].mass_GC);
 	}
 
+	configureAsteroid(&ptr->spaceship, ptr->EphemeridesBody[SOL].mass_GC);
+	ptr->spaceship.color = GREEN;
+	ptr->spaceship.radius = 120;
+	ptr->spaceship.mass_GC = 5E6 * GRAVITATIONAL_CONSTANT;
+
 	return ptr; // This should return your orbital sim
 }
 
@@ -125,7 +132,6 @@ static inline void calculateAccelerations(EphemeridesBody_t* body0, EphemeridesB
 
 	inverse_distance_cubed = Q_rsqrt(DOT_PRODUCT(acceleration, acceleration));
 	inverse_distance_cubed = inverse_distance_cubed * inverse_distance_cubed * inverse_distance_cubed;
-	//inverse_distance_cubed *= GRAVITATIONAL_CONSTANT;
 
 	acceleration[X] *= inverse_distance_cubed;
 	acceleration[Y] *= inverse_distance_cubed;
@@ -151,6 +157,11 @@ static inline void updateSpeedAndPosition(EphemeridesBody_t* body, double dt)
 	body->position[Z] += body->velocity[Z] * dt;
 }
 
+static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
+{
+	// Aca tenemos que actualizaar la aceleracion de sim->spaceship a partir del input del usuario
+}
+
 void updateOrbitalSim(OrbitalSim_t* sim)
 {
 	//if (!sim || !sim->EphemeridesBody || sim->bodyNum < 1 || sim->dt <= 0)
@@ -165,6 +176,11 @@ void updateOrbitalSim(OrbitalSim_t* sim)
 		sim->EphemeridesBody[i].acceleration[Z] = 0;
 	}
 
+	sim->spaceship.acceleration[X] = 0;
+	sim->spaceship.acceleration[Y] = 0;
+	sim->spaceship.acceleration[Z] = 0;
+	updateSpaceShipUserInputs(sim);
+
 	for (i = 0; i < sim->bodyNum; i++)
 	{
 		for (j = 0; j < sim->asteroidsNum; j++)
@@ -175,10 +191,12 @@ void updateOrbitalSim(OrbitalSim_t* sim)
 		{
 			calculateAccelerations(sim->EphemeridesBody + i, sim->EphemeridesBody + j);
 		}
+		calculateAccelerations(sim->EphemeridesBody + i, &sim->spaceship);
 	}
 
 	for (i = 0, j = sim->bodyNum + sim->asteroidsNum; i < j; i++)
 	{
 		updateSpeedAndPosition(sim->EphemeridesBody + i, sim->dt);
 	}
+	updateSpeedAndPosition(&sim->spaceship, sim->dt);
 }

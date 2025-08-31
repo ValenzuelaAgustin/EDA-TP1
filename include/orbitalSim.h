@@ -18,6 +18,7 @@ typedef struct
 	double dt;			// In seconds ( has to be updated with the frametime to match the simulation speed )
 	EphemeridesBody_t* EphemeridesBody;
 	EphemeridesBody_t* Asteroids;
+	EphemeridesBody_t spaceship;
 	unsigned int bodyNum;
 	unsigned int asteroidsNum;
 } OrbitalSim_t;
