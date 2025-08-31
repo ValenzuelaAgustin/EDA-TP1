@@ -15,7 +15,7 @@
 typedef struct
 {
 	double dt;
-	EphemeridesBody_t* EphemeridesBody;
+	EphemeridesBody_t *EphemeridesBody, spaceship;
 	int bodyNum;
 } OrbitalSim_t;
 

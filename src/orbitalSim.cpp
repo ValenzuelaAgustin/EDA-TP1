@@ -103,6 +103,10 @@ void destroyOrbitalSim(OrbitalSim_t* sim)
 	delete sim;
 }
 
+static void updateSpaceship(OrbitalSim_t* sim){
+	
+}
+
 void updateOrbitalSim(OrbitalSim_t* sim)
 {
 	//if (!sim || !sim->EphemeridesBody || sim->bodyNum < 1 || sim->dt <= 0)
@@ -119,9 +123,9 @@ void updateOrbitalSim(OrbitalSim_t* sim)
 		sim->EphemeridesBody[i].acceleration[Z] = 0;
 	}
 
-	for (i = 0; i < sim->bodyNum - 1; i++)
+	for (i = 0; i < sim->bodyNum - 1; i++) // n
 	{
-		for (j = i + 1; j < sim->bodyNum; j++)
+		for (j = i + 1; j < sim->bodyNum; j++) // n*n
 		{
 			acceleration[X] = sim->EphemeridesBody[j].position[X] - sim->EphemeridesBody[i].position[X];
 			acceleration[Y] = sim->EphemeridesBody[j].position[Y] - sim->EphemeridesBody[i].position[Y];
