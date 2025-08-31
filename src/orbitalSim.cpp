@@ -13,7 +13,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define GRAVITATIONAL_CONSTANT 6.6743E-11
 #define ASTEROIDS_MEAN_RADIUS 4E11F
 
 static inline void calculateAccelerations(EphemeridesBody_t* body0, EphemeridesBody_t* body1);
@@ -57,7 +56,7 @@ static void configureAsteroid(EphemeridesBody_t* body, float centerMass)
 
 	// Fill in with your own fields:
 	body->name = NULL;
-	body->mass = 1E12F * GRAVITATIONAL_CONSTANT;  // Typical asteroid weight: 1 billion tons
+	body->mass_GC = 1E12 * GRAVITATIONAL_CONSTANT;  // Typical asteroid weight: 1 billion tons
 	body->radius = 2E3F; // Typical asteroid radius: 2km
 	body->color = GRAY;
 	body->position[X] = r * cosf(phi);
@@ -97,11 +96,10 @@ OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroids
 	for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
 	{
 		ptr->EphemeridesBody[i] = solarSystem[i];
-		ptr->EphemeridesBody[i].mass *= GRAVITATIONAL_CONSTANT;
 	}
 	for (i = 0; i < ptr->asteroidsNum; i++)
 	{
-		configureAsteroid(ptr->Asteroids + i, ptr->EphemeridesBody[SOL].mass);
+		configureAsteroid(ptr->Asteroids + i, ptr->EphemeridesBody[SOL].mass_GC);
 	}
 
 	return ptr; // This should return your orbital sim
@@ -133,13 +131,13 @@ static inline void calculateAccelerations(EphemeridesBody_t* body0, EphemeridesB
 	acceleration[Y] *= inverse_distance_cubed;
 	acceleration[Z] *= inverse_distance_cubed;
 
-	body0->acceleration[X] += body1->mass * acceleration[X];
-	body0->acceleration[Y] += body1->mass * acceleration[Y];
-	body0->acceleration[Z] += body1->mass * acceleration[Z];
+	body0->acceleration[X] += body1->mass_GC * acceleration[X];
+	body0->acceleration[Y] += body1->mass_GC * acceleration[Y];
+	body0->acceleration[Z] += body1->mass_GC * acceleration[Z];
 
-	body1->acceleration[X] -= body0->mass * acceleration[X];
-	body1->acceleration[Y] -= body0->mass * acceleration[Y];
-	body1->acceleration[Z] -= body0->mass * acceleration[Z];
+	body1->acceleration[X] -= body0->mass_GC * acceleration[X];
+	body1->acceleration[Y] -= body0->mass_GC * acceleration[Y];
+	body1->acceleration[Z] -= body0->mass_GC * acceleration[Z];
 }
 
 static inline void updateSpeedAndPosition(EphemeridesBody_t* body, double dt)

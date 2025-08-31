@@ -10,10 +10,12 @@
 
 #include <raylib.h>
 
+#define GRAVITATIONAL_CONSTANT 6.6743E-11	// [N * m^2 / Kg^2]
+
 typedef struct
 {
 	const char* name;		// Name
-	double mass;			// [kg]
+	double mass_GC;			// [m^3 / s^2]
 	float radius;			// [m]
 	Color color;			// Raylib color
 	double position[3];		// [m]
@@ -25,6 +27,7 @@ typedef struct
  * @brief Solay system ephermerides for 2022-01-01T00:00:00Z
  * 
  * @cite https://ssd.jpl.nasa.gov/horizons/app.html#/
+ * @cite https://ssd.jpl.nasa.gov/planets/phys_par.html
 */
 extern EphemeridesBody_t solarSystem[];
 extern const unsigned int SOLARSYSTEM_BODYNUM;
