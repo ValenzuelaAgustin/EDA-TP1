@@ -8,6 +8,7 @@
 #include "launchOptions.h"
 #include "orbitalSim.h"
 #include "view.h"
+#include <stdio.h>
 
 #define DAYS_PER_SECOND 10
 
@@ -17,7 +18,7 @@
 #define DEFAULT_FRAME_TIME ( 1.0 / DEFAULT_FPS_TARGET )
 
 /*
-+fps_max 0 -fullscreen -w 2560 -h 1600 -asteroids_ammount 500 -show_velocity_vectors -show_acceleration_vectors
++fps_target 0 -fullscreen -w 2560 -h 1600 -asteroids_ammount 500 -show_velocity_vectors -show_acceleration_vectors
 */
 
 double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC);
@@ -35,8 +36,11 @@ int main(int argc, char* argv[])
 	double PIDC;
 
 	searchLaunchOptions(argc, argv, launchOptionsValues);
+	launchOptionsValues[TARGET_FPS] *= (launchOptionsValues[TARGET_FPS] >= 0) ? 1 : -1;
+	launchOptionsValues[ASTEROIDS_AMMOUNT] *= (launchOptionsValues[ASTEROIDS_AMMOUNT] >= 0) ? 1 : -1;
+
 	OrbitalSim_t* sim = constructOrbitalSim(simulationSpeed, launchOptionsValues[ASTEROIDS_AMMOUNT]);
-	view_t* view = constructView(	launchOptionsValues[TARGET_FPS],
+	view_t* view = constructView(	0,
 					launchOptionsValues[FULLSCREEN],
 					launchOptionsValues[WIDTH],
 					launchOptionsValues[HEIGHT],
@@ -46,8 +50,9 @@ int main(int argc, char* argv[])
 	PIDC = (sim->asteroidsNum == 0) ? 1E4 : 1E4 / sim->asteroidsNum;
 	PIDC = (PIDC < 1) ? 1 : PIDC;
 
-	target_frametime = (launchOptionsValues[TARGET_FPS] == 0) ? DEFAULT_FRAME_TIME : (1.0F / launchOptionsValues[TARGET_FPS]);
+	target_frametime = (launchOptionsValues[TARGET_FPS] == 0) ? DEFAULT_FRAME_TIME : (1.0 / launchOptionsValues[TARGET_FPS]);
 	sim_updates_per_frame = getInitialSimUpdatesPerFrame(sim, view, target_frametime, PIDC);
+	printf("\nsim_updates_per_frame = %lf", sim_updates_per_frame);
 
 	while (isViewRendering(view))
 	{
