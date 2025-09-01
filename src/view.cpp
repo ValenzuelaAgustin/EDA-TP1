@@ -139,27 +139,28 @@ static void drawBody(EphemeridesBody_t* body, int render_mode)
 
 void renderView(view_t* view, OrbitalSim_t* sim)
 {
-	if (IsKeyReleased(FULLSCREEN_KEY))
+	if (IsKeyPressed(FULLSCREEN_KEY))
 	{
 		ToggleFullscreen();
 	}
-	if (IsKeyReleased(TOGGLE_SHOW_VELOCITY))
+	if (IsKeyPressed(TOGGLE_SHOW_VELOCITY))
 	{
 		show_velocity_v = !show_velocity_v;
 	}
-	if (IsKeyReleased(TOGGLE_SHOW_ACCELERATION))
+	if (IsKeyPressed(TOGGLE_SHOW_ACCELERATION))
 	{
 		show_acceleration_v = !show_acceleration_v;
 	}
-	if (IsKeyReleased(TOGGLE_EBODIES_RENDER_MODE))
+	if (IsKeyPressed(TOGGLE_EBODIES_RENDER_MODE))
 	{
 		EBodies_render_mode = !EBodies_render_mode;
 	}
-	if (IsKeyReleased(TOGGLE_ASTEROIDS_RENDER_MODE))
+	if (IsKeyPressed(TOGGLE_ASTEROIDS_RENDER_MODE))
 	{
 		Asteroids_render_mode = !Asteroids_render_mode;
 	}
-	if(IsKeyReleased(TOGGLE_SHOW_CONTROLS)){
+	if(IsKeyPressed(TOGGLE_SHOW_CONTROLS))
+	{
 		show_controls = !show_controls;
 	}
 
@@ -189,15 +190,18 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	// Fill in your 2D drawing code here:
 	DrawFPS(10,10);
 	DrawText(getISODate(clock()),10, 30, 20, RAYWHITE);
+
 	// Show or hide controls menu
-	DrawText("Show/Hide Controls: F6", view->width-CONTROLS_X_MARGIN, 10, 20, CONTROLS_COLOR);
-	if(show_controls){
-		DrawText("Move Spaceship: U, I, O, J, K, L", view->width-CONTROLS_X_MARGIN, 30, 20, CONTROLS_COLOR);
-		DrawText("Toggle Bodies Render Mode: F7", view->width-CONTROLS_X_MARGIN, 50, 20, CONTROLS_COLOR);
-		DrawText("Toggle Asteroids Render Mode: F8", view->width-CONTROLS_X_MARGIN, 70, 20, CONTROLS_COLOR);
-		DrawText("Show/Hide Velocities: F9", view->width-CONTROLS_X_MARGIN, 90, 20, CONTROLS_COLOR);
-		DrawText("Show/Hide Accelerations: F10", view->width-CONTROLS_X_MARGIN, 110, 20, CONTROLS_COLOR);
-		DrawText("Toggle Fullscreen: F11", view->width-CONTROLS_X_MARGIN, 130, 20, CONTROLS_COLOR);
+	DrawText("Show/Hide Controls: F6", view->width - CONTROLS_X_MARGIN, 10, 20, CONTROLS_COLOR);
+	if(show_controls)
+	{
+		DrawText("Move Spaceship: U, I, O, J, K, L", view->width - CONTROLS_X_MARGIN, 30, 20, CONTROLS_COLOR);
+		DrawText("Toggle Bodies Render Mode: F7", view->width - CONTROLS_X_MARGIN, 50, 20, CONTROLS_COLOR);
+		DrawText("Toggle Asteroids Render Mode: F8", view->width - CONTROLS_X_MARGIN, 70, 20, CONTROLS_COLOR);
+		DrawText("Show/Hide Velocities: F9", view->width - CONTROLS_X_MARGIN, 90, 20, CONTROLS_COLOR);
+		DrawText("Show/Hide Accelerations: F10", view->width - CONTROLS_X_MARGIN, 110, 20, CONTROLS_COLOR);
+		DrawText("Toggle Fullscreen: F11", view->width - CONTROLS_X_MARGIN, 130, 20, CONTROLS_COLOR);
 	}
+
 	EndDrawing();
 }
