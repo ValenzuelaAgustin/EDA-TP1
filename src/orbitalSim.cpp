@@ -108,6 +108,7 @@ OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroids
 
 	ptr->dt = 0;
 	ptr->simulationSpeed = simulationSpeed;
+	ptr->started = 0;
 
 	unsigned int i;
 	for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)

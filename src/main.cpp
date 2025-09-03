@@ -53,6 +53,7 @@ int main(int argc, char* argv[])
 
 	target_frametime = (launchOptionsValues[TARGET_FPS] == 0) ? DEFAULT_FRAME_TIME : (1.0 / launchOptionsValues[TARGET_FPS]);
 	sim_updates_per_frame = getInitialSimUpdatesPerFrame(sim, view, target_frametime, PIDC);
+	sim->started = 1;
 	printf("\nsim_updates_per_frame = %.0lf", sim_updates_per_frame);
 
 	while (isViewRendering(view))

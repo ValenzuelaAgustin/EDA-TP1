@@ -4,7 +4,7 @@
  *
  * @copyright Copyright (c) 2022-2023
  */
-
+s
 #include "view.h"
 #include "raymath.h"
 #include "nmath.h"
@@ -65,9 +65,12 @@ static const char* get_simTime_elapsed (float timestamp)
 	struct tm* localTM = localtime(&new_timestamp);
 	return TextFormat("%04d years, %02d months, %02d hours", localTM->tm_year - 70, localTM->tm_mon, localTM->tm_mday);
 }
-char* print_simTime_elapsed (const char* simTime, char buffer [])
+char* print_simTime_elapsed (const char* simTime, char buffer [], int flag)
 {
-	sprintf(buffer, "Elapsed Simulation Time: %s ", simTime);
+	if(flag)
+	sprintf(buffer, "Elapsed Sim Time: %s ", simTime);
+	else
+	sprintf(buffer, "Elapsed Sim Time: 0000 years, 00 months, 00 seconds");
 	return buffer;
 }
 
@@ -203,8 +206,14 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 
 	// Fill in your 2D drawing code here:
 	DrawFPS(10,10);
-	DrawText(getISODate(clock()),10, 30, 20, RAYWHITE);
-	DrawText(print_simTime_elapsed(get_simTime_elapsed(clock()), buffer), 10, 50, 17, RAYWHITE);
+
+	if(sim->started)
+		DrawText(getISODate(clock()),10, 30, 20, RAYWHITE);
+	else
+		DrawText("0000-00-00", 10, 30, 20, RAYWHITE);
+
+	DrawText(print_simTime_elapsed(get_simTime_elapsed(clock()), buffer, sim->started), 10, 50, 17, RAYWHITE);
+
 	// Show or hide controls menu
 	DrawText("Show/Hide Controls: F6", view->width - CONTROLS_X_MARGIN, 10, 20, CONTROLS_COLOR);
 	if(show_controls)

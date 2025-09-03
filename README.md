@@ -14,7 +14,7 @@ Se pudo obtener un valor adecuado de timeStep al realizar diversas simulaciones 
 
 ## Verificación del tipo de datos float
 
-Para almacenar las masas, aceleraciones, velocidades y posiciones se optó por el tipo de dato double en lugar de float. Esto permitió evitar casteos implícitos y errores de redondeo, ya que las propiedades de los cuerpos se utilizan en cálculos junto con otras variables de tipo double. Es esencial evitar dichos casteos, dado que en algunas funciones, como por ejemplo calculateAcceleration y updateSpeedAndPosition, se requiere de precisión para evitar la acumulación de errores durante las iteraciones de updateOrbitalSim. La falta de exactitud en los cálculos puede causar órbitas inestables y movimientos erráticos de los cuerpos en la simulación.
+Para almacenar las masas, aceleraciones, velocidades y posiciones se optó por el tipo de dato double en lugar de float. Esto permitió evitar casteos implícitos y errores de redondeo, ya que las propiedades de los cuerpos se utilizan en cálculos junto con otras variables de tipo double. Es esencial evitar dichos casteos, dado que en algunas funciones, como por ejemplo `calculateAcceleration` y `updateSpeedAndPosition`, se requiere de precisión para evitar la acumulación de errores durante las iteraciones de updateOrbitalSim. La falta de exactitud en los cálculos puede causar órbitas inestables y movimientos erráticos de los cuerpos en la simulación.
 
 
 ## Complejidad computacional con asteroides
@@ -29,12 +29,19 @@ Se pudo mejorar la complejidad computacional al reducir el cuello de botella gen
 
 ## Simulacion con Jupiter 1000 veces mas masivo
 
-Al simular a Júpiter mil veces más masivo (1,898 × 10<sup>30</sup> kg), su masa se aproxima a la del Sol (1,989 × 10<sup>30</sup> kg). Esto hace que Júpiter comience a comportarse como un cuerpo comparable en fuerza gravitatoria al Sol. Uno de los efectos observados en la simulación fue que las órbitas de los planetas y asteroides se deformaron, y algunos cuerpos previamente ligados al Sol pasaron a gravitar alrededor de Júpiter. Como el Sol dejó de ser el cuerpo dominante, el centro de masa del sistema se desplazó hacia Júpiter, y ambos comenzaron a orbitar alrededor de este nuevo centro de masa. Antes de este cambio, la masa de Júpiter era mucho menor que la del Sol, por lo que las contribuciones a la aceleración calculadas en calculateAccelerations eran despreciables, haciendo que el Sol esté prácticamente fijo.
+Al simular a Júpiter mil veces más masivo (1,898 × 10<sup>30</sup> kg), su masa se aproxima a la del Sol (1,989 × 10<sup>30</sup> kg). Esto hace que Júpiter comience a comportarse como un cuerpo comparable en fuerza gravitatoria al Sol. Uno de los efectos observados en la simulación fue que las órbitas de los planetas y asteroides se deformaron, y algunos cuerpos previamente ligados al Sol pasaron a gravitar alrededor de Júpiter. Como el Sol dejó de ser el cuerpo dominante, el centro de masa del sistema se desplazó hacia Júpiter, y ambos comenzaron a orbitar alrededor de este nuevo centro de masa. Antes de este cambio, la masa de Júpiter era mucho menor que la del Sol, por lo que las contribuciones a la aceleración calculadas en `calculateAccelerations` eran despreciables, haciendo que el Sol esté prácticamente fijo.
 Con un agujero negro ocurriria algo similar, pero con efectos mucho mas drasticos, ya que la masa de un agujero negro típico puede ser decenas de miles de millones de veces la del Sol.
 
 ## Simulacion con estrellas del sistema Alpha Centauri
 
 ## Easter egg
+
+En el archivo `orbitalSim.cpp` se incluye un Easter Egg en las siguientes lineas de codigo:
+```
+// Surprise!
+//phi = 0;
+```
+Si estas lineas se descomentan, phi pasa a valer cero. Phi representa el angulo polar en el plano XZ para ubicar a un asteroide alrededor del centro de masa, por lo cual, si phi es cero todos los asteroides se alinearan sobre el eje X y su velocidad inicial sera perpendicular al eje X.
 
 ## Nave espacial manejada por el usuario
 

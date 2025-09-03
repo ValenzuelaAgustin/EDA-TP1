@@ -21,6 +21,7 @@ typedef struct
 	EphemeridesBody_t spaceship;
 	unsigned int bodyNum;
 	unsigned int asteroidsNum;
+	int started;
 } OrbitalSim_t;
 
 /**
