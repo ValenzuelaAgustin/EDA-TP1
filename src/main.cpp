@@ -33,11 +33,6 @@ int main(int argc, char* argv[])
 	double PIDC;
 
 	searchLaunchOptions(argc, argv, launchOptionsValues);
-	launchOptionsValues[TARGET_FPS] *= (launchOptionsValues[TARGET_FPS] >= 0) ? 1 : -1;
-	launchOptionsValues[ASTEROIDS_AMMOUNT] *= (launchOptionsValues[ASTEROIDS_AMMOUNT] >= 0) ? 1 : -1;
-	launchOptionsValues[DAYS_PER_SIMULATION_SECOND] = (launchOptionsValues[DAYS_PER_SIMULATION_SECOND] <= 0) ? 
-								launchOptions[DAYS_PER_SIMULATION_SECOND].defaultValue :
-								launchOptionsValues[DAYS_PER_SIMULATION_SECOND];
 	simulationSpeed = launchOptionsValues[DAYS_PER_SIMULATION_SECOND] * SECONDS_PER_DAY;
 
 	OrbitalSim_t* sim = constructOrbitalSim(simulationSpeed, launchOptionsValues[ASTEROIDS_AMMOUNT]);

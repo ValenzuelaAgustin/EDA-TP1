@@ -6,6 +6,7 @@ typedef struct
 	const char* name;
 	int hasArgument;
 	int defaultValue;
+	int valueRange[2];	// Closed Interval
 } launchOptions_t;
 
 extern const launchOptions_t launchOptions[];
