@@ -32,6 +32,7 @@ static int Spaceship_render_mode = QUALITY;
 static int show_velocity_v = 0;
 static int show_acceleration_v = 0;
 static int show_controls = 1;
+static char buffer[128];
 
 static void drawBody(EphemeridesBody_t* body, int render_mode);
 
@@ -55,6 +56,19 @@ static const char* getISODate(float timestamp)
 	struct tm* localTM = localtime(&unixTimestamp);
 	return TextFormat("%04d-%02d-%02d",
 					1900 + localTM->tm_year, localTM->tm_mon + 1, localTM->tm_mday);
+}
+
+static const char* get_simTime_elapsed (float timestamp)
+{
+	time_t new_timestamp = (time_t)timestamp;
+
+	struct tm* localTM = localtime(&new_timestamp);
+	return TextFormat("%04d years, %02d months, %02d hours", localTM->tm_year - 70, localTM->tm_mon, localTM->tm_mday);
+}
+char* print_simTime_elapsed (const char* simTime, char buffer [])
+{
+	sprintf(buffer, "Elapsed Simulation Time: %s ", simTime);
+	return buffer;
 }
 
 view_t* constructView(int fps, int fullscreen, int width, int height, int show_velocity_vectors, int show_acceleration_vectors)
@@ -189,6 +203,7 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	// Fill in your 2D drawing code here:
 	DrawFPS(10,10);
 	DrawText(getISODate(clock()),10, 30, 20, RAYWHITE);
+	DrawText(print_simTime_elapsed(get_simTime_elapsed(clock()), buffer), 10, 50, 17, RAYWHITE);
 	// Show or hide controls menu
 	DrawText("Show/Hide Controls: F6", view->width-CONTROLS_X_MARGIN, 10, 20, CONTROLS_COLOR);
 	if(show_controls){

@@ -29,6 +29,9 @@ Se pudo mejorar la complejidad computacional al reducir el cuello de botella gen
 
 ## Simulacion con Jupiter 1000 veces mas masivo
 
+Al simular a Júpiter mil veces más masivo (1,898 × 10<sup>30</sup> kg), su masa se aproxima a la del Sol (1,989 × 10<sup>30</sup> kg). Esto hace que Júpiter comience a comportarse como un cuerpo comparable en fuerza gravitatoria al Sol. Uno de los efectos observados en la simulación fue que las órbitas de los planetas y asteroides se deformaron, y algunos cuerpos previamente ligados al Sol pasaron a gravitar alrededor de Júpiter. Como el Sol dejó de ser el cuerpo dominante, el centro de masa del sistema se desplazó hacia Júpiter, y ambos comenzaron a orbitar alrededor de este nuevo centro de masa. Antes de este cambio, la masa de Júpiter era mucho menor que la del Sol, por lo que las contribuciones a la aceleración calculadas en calculateAccelerations eran despreciables, haciendo que el Sol esté prácticamente fijo.
+Con un agujero negro ocurriria algo similar, pero con efectos mucho mas drasticos, ya que la masa de un agujero negro típico puede ser decenas de miles de millones de veces la del Sol.
+
 ## Simulacion con estrellas del sistema Alpha Centauri
 
 ## Easter egg
