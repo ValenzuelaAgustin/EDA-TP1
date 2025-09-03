@@ -26,6 +26,11 @@ const launchOptions_t launchOptions[] =
 		720
 	},
 	{
+		"-days_per_simulation_second",
+		1,
+		10
+	},
+	{
 		"-asteroids_ammount",
 		1,
 		0

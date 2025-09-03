@@ -10,15 +10,13 @@
 #include "view.h"
 #include <stdio.h>
 
-#define DAYS_PER_SECOND 10
-
 #define INITIAL_SIM_UPDATES_PER_FRAME 100
 #define DEFAULT_FPS_TARGET 60
 #define SECONDS_PER_DAY ( 24 * 60 * 60 )
 #define DEFAULT_FRAME_TIME ( 1.0 / DEFAULT_FPS_TARGET )
 
 /*
-+fps_target 0 -fullscreen -w 2560 -h 1600 -asteroids_ammount 500 -show_velocity_vectors -show_acceleration_vectors
++fps_target 0 -fullscreen -w 2560 -h 1600 -days_per_simulation_second 10 -asteroids_ammount 500 -show_velocity_vectors -show_acceleration_vectors
 */
 
 double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC);
@@ -26,18 +24,21 @@ double frametime_PID(double target_frametime, double frametime);
 
 int main(int argc, char* argv[])
 {
+	int i;
 	int launchOptionsValues[launchOptionsAmmount];
-	double simulationSpeed = DAYS_PER_SECOND * SECONDS_PER_DAY;	// Simulation speed: 100 days per simulation second
-
+	double simulationSpeed;
 	double target_frametime;
 	double frametime;
-	int i;
 	double sim_updates_per_frame;
 	double PIDC;
 
 	searchLaunchOptions(argc, argv, launchOptionsValues);
 	launchOptionsValues[TARGET_FPS] *= (launchOptionsValues[TARGET_FPS] >= 0) ? 1 : -1;
 	launchOptionsValues[ASTEROIDS_AMMOUNT] *= (launchOptionsValues[ASTEROIDS_AMMOUNT] >= 0) ? 1 : -1;
+	launchOptionsValues[DAYS_PER_SIMULATION_SECOND] = (launchOptionsValues[DAYS_PER_SIMULATION_SECOND] <= 0) ? 
+								launchOptions[DAYS_PER_SIMULATION_SECOND].defaultValue :
+								launchOptionsValues[DAYS_PER_SIMULATION_SECOND];
+	simulationSpeed = launchOptionsValues[DAYS_PER_SIMULATION_SECOND] * SECONDS_PER_DAY;
 
 	OrbitalSim_t* sim = constructOrbitalSim(simulationSpeed, launchOptionsValues[ASTEROIDS_AMMOUNT]);
 	view_t* view = constructView(	0,
@@ -52,7 +53,7 @@ int main(int argc, char* argv[])
 
 	target_frametime = (launchOptionsValues[TARGET_FPS] == 0) ? DEFAULT_FRAME_TIME : (1.0 / launchOptionsValues[TARGET_FPS]);
 	sim_updates_per_frame = getInitialSimUpdatesPerFrame(sim, view, target_frametime, PIDC);
-	printf("\nsim_updates_per_frame = %lf", sim_updates_per_frame);
+	printf("\nsim_updates_per_frame = %.0lf", sim_updates_per_frame);
 
 	while (isViewRendering(view))
 	{
@@ -61,8 +62,8 @@ int main(int argc, char* argv[])
 		renderView(view, sim);
 
 		frametime = GetFrameTime();
-		sim_updates_per_frame += PIDC * frametime_PID(target_frametime, frametime);
-		sim_updates_per_frame = (sim_updates_per_frame > 1) ? sim_updates_per_frame : 1;
+		//sim_updates_per_frame += PIDC * frametime_PID(target_frametime, frametime);
+		//sim_updates_per_frame = (sim_updates_per_frame > 1) ? sim_updates_per_frame : 1;
 		sim->dt = sim->simulationSpeed * frametime / sim_updates_per_frame;
 	}
 
