@@ -4,11 +4,12 @@
  *
  * @copyright Copyright (c) 2022-2023
  */
-s
+
 #include "view.h"
 #include "raymath.h"
 #include "nmath.h"
 #include <time.h>
+#include <stdarg.h>
 
 #define MIN_WIDTH 800
 #define MIN_HEIGHT 600
@@ -41,36 +42,59 @@ static void drawBody(EphemeridesBody_t* body, int render_mode);
  *		to an ISO date ("YYYY-MM-DD")
  *
  * @param timestamp the timestamp
+ * @param started wether the simulation has started
  * @return The ISO date (a raylib string)
  */
-static const char* getISODate(float timestamp)
+static const char* getISODate(float timestamp, int started)
 {
-	// Timestamp epoch: 1/1/2022
-	struct tm unichEpochTM = {0, 0, 0, 1, 0, 122};
+	static time_t old_timestamp = 0.0;
+	time_t new_timestamp = 0.0;
+	if (!started)
+	{
+		old_timestamp = (time_t)timestamp;
+		return TextFormat("0000-00-00");
+	}
+	new_timestamp = (time_t)timestamp - old_timestamp;
+	if(started)
+	{
+		// Timestamp epoch: 1/1/2022
+		struct tm unichEpochTM = {0, 0, 0, 1, 0, 122};
 
-	// Convert timestamp to UNIX timestamp (number of seconds since 1/1/1970)
-	time_t unixEpoch = mktime(&unichEpochTM);
-	time_t unixTimestamp = unixEpoch + (time_t)timestamp;
+		// Convert timestamp to UNIX timestamp (number of seconds since 1/1/1970)
+		time_t unixEpoch = mktime(&unichEpochTM);
+		time_t unixTimestamp = unixEpoch + (time_t)new_timestamp;
 
-	// Returns ISO date
-	struct tm* localTM = localtime(&unixTimestamp);
-	return TextFormat("%04d-%02d-%02d",
-					1900 + localTM->tm_year, localTM->tm_mon + 1, localTM->tm_mday);
+		// Returns ISO date
+		struct tm* localTM = localtime(&unixTimestamp);
+		return TextFormat("%04d-%02d-%02d",
+						1900 + localTM->tm_year, localTM->tm_mon + 1, localTM->tm_mday);
+	}
 }
 
-static const char* get_simTime_elapsed (float timestamp)
+static const char* get_simTime_elapsed (float timestamp, int started)
 {
-	time_t new_timestamp = (time_t)timestamp;
+	static float old_timestamp;
+	float new_timestamp;
 
-	struct tm* localTM = localtime(&new_timestamp);
-	return TextFormat("%04d years, %02d months, %02d hours", localTM->tm_year - 70, localTM->tm_mon, localTM->tm_mday);
-}
-char* print_simTime_elapsed (const char* simTime, char buffer [], int flag)
-{
-	if(flag)
-	sprintf(buffer, "Elapsed Sim Time: %s ", simTime);
+	if(!started)
+	{
+		old_timestamp = timestamp;
+	}
+	new_timestamp = timestamp - old_timestamp;
+	if(started)
+	{
+		time_t copy_timestamp = (time_t)new_timestamp;
+
+		struct tm* localTM = localtime(&copy_timestamp);
+		return TextFormat("%04d years, %02d months, %02d days", localTM->tm_year - 70, localTM->tm_mon, localTM->tm_mday);
+	}
 	else
-	sprintf(buffer, "Elapsed Sim Time: 0000 years, 00 months, 00 seconds");
+		return TextFormat("0000 years, 00 months, 00 days");
+}
+
+char* print_simTime_elapsed (const char* simTime, char buffer [])
+{
+	sprintf(buffer, "Elapsed Sim Time: %s ", simTime);
 	return buffer;
 }
 
@@ -208,11 +232,11 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	DrawFPS(10,10);
 
 	if(sim->started)
-		DrawText(getISODate(clock()),10, 30, 20, RAYWHITE);
+		DrawText(getISODate(clock(), sim->started),10, 30, 20, RAYWHITE);
 	else
 		DrawText("0000-00-00", 10, 30, 20, RAYWHITE);
 
-	DrawText(print_simTime_elapsed(get_simTime_elapsed(clock()), buffer, sim->started), 10, 50, 17, RAYWHITE);
+	DrawText(print_simTime_elapsed(get_simTime_elapsed(clock(), sim->started), buffer), 10, 50, 17, RAYWHITE);
 
 	// Show or hide controls menu
 	DrawText("Show/Hide Controls: F6", view->width - CONTROLS_X_MARGIN, 10, 20, CONTROLS_COLOR);
