@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
 
 	searchLaunchOptions(argc, argv, launchOptionsValues);
 	simulationSpeed = launchOptionsValues[DAYS_PER_SIMULATION_SECOND] * SECONDS_PER_DAY;
+	solarSystem[JUPITER].mass_GC *= (launchOptionsValues[MASSIVE_JUPITER]) ? 1E3 : 1.0 ;
 
 	OrbitalSim_t* sim = constructOrbitalSim(simulationSpeed, launchOptionsValues[ASTEROIDS_AMMOUNT]);
 	view_t* view = constructView(	0,
