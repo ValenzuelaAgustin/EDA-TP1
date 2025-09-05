@@ -23,16 +23,19 @@
 
 // Controls
 #define CONTROLS_X_MARGIN 370
+#define CONTROLS_Y_MARGIN 20
 #define CONTROLS_COLOR CLITERAL(Color){0, 228, 48, 150} 
 
 enum
 {
+	SHOW_CONTROLS,
+	SPACESHIP_CAMERA_MODE,
+	SPACESHIP_RENDER_MODE,
 	EBODIES_RENDER_MODE,
 	ASTEROIDS_RENDER_MODE,
-	SPACESHIP_RENDER_MODE,
 	SHOW_VELOCITY_VECTORS,
 	SHOW_ACCELERATION_VECTORS,
-	SHOW_CONTROLS
+	CONTROLS_AMMOUNT // Dejar siempre al final (cantidad total de controles)
 };
 
 enum
@@ -41,13 +44,59 @@ enum
 	PERFORMANCE
 };
 
-static int EBodies_render_mode = QUALITY;
-static int Asteroids_render_mode = PERFORMANCE;
-static int Spaceship_render_mode = QUALITY;
-static int show_velocity_v = 0;
-static int show_acceleration_v = 0;
-static int show_controls = 1;
+typedef struct 
+{
+	int key, value;
+	char description[50];
+} control_t;
+
 static char buffer[128];
+static control_t controls[] =
+{
+	// SHOW_CONTROLS
+	{
+		TOGGLE_SHOW_CONTROLS,
+		1,
+		"Show/Hide Controls: F4"
+	},
+	// SPACESHIP_CAMERA_MODE
+	{
+		TOGGLE_SPACESHIP_CAMERA,
+		0,
+		"Toggle Spaceship Camera: F5"
+	},
+	// SPACESHIP_RENDER_MODE
+	{
+		TOGGLE_SPACESHIP_RENDER_MODE,
+		QUALITY,
+		"Toggle Spaceship Render Mode: F6"
+	},
+	// EBODIES_RENDER_MODE
+	{
+		TOGGLE_EBODIES_RENDER_MODE,
+		QUALITY,
+		"Toggle Bodies Render Mode: F7"
+	},
+	// ASTEROIDS_RENDER_MODE
+	{
+		TOGGLE_ASTEROIDS_RENDER_MODE,
+		PERFORMANCE,
+		"Toggle Asteroids Render Mode: F8"
+	},
+	// SHOW_VELOCITY_VECTORS
+	{
+		TOGGLE_SHOW_VELOCITY,
+		0,
+		"Show/Hide Velocities: F9"
+	},
+	// SHOW_ACCELERATION_VECTORS
+	{
+		TOGGLE_SHOW_ACCELERATION,
+		0,
+		"Show/Hide Accelerations: F10"
+	}
+};
+
 
 static void drawBody(Body_t* body, float radius, Color color, int render_mode);
 
@@ -127,8 +176,8 @@ view_t* constructView(int fps, int fullscreen, int width, int height, int show_v
 	if (fullscreen)
 		ToggleFullscreen();
 
-	show_velocity_v = show_velocity_vectors;
-	show_acceleration_v = show_acceleration_vectors;
+	controls[SHOW_VELOCITY_VECTORS].value = show_velocity_vectors;
+	controls[SHOW_ACCELERATION_VECTORS].value = show_acceleration_vectors;
 	SetTargetFPS(fps);
 
 	DisableCursor();
@@ -174,7 +223,7 @@ static void drawBody(Body_t* body, float radius, Color color, int render_mode)
 		break;
 	}
 
-	if (show_velocity_v)
+	if (controls[SHOW_VELOCITY_VECTORS].value)
 	{
 		velocity.x = body->velocity.x * 1E-4 + position.x;
 		velocity.y = body->velocity.y * 1E-4 + position.y;
@@ -182,7 +231,7 @@ static void drawBody(Body_t* body, float radius, Color color, int render_mode)
 
 		DrawLine3D(position, velocity, BLUE);
 	}
-	if (show_acceleration_v)
+	if (controls[SHOW_ACCELERATION_VECTORS].value)
 	{
 		acceleration.x = body->acceleration.x * 1E3 + position.x;
 		acceleration.y = body->acceleration.y * 1E3 + position.y;
@@ -198,25 +247,14 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	{
 		ToggleFullscreen();
 	}
-	if (IsKeyPressed(TOGGLE_SHOW_VELOCITY))
+
+	// Check for controls toggle
+	for(unsigned i = 0; i < CONTROLS_AMMOUNT; i++)
 	{
-		show_velocity_v = !show_velocity_v;
-	}
-	if (IsKeyPressed(TOGGLE_SHOW_ACCELERATION))
-	{
-		show_acceleration_v = !show_acceleration_v;
-	}
-	if (IsKeyPressed(TOGGLE_EBODIES_RENDER_MODE))
-	{
-		EBodies_render_mode = !EBodies_render_mode;
-	}
-	if (IsKeyPressed(TOGGLE_ASTEROIDS_RENDER_MODE))
-	{
-		Asteroids_render_mode = !Asteroids_render_mode;
-	}
-	if(IsKeyPressed(TOGGLE_SHOW_CONTROLS))
-	{
-		show_controls = !show_controls;
+		if(IsKeyPressed(controls[i].key))
+		{
+			controls[i].value = !controls[i].value;
+		}
 	}
 
 	UpdateCamera(&view->camera, CAMERA_FREE);
@@ -232,13 +270,13 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 
 	for (unsigned int i = 0; i < sim->bodyNum; i++) 
 	{
-		drawBody(&sim->PlanetarySystem[i].body, sim->PlanetarySystem[i].radius, sim->PlanetarySystem[i].color, EBodies_render_mode);
+		drawBody(&sim->PlanetarySystem[i].body, sim->PlanetarySystem[i].radius, sim->PlanetarySystem[i].color, controls[EBODIES_RENDER_MODE].value);
 	}
 	for (unsigned int i = 0; i < sim->asteroidsNum; i++) 
 	{
-		drawBody(sim->Asteroids + i, ASTEROIDS_RADIUS, ASTEROIDS_COLOR, Asteroids_render_mode);
+		drawBody(sim->Asteroids + i, ASTEROIDS_RADIUS, ASTEROIDS_COLOR, controls[ASTEROIDS_RENDER_MODE].value);
 	}
-	drawBody(&sim->Spaceship.body, sim->Spaceship.radius, sim->Spaceship.color, Spaceship_render_mode);
+	drawBody(&sim->Spaceship.body, sim->Spaceship.radius, sim->Spaceship.color, controls[SPACESHIP_RENDER_MODE].value);
 
 	EndMode3D();
 
@@ -253,15 +291,20 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	DrawText(print_simTime_elapsed(get_simTime_elapsed(clock(), sim->started), buffer), 10, 50, 17, RAYWHITE);
 
 	// Show or hide controls menu
-	DrawText("Show/Hide Controls: F6", view->width - CONTROLS_X_MARGIN, 10, 20, CONTROLS_COLOR);
-	if(show_controls)
+	DrawText(controls[SHOW_CONTROLS].description, view->width - CONTROLS_X_MARGIN, 10, 20, CONTROLS_COLOR);
+	if(controls[SHOW_CONTROLS].value)
 	{
 		DrawText("Move Spaceship: U, I, O, J, K, L", view->width - CONTROLS_X_MARGIN, 30, 20, CONTROLS_COLOR);
-		DrawText("Toggle Bodies Render Mode: F7", view->width - CONTROLS_X_MARGIN, 50, 20, CONTROLS_COLOR);
-		DrawText("Toggle Asteroids Render Mode: F8", view->width - CONTROLS_X_MARGIN, 70, 20, CONTROLS_COLOR);
-		DrawText("Show/Hide Velocities: F9", view->width - CONTROLS_X_MARGIN, 90, 20, CONTROLS_COLOR);
-		DrawText("Show/Hide Accelerations: F10", view->width - CONTROLS_X_MARGIN, 110, 20, CONTROLS_COLOR);
-		DrawText("Toggle Fullscreen: F11", view->width - CONTROLS_X_MARGIN, 130, 20, CONTROLS_COLOR);
+		int yCoord = 50;
+		for(unsigned i = 0; i < CONTROLS_AMMOUNT; i++){
+			if(controls[i].key == TOGGLE_SHOW_CONTROLS){
+				yCoord -= 20; // Avoid blank space between control descriptions.
+				continue;
+			}
+			DrawText(controls[i].description, view->width-CONTROLS_X_MARGIN, yCoord+CONTROLS_Y_MARGIN*i, 20, CONTROLS_COLOR);
+		}
+		
+		DrawText("Toggle Fullscreen: F11", view->width - CONTROLS_X_MARGIN, yCoord+CONTROLS_Y_MARGIN*CONTROLS_AMMOUNT, 20, CONTROLS_COLOR);
 	}
 
 	EndDrawing();
