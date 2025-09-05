@@ -11,14 +11,15 @@
 #include "orbitalSim.h"
 #include <raylib.h>
 
-#define TOGGLE_SHOW_CONTROLS KEY_F4
-#define TOGGLE_SPACESHIP_CAMERA KEY_F5
-#define TOGGLE_SPACESHIP_RENDER_MODE KEY_F6
-#define TOGGLE_EBODIES_RENDER_MODE KEY_F7
-#define TOGGLE_ASTEROIDS_RENDER_MODE KEY_F8
-#define TOGGLE_SHOW_VELOCITY KEY_F9
-#define TOGGLE_SHOW_ACCELERATION KEY_F10
-#define FULLSCREEN_KEY KEY_F11
+#define TOGGLE_REWIND_KEY KEY_R
+#define TOGGLE_SHOW_CONTROLS_KEY KEY_F4
+#define TOGGLE_SPACESHIP_CAMERA_KEY KEY_F5
+#define TOGGLE_SPACESHIP_RENDER_MODE_KEY KEY_F6
+#define TOGGLE_EBODIES_RENDER_MODE_KEY KEY_F7
+#define TOGGLE_ASTEROIDS_RENDER_MODE_KEY KEY_F8
+#define TOGGLE_SHOW_VELOCITY_KEY KEY_F9
+#define TOGGLE_SHOW_ACCELERATION_KEY KEY_F10
+#define TOGGLE_FULLSCREEN_KEY KEY_F11
 
 /**
  * The view data
@@ -57,6 +58,6 @@ bool isViewRendering(view_t* view);
  * @param view The view
  * @param sim The orbital sim
  */
-void renderView(view_t* view, OrbitalSim_t* sim);
+int renderView(view_t* view, OrbitalSim_t* sim);
 
 #endif

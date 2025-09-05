@@ -60,7 +60,7 @@ int main(int argc, char* argv[])
 	{
 		for (i = 0; i < sim_updates_per_frame; i++)
 			updateOrbitalSim(sim);
-		renderView(view, sim);
+		simulationSpeed *= (renderView(view, sim)) ? -1.0 : 1.0;
 
 		frametime = GetFrameTime();
 		//sim_updates_per_frame += PIDC * frametime_PID(target_frametime, frametime);

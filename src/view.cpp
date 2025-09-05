@@ -37,6 +37,7 @@ enum
 	ASTEROIDS_RENDER_MODE,
 	SHOW_VELOCITY_VECTORS,
 	SHOW_ACCELERATION_VECTORS,
+	TOGGLE_REWIND,
 	CONTROLS_AMMOUNT // Dejar siempre al final (cantidad total de controles)
 };
 
@@ -57,45 +58,51 @@ static control_t controls[] =
 {
 	// SHOW_CONTROLS
 	{
-		TOGGLE_SHOW_CONTROLS,
+		TOGGLE_SHOW_CONTROLS_KEY,
 		1,
 		"Show/Hide Controls: F4"
 	},
 	// SPACESHIP_CAMERA_MODE
 	{
-		TOGGLE_SPACESHIP_CAMERA,
+		TOGGLE_SPACESHIP_CAMERA_KEY,
 		0,
 		"Toggle Spaceship Camera: F5"
 	},
 	// SPACESHIP_RENDER_MODE
 	{
-		TOGGLE_SPACESHIP_RENDER_MODE,
+		TOGGLE_SPACESHIP_RENDER_MODE_KEY,
 		QUALITY,
 		"Toggle Spaceship Render Mode: F6"
 	},
 	// EBODIES_RENDER_MODE
 	{
-		TOGGLE_EBODIES_RENDER_MODE,
+		TOGGLE_EBODIES_RENDER_MODE_KEY,
 		QUALITY,
 		"Toggle Bodies Render Mode: F7"
 	},
 	// ASTEROIDS_RENDER_MODE
 	{
-		TOGGLE_ASTEROIDS_RENDER_MODE,
+		TOGGLE_ASTEROIDS_RENDER_MODE_KEY,
 		PERFORMANCE,
 		"Toggle Asteroids Render Mode: F8"
 	},
 	// SHOW_VELOCITY_VECTORS
 	{
-		TOGGLE_SHOW_VELOCITY,
+		TOGGLE_SHOW_VELOCITY_KEY,
 		0,
 		"Show/Hide Velocities: F9"
 	},
 	// SHOW_ACCELERATION_VECTORS
 	{
-		TOGGLE_SHOW_ACCELERATION,
+		TOGGLE_SHOW_ACCELERATION_KEY,
 		0,
 		"Show/Hide Accelerations: F10"
+	},
+	// REWIND
+	{
+		TOGGLE_REWIND_KEY,
+		0,
+		"Toggle Rewind"
 	}
 };
 
@@ -137,7 +144,7 @@ static const char* getISODate(time_t timestamp)
 
 static const char* getElapsedSimTime(time_t timestamp, char buffer[])
 {
-	time_t years = timestamp / SECONDS_PER_YEAR;
+	time_t years = timestamp / SECONDS_PER_YEAR;	// Falta agregar el caso de que el anio sea bisiesto ( agregarle un parametro a la funcion )
 	time_t days = (timestamp % SECONDS_PER_YEAR) / SECONDS_PER_DAY;
 
 	sprintf(buffer, "Elapsed Sim Time: %04lld years, %03lld days", years, days);
@@ -224,9 +231,9 @@ static void drawBody(Body_t* body, float radius, Color color, int render_mode)
 	}
 }
 
-void renderView(view_t* view, OrbitalSim_t* sim)
+int renderView(view_t* view, OrbitalSim_t* sim)
 {
-	if (IsKeyPressed(FULLSCREEN_KEY))
+	if (IsKeyPressed(TOGGLE_FULLSCREEN_KEY))
 	{
 		ToggleFullscreen();
 	}
@@ -277,7 +284,7 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 		int yCoord = 50;
 		for (unsigned i = 0; i < CONTROLS_AMMOUNT; i++)
 		{
-			if(controls[i].key == TOGGLE_SHOW_CONTROLS)
+			if(controls[i].key == TOGGLE_SHOW_CONTROLS_KEY)
 			{
 				yCoord -= 20; // Avoid blank space between control descriptions.
 				continue;
@@ -289,4 +296,6 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	}
 
 	EndDrawing();
+
+	return controls[TOGGLE_REWIND].value;
 }
