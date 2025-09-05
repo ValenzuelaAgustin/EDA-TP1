@@ -102,7 +102,7 @@ static control_t controls[] =
 	{
 		TOGGLE_REWIND_KEY,
 		0,
-		"Toggle Rewind"
+		"Toggle Rewind: R"
 	}
 };
 
