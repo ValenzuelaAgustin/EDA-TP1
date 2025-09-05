@@ -7,6 +7,7 @@
 
 #include "view.h"
 #include "nmath.h"
+#include <raymath.h>
 #include <math.h>
 #include <time.h>
 #include <stdio.h>
@@ -27,6 +28,13 @@
 #define CONTROLS_X_MARGIN 370
 #define CONTROLS_Y_MARGIN 20
 #define CONTROLS_COLOR CLITERAL(Color){0, 228, 48, 150} 
+
+// Spaceship
+//#define SPACESHIP_CAMERA_DISTANCE {3.f, 3.f, 3.f}
+#define CAMERA_DISTANCE_SCALAR 1.5f
+
+static Vector3 camLastPosition, camLastTarget;
+static int saveLastCam = 0, returnToLastCam = 0, cameraMode = CAMERA_FREE;
 
 enum
 {
@@ -116,6 +124,9 @@ static control_t controls[] =
  */
 static const char* getISODate(time_t timestamp);
 
+// Returns the vector parsed in the raylib data type Vector3
+static Vector3 toVector3(vector3D_t vector);
+
 /**
  * 
  */
@@ -194,13 +205,19 @@ bool isViewRendering(view_t* view)
 	return !WindowShouldClose();
 }
 
+static Vector3 toVector3(vector3D_t vector){
+	return Vector3{
+		(float)vector.x,
+		(float)vector.y,
+		(float)vector.z
+	};
+}
+
 static void drawBody(Body_t* body, float radius, Color color, int render_mode)
 {
 	Vector3 position, velocity, acceleration;
 
-	position.x = body->position.x * 1E-11;
-	position.y = body->position.y * 1E-11;
-	position.z = body->position.z * 1E-11;
+	position = Vector3Scale(toVector3(body->position), 1E-11);
 
 	switch (render_mode)
 	{
@@ -215,18 +232,12 @@ static void drawBody(Body_t* body, float radius, Color color, int render_mode)
 
 	if (controls[SHOW_VELOCITY_VECTORS].value)
 	{
-		velocity.x = body->velocity.x * 1E-4 + position.x;
-		velocity.y = body->velocity.y * 1E-4 + position.y;
-		velocity.z = body->velocity.z * 1E-4 + position.z;
-
+		velocity = Vector3Add(Vector3Scale(toVector3(body->velocity), 1E-4), position);
 		DrawLine3D(position, velocity, BLUE);
 	}
 	if (controls[SHOW_ACCELERATION_VECTORS].value)
 	{
-		acceleration.x = body->acceleration.x * 1E3 + position.x;
-		acceleration.y = body->acceleration.y * 1E3 + position.y;
-		acceleration.z = body->acceleration.z * 1E3 + position.z;
-
+		acceleration = Vector3Add(Vector3Scale(toVector3(body->acceleration), 1E3), position);
 		DrawLine3D(position, acceleration, RED);
 	}
 }
@@ -247,7 +258,40 @@ int renderView(view_t* view, OrbitalSim_t* sim)
 		}
 	}
 
-	UpdateCamera(&view->camera, CAMERA_FREE);
+	// Camera mode toggle
+	if(controls[SPACESHIP_CAMERA_MODE].value){
+		Vector3 spaceshipPos = Vector3Scale(toVector3(sim->Spaceship.body.position), 1E-11);
+		Vector3 spaceshipDir = Vector3Add(Vector3Scale(toVector3(sim->Spaceship.body.velocity), 1E-4), spaceshipPos);
+		switch(saveLastCam){
+			case 0:
+				camLastPosition = view->camera.position;
+				camLastTarget = view->camera.target;
+				saveLastCam = 1;
+				returnToLastCam = 1;
+				cameraMode = CAMERA_THIRD_PERSON;
+				break;
+			case 1:
+				view->camera.position = Vector3Add(
+					Vector3ClampValue(
+						Vector3Subtract(spaceshipPos, spaceshipDir), CAMERA_DISTANCE_SCALAR, CAMERA_DISTANCE_SCALAR
+					),
+					spaceshipPos
+				);
+				view->camera.target = spaceshipPos;
+				break;
+		}
+	}
+	else{
+		if(returnToLastCam){
+			view->camera.position = camLastPosition;
+			view->camera.target = camLastTarget;
+			returnToLastCam = 0;
+			saveLastCam = 0;
+			cameraMode = CAMERA_FREE;
+		}
+	}
+
+	UpdateCamera(&view->camera, cameraMode);
 
 	BeginDrawing();
 
@@ -256,7 +300,7 @@ int renderView(view_t* view, OrbitalSim_t* sim)
 
 	// Fill in your 3D drawing code here:
 
-	//DrawGrid(10, 10.0f);
+	DrawGrid(15, 5.0f);
 
 	for (unsigned int i = 0; i < sim->bodyNum; i++) 
 	{
