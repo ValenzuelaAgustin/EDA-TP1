@@ -30,12 +30,6 @@ static const int movement_keys[] =
 	SPACESHIP_XN_KEY, SPACESHIP_YN_KEY, SPACESHIP_ZN_KEY
 };
 
-static inline void calculateAccelerations(Body_t* body0, Body_t* body1);
-
-static inline void updateSpeedAndPosition(Body_t* body, double dt);
-
-static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim);
-
 /**
  * @brief Gets a uniform random value in a range
  *
@@ -43,10 +37,7 @@ static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim);
  * @param max Maximum value
  * @return The random value
  */
-static float getRandomFloat(float min, float max)
-{
-	return min + (max - min) * rand() / (float)RAND_MAX;
-}
+static float getRandomFloat(float min, float max);
 
 /**
  * @brief Configures an asteroid
@@ -54,34 +45,34 @@ static float getRandomFloat(float min, float max)
  * @param body An orbital body
  * @param centerMass The mass of the most massive object in the star system
  */
-static void configureAsteroid(Body_t* body, float centerMass, int easter_egg)
-{
-	// Logit distribution
-	float x = getRandomFloat(0, 1);
-	float l = logf(x) - logf(1 - x) + 1;
+static void configureAsteroid(Body_t* body, float centerMass, int easter_egg);
 
-	// https://mathworld.wolfram.com/DiskPointPicking.html
-	float r = ASTEROIDS_MEAN_RADIUS * sqrtf(fabsf(l));
-	float phi = getRandomFloat(0, 2.0F * (float)M_PI);
+/**
+ * @brief Sets PlanetarySystem, Asteroids and SpaceShip accelerations to 0
+ * @param sim Pointer to the simulation
+ */
+static inline void initializeAccelerations(OrbitalSim_t* sim);
 
-	// Surprise!
-	if (easter_egg)
-		phi = 0;
+/**
+ * @brief Calculates the accelerations between two bodies
+ * @param body0
+ * @param body1
+ */
+static inline void calculateAccelerations(Body_t* body0, Body_t* body1);
 
-	// https://en.wikipedia.org/wiki/Circular_orbit#Velocity
-	float v = sqrtf(centerMass / r) * getRandomFloat(0.6F, 1.2F);
-	float vy = getRandomFloat(-1E2F, 1E2F);
+/**
+ * @brief Calculates the new speed and position for a given body
+ * @param body pointer to the body
+ * @param dt time step used to calculate discrete integrals
+ */
+static inline void updateSpeedAndPosition(Body_t* body, double dt);
 
-	// Fill in with your own fields:
-	body->mass_GC = 1E12 * GRAVITATIONAL_CONSTANT;  // Typical asteroid weight: 1 billion tons
-	body->position.x = r * cosf(phi);
-	body->position.y = 0;
-	body->position.z = r * sinf(phi);
+/**
+ * @brief 
+ * @param sim
+ */
+static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim);
 
-	body->velocity.x = -v * sinf(phi);
-	body->velocity.y = vy;
-	body->velocity.z = v * cosf(phi);
-}
 
 OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroidsNum, int easter_egg)
 {
@@ -135,6 +126,96 @@ void destroyOrbitalSim(OrbitalSim_t* sim)
 	delete sim;
 }
 
+void updateOrbitalSim(OrbitalSim_t* sim)
+{
+	//if (!sim || !sim->EphemeridesBody || sim->bodyNum < 1 || sim->dt <= 0)
+	//	return;
+
+	unsigned int i, j;
+
+	initializeAccelerations(sim);
+	updateSpaceShipUserInputs(sim);
+
+	for (i = 0; i < sim->bodyNum; i++)
+	{
+		for (j = 0; j < sim->asteroidsNum; j++)
+		{
+			calculateAccelerations(&sim->PlanetarySystem[i].body, sim->Asteroids + j);
+		}
+		for (j = i + 1; j < sim->bodyNum; j++)
+		{
+			calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->PlanetarySystem[j].body);
+		}
+		calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->Spaceship.body);
+	}
+
+	for (i = 0; i < sim->bodyNum; i++)
+	{
+		updateSpeedAndPosition(&sim->PlanetarySystem[i].body, sim->dt);
+	}
+	for (i = 0; i < sim->asteroidsNum; i++)
+	{
+		updateSpeedAndPosition(sim->Asteroids + i, sim->dt);
+	}
+	updateSpeedAndPosition(&sim->Spaceship.body, sim->dt);
+}
+
+static float getRandomFloat(float min, float max)
+{
+	return min + (max - min) * rand() / (float)RAND_MAX;
+}
+
+static void configureAsteroid(Body_t* body, float centerMass, int easter_egg)
+{
+	// Logit distribution
+	float x = getRandomFloat(0, 1);
+	float l = logf(x) - logf(1 - x) + 1;
+
+	// https://mathworld.wolfram.com/DiskPointPicking.html
+	float r = ASTEROIDS_MEAN_RADIUS * sqrtf(fabsf(l));
+	float phi = getRandomFloat(0, 2.0F * (float)M_PI);
+
+	// Surprise!
+	if (easter_egg)
+		phi = 0;
+
+	// https://en.wikipedia.org/wiki/Circular_orbit#Velocity
+	float v = sqrtf(centerMass / r) * getRandomFloat(0.6F, 1.2F);
+	float vy = getRandomFloat(-1E2F, 1E2F);
+
+	// Fill in with your own fields:
+	body->mass_GC = 1E12 * GRAVITATIONAL_CONSTANT;  // Typical asteroid weight: 1 billion tons
+	body->position.x = r * cosf(phi);
+	body->position.y = 0;
+	body->position.z = r * sinf(phi);
+
+	body->velocity.x = -v * sinf(phi);
+	body->velocity.y = vy;
+	body->velocity.z = v * cosf(phi);
+}
+
+static inline void initializeAccelerations(OrbitalSim_t* sim)
+{
+	unsigned int i;
+
+	for (i = 0; i < sim->bodyNum; i++)
+	{
+		sim->PlanetarySystem[i].body.acceleration.x = 0.0;
+		sim->PlanetarySystem[i].body.acceleration.y = 0.0;
+		sim->PlanetarySystem[i].body.acceleration.z = 0.0;
+	}
+	for (i = 0; i < sim->asteroidsNum; i++)
+	{
+		sim->Asteroids[i].acceleration.x = 0.0;
+		sim->Asteroids[i].acceleration.y = 0.0;
+		sim->Asteroids[i].acceleration.z = 0.0;
+	}
+
+	sim->Spaceship.body.acceleration.x = 0.0;
+	sim->Spaceship.body.acceleration.y = 0.0;
+	sim->Spaceship.body.acceleration.z = 0.0;
+}
+
 static inline void calculateAccelerations(Body_t* body0, Body_t* body1)
 {
 	vector3D_t acceleration;
@@ -186,53 +267,4 @@ static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
 			acceleration[axis] += (i < 3) ? SPACESHIP_ACCELERATION : -SPACESHIP_ACCELERATION;
 		}
 	}
-}
-
-void updateOrbitalSim(OrbitalSim_t* sim)
-{
-	//if (!sim || !sim->EphemeridesBody || sim->bodyNum < 1 || sim->dt <= 0)
-	//	return;
-
-	unsigned int i, j;
-
-	for (i = 0; i < sim->bodyNum; i++)
-	{
-		sim->PlanetarySystem[i].body.acceleration.x = 0.0;
-		sim->PlanetarySystem[i].body.acceleration.y = 0.0;
-		sim->PlanetarySystem[i].body.acceleration.z = 0.0;
-	}
-	for (i = 0; i < sim->asteroidsNum; i++)
-	{
-		sim->Asteroids[i].acceleration.x = 0.0;
-		sim->Asteroids[i].acceleration.y = 0.0;
-		sim->Asteroids[i].acceleration.z = 0.0;
-	}
-
-	sim->Spaceship.body.acceleration.x = 0.0;
-	sim->Spaceship.body.acceleration.y = 0.0;
-	sim->Spaceship.body.acceleration.z = 0.0;
-	updateSpaceShipUserInputs(sim);
-
-	for (i = 0; i < sim->bodyNum; i++)
-	{
-		for (j = 0; j < sim->asteroidsNum; j++)
-		{
-			calculateAccelerations(&sim->PlanetarySystem[i].body, sim->Asteroids + j);
-		}
-		for (j = i + 1; j < sim->bodyNum; j++)
-		{
-			calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->PlanetarySystem[j].body);
-		}
-		calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->Spaceship.body);
-	}
-
-	for (i = 0; i < sim->bodyNum; i++)
-	{
-		updateSpeedAndPosition(&sim->PlanetarySystem[i].body, sim->dt);
-	}
-	for (i = 0; i < sim->asteroidsNum; i++)
-	{
-		updateSpeedAndPosition(sim->Asteroids + i, sim->dt);
-	}
-	updateSpeedAndPosition(&sim->Spaceship.body, sim->dt);
 }
