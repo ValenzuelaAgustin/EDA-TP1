@@ -10,6 +10,7 @@
 #include "nmath.h"
 #include <time.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #define MIN_WIDTH 800
 #define MIN_HEIGHT 600
@@ -17,9 +18,22 @@
 #define DEFAULT_WINDOW_HEIGHT 720
 #define WINDOW_TITLE "EDA Orbital Simulation"
 
+#define ASTEROIDS_COLOR GRAY
+#define ASTEROIDS_RADIUS 2E3F
+
 // Controls
 #define CONTROLS_X_MARGIN 370
 #define CONTROLS_COLOR CLITERAL(Color){0, 228, 48, 150} 
+
+enum
+{
+	EBODIES_RENDER_MODE,
+	ASTEROIDS_RENDER_MODE,
+	SPACESHIP_RENDER_MODE,
+	SHOW_VELOCITY_VECTORS,
+	SHOW_ACCELERATION_VECTORS,
+	SHOW_CONTROLS
+};
 
 enum
 {
@@ -35,7 +49,7 @@ static int show_acceleration_v = 0;
 static int show_controls = 1;
 static char buffer[128];
 
-static void drawBody(EphemeridesBody_t* body, int render_mode);
+static void drawBody(Body_t* body, float radius, Color color, int render_mode);
 
 /**
  * @brief Converts a timestamp (number of seconds since 1/1/2022)
@@ -141,38 +155,38 @@ bool isViewRendering(view_t* view)
 	return !WindowShouldClose();
 }
 
-static void drawBody(EphemeridesBody_t* body, int render_mode)
+static void drawBody(Body_t* body, float radius, Color color, int render_mode)
 {
 	Vector3 position, velocity, acceleration;
 
-	position.x = body->position[X] * 1E-11;
-	position.y = body->position[Y] * 1E-11;
-	position.z = body->position[Z] * 1E-11;
+	position.x = body->position.x * 1E-11;
+	position.y = body->position.y * 1E-11;
+	position.z = body->position.z * 1E-11;
 
 	switch (render_mode)
 	{
 	default:
 	case QUALITY:
-		DrawSphereEx(position, 0.005F * logf(body->radius), 5, 7, body->color);
+		DrawSphereEx(position, 0.005F * logf(radius), 5, 7, color);
 		break;
 	case PERFORMANCE:
-		DrawPoint3D(position, body->color);
+		DrawPoint3D(position, color);
 		break;
 	}
 
 	if (show_velocity_v)
 	{
-		velocity.x = body->velocity[X] * 1E-4 + position.x;
-		velocity.y = body->velocity[Y] * 1E-4 + position.y;
-		velocity.z = body->velocity[Z] * 1E-4 + position.z;
+		velocity.x = body->velocity.x * 1E-4 + position.x;
+		velocity.y = body->velocity.y * 1E-4 + position.y;
+		velocity.z = body->velocity.z * 1E-4 + position.z;
 
 		DrawLine3D(position, velocity, BLUE);
 	}
 	if (show_acceleration_v)
 	{
-		acceleration.x = body->acceleration[X] * 1E3 + position.x;
-		acceleration.y = body->acceleration[Y] * 1E3 + position.y;
-		acceleration.z = body->acceleration[Z] * 1E3 + position.z;
+		acceleration.x = body->acceleration.x * 1E3 + position.x;
+		acceleration.y = body->acceleration.y * 1E3 + position.y;
+		acceleration.z = body->acceleration.z * 1E3 + position.z;
 
 		DrawLine3D(position, acceleration, RED);
 	}
@@ -218,13 +232,13 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 
 	for (unsigned int i = 0; i < sim->bodyNum; i++) 
 	{
-		drawBody(sim->EphemeridesBody + i, EBodies_render_mode);
+		drawBody(&sim->PlanetarySystem[i].body, sim->PlanetarySystem[i].radius, sim->PlanetarySystem[i].color, EBodies_render_mode);
 	}
 	for (unsigned int i = 0; i < sim->asteroidsNum; i++) 
 	{
-		drawBody(sim->Asteroids + i, Asteroids_render_mode);
+		drawBody(sim->Asteroids + i, ASTEROIDS_RADIUS, ASTEROIDS_COLOR, Asteroids_render_mode);
 	}
-	drawBody(&sim->spaceship, Spaceship_render_mode);
+	drawBody(&sim->Spaceship.body, sim->Spaceship.radius, sim->Spaceship.color, Spaceship_render_mode);
 
 	EndMode3D();
 

@@ -10,7 +10,6 @@
 
 #include "orbitalSim.h"
 #include <raylib.h>
-#include <stdio.h>
 
 #define FULLSCREEN_KEY KEY_F11
 #define TOGGLE_SHOW_CONTROLS KEY_F6

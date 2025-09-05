@@ -8,19 +8,25 @@
 #ifndef EPHEMERIDES_H
 #define EPHEMERIDES_H
 
+#include "nmath.h"
 #include <raylib.h>
 
 #define GRAVITATIONAL_CONSTANT 6.6743E-11	// [N * m^2 / Kg^2]
 
 typedef struct
 {
-	const char* name;		// Name
 	double mass_GC;			// [m^3 / s^2]
-	float radius;			// [m]
+	vector3D_t position;		// [m]
+	vector3D_t velocity;		// [m/s]
+	vector3D_t acceleration;	// [m/s^2]
+} Body_t;
+
+typedef struct
+{
+//	const char* name;		// Name
 	Color color;			// Raylib color
-	double position[3];		// [m]
-	double velocity[3];		// [m/s]
-	double acceleration[3];		// [m/s^2]
+	float radius;			// [m]
+	Body_t body;
 } EphemeridesBody_t;
 
 /**

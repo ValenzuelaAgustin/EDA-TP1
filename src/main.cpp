@@ -10,10 +10,13 @@
 #include "view.h"
 #include <stdio.h>
 
+//#define TEST_UPDATE_ORBITAL_SIM
+#ifdef TEST_UPDATE_ORBITAL_SIM
+	#include <time.h>
+#endif
+
 #define INITIAL_SIM_UPDATES_PER_FRAME 100
-#define DEFAULT_FPS_TARGET 60
 #define SECONDS_PER_DAY ( 24 * 60 * 60 )
-#define DEFAULT_FRAME_TIME ( 1.0 / DEFAULT_FPS_TARGET )
 
 /*
 +fps_target 0 -fullscreen -w 2560 -h 1600 -days_per_simulation_second 10 -asteroids_ammount 500 -show_velocity_vectors -show_acceleration_vectors
@@ -34,9 +37,11 @@ int main(int argc, char* argv[])
 
 	searchLaunchOptions(argc, argv, launchOptionsValues);
 	simulationSpeed = launchOptionsValues[DAYS_PER_SIMULATION_SECOND] * SECONDS_PER_DAY;
-	solarSystem[JUPITER].mass_GC *= (launchOptionsValues[MASSIVE_JUPITER]) ? 1E3 : 1.0 ;
+	solarSystem[JUPITER].body.mass_GC *= (launchOptionsValues[MASSIVE_JUPITER]) ? 1E3 : 1.0;
 
 	OrbitalSim_t* sim = constructOrbitalSim(simulationSpeed, launchOptionsValues[ASTEROIDS_AMMOUNT]);
+
+#ifndef TEST_UPDATE_ORBITAL_SIM
 	view_t* view = constructView(	0,
 					launchOptionsValues[FULLSCREEN],
 					launchOptionsValues[WIDTH],
@@ -47,7 +52,7 @@ int main(int argc, char* argv[])
 	PIDC = (sim->asteroidsNum == 0) ? 1E4 : 1E4 / sim->asteroidsNum;
 	PIDC = (PIDC < 1) ? 1 : PIDC;
 
-	target_frametime = (launchOptionsValues[TARGET_FPS] == 0) ? DEFAULT_FRAME_TIME : (1.0 / launchOptionsValues[TARGET_FPS]);
+	target_frametime = 1.0 / launchOptionsValues[TARGET_FPS];
 	sim_updates_per_frame = getInitialSimUpdatesPerFrame(sim, view, target_frametime, PIDC);
 	sim->started = 1;
 	printf("\nsim_updates_per_frame = %.0lf", sim_updates_per_frame);
@@ -68,6 +73,25 @@ int main(int argc, char* argv[])
 	destroyOrbitalSim(sim);
 
 	return 0;
+#else
+	#define TEST_TIME (60 * 20)
+	time_t t0, t1;
+	size_t counter = 0;
+	t0 = time(NULL);
+
+	do
+	{
+		updateOrbitalSim(sim);
+		counter++;
+		t1 = time(NULL);
+	} while (difftime(t1,t0) < TEST_TIME);
+
+	printf("\nUpdates:\t%zu\nTime:\t%lld\n", counter, t1 - t0);
+	printf("\nUpdates per second:\t%zu\n",counter / TEST_TIME);
+	printf("\nUpdates per frame:\t%zu\n",counter / (TEST_TIME * launchOptionsValues[TARGET_FPS]));
+
+	return 0;
+#endif
 }
 
 double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC)

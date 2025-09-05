@@ -17,8 +17,8 @@ const launchOptions_t launchOptions[] =
 	{
 		"+fps_target",
 		1,
-		0,
-		{0, 240}
+		60,
+		{15, 240}
 	},
 	{
 		"-fullscreen",

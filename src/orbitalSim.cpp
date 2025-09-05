@@ -30,9 +30,9 @@ static const int movement_keys[] =
 	SPACESHIP_XN_KEY, SPACESHIP_YN_KEY, SPACESHIP_ZN_KEY
 };
 
-static inline void calculateAccelerations(EphemeridesBody_t* body0, EphemeridesBody_t* body1);
+static inline void calculateAccelerations(Body_t* body0, Body_t* body1);
 
-static inline void updateSpeedAndPosition(EphemeridesBody_t* body, double dt);
+static inline void updateSpeedAndPosition(Body_t* body, double dt);
 
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim);
 
@@ -54,7 +54,7 @@ static float getRandomFloat(float min, float max)
  * @param body An orbital body
  * @param centerMass The mass of the most massive object in the star system
  */
-static void configureAsteroid(EphemeridesBody_t* body, float centerMass)
+static void configureAsteroid(Body_t* body, float centerMass)
 {
 	// Logit distribution
 	float x = getRandomFloat(0, 1);
@@ -72,17 +72,14 @@ static void configureAsteroid(EphemeridesBody_t* body, float centerMass)
 	float vy = getRandomFloat(-1E2F, 1E2F);
 
 	// Fill in with your own fields:
-	body->name = NULL;
 	body->mass_GC = 1E12 * GRAVITATIONAL_CONSTANT;  // Typical asteroid weight: 1 billion tons
-	body->radius = 2E3F; // Typical asteroid radius: 2km
-	body->color = GRAY;
-	body->position[X] = r * cosf(phi);
-	body->position[Y] = 0;
-	body->position[Z] = r * sinf(phi);
+	body->position.x = r * cosf(phi);
+	body->position.y = 0;
+	body->position.z = r * sinf(phi);
 
-	body->velocity[X] = -v * sinf(phi);
-	body->velocity[Y] = vy;
-	body->velocity[Z] = v * cosf(phi);
+	body->velocity.x = -v * sinf(phi);
+	body->velocity.y = vy;
+	body->velocity.z = v * cosf(phi);
 }
 
 OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroidsNum)
@@ -96,12 +93,12 @@ OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroids
 
 	ptr->bodyNum = SOLARSYSTEM_BODYNUM;
 	ptr->asteroidsNum = asteroidsNum;
-	ptr->EphemeridesBody = (EphemeridesBody_t*)malloc(sizeof(EphemeridesBody_t) * (ptr->bodyNum + ptr->asteroidsNum));
-	ptr->Asteroids = (ptr->asteroidsNum) ? ptr->EphemeridesBody + ptr->bodyNum : NULL;
+	ptr->PlanetarySystem = (EphemeridesBody_t*)malloc(sizeof(EphemeridesBody_t) * ptr->bodyNum + sizeof(Body_t) * ptr->asteroidsNum);
+	ptr->Asteroids = (Body_t*) ((ptr->asteroidsNum) ? (ptr->PlanetarySystem + ptr->bodyNum) : NULL);
 
-	if (!ptr->EphemeridesBody)
+	if (!ptr->PlanetarySystem)
 	{
-		free(ptr->EphemeridesBody);
+		free(ptr->PlanetarySystem);
 		delete ptr;
 		return NULL;
 	}
@@ -113,17 +110,17 @@ OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroids
 	unsigned int i;
 	for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
 	{
-		ptr->EphemeridesBody[i] = solarSystem[i];
+		ptr->PlanetarySystem[i] = solarSystem[i];
 	}
 	for (i = 0; i < ptr->asteroidsNum; i++)
 	{
-		configureAsteroid(ptr->Asteroids + i, ptr->EphemeridesBody[SOL].mass_GC);
+		configureAsteroid(ptr->Asteroids + i, ptr->PlanetarySystem[SOL].body.mass_GC);
 	}
 
-	configureAsteroid(&ptr->spaceship, ptr->EphemeridesBody[SOL].mass_GC);
-	ptr->spaceship.color = GREEN;
-	ptr->spaceship.radius = 120;
-	ptr->spaceship.mass_GC = 5E6 * GRAVITATIONAL_CONSTANT;
+	configureAsteroid(&ptr->Spaceship.body, ptr->PlanetarySystem[SOL].body.mass_GC);
+	ptr->Spaceship.color = GREEN;
+	ptr->Spaceship.radius = 120;
+	ptr->Spaceship.body.mass_GC = 5E6 * GRAVITATIONAL_CONSTANT;
 
 	return ptr; // This should return your orbital sim
 }
@@ -132,57 +129,60 @@ void destroyOrbitalSim(OrbitalSim_t* sim)
 {
 	if (!sim)
 		return;
-	if (sim->EphemeridesBody)
-		free(sim->EphemeridesBody);
+	if (sim->PlanetarySystem)
+		free(sim->PlanetarySystem);
 	delete sim;
 }
 
-static inline void calculateAccelerations(EphemeridesBody_t* body0, EphemeridesBody_t* body1)
+static inline void calculateAccelerations(Body_t* body0, Body_t* body1)
 {
-	double acceleration[3];
+	vector3D_t acceleration;
 	double inverse_distance_cubed;
 
-	acceleration[X] = body1->position[X] - body0->position[X];
-	acceleration[Y] = body1->position[Y] - body0->position[Y];
-	acceleration[Z] = body1->position[Z] - body0->position[Z];
+	acceleration.x = body1->position.x - body0->position.x;
+	acceleration.y = body1->position.y - body0->position.y;
+	acceleration.z = body1->position.z - body0->position.z;
 
-	inverse_distance_cubed = Q_rsqrt(DOT_PRODUCT(acceleration, acceleration));
+	inverse_distance_cubed = 1 / sqrt(DOT_PRODUCT(acceleration, acceleration));
+//	inverse_distance_cubed = Q_rsqrt(DOT_PRODUCT(acceleration, acceleration));
 	inverse_distance_cubed = inverse_distance_cubed * inverse_distance_cubed * inverse_distance_cubed;
 
-	acceleration[X] *= inverse_distance_cubed;
-	acceleration[Y] *= inverse_distance_cubed;
-	acceleration[Z] *= inverse_distance_cubed;
+	acceleration.x *= inverse_distance_cubed;
+	acceleration.y *= inverse_distance_cubed;
+	acceleration.z *= inverse_distance_cubed;
 
-	body0->acceleration[X] += body1->mass_GC * acceleration[X];
-	body0->acceleration[Y] += body1->mass_GC * acceleration[Y];
-	body0->acceleration[Z] += body1->mass_GC * acceleration[Z];
+	body0->acceleration.x += body1->mass_GC * acceleration.x;
+	body0->acceleration.y += body1->mass_GC * acceleration.y;
+	body0->acceleration.z += body1->mass_GC * acceleration.z;
 
-	body1->acceleration[X] -= body0->mass_GC * acceleration[X];
-	body1->acceleration[Y] -= body0->mass_GC * acceleration[Y];
-	body1->acceleration[Z] -= body0->mass_GC * acceleration[Z];
+	body1->acceleration.x -= body0->mass_GC * acceleration.x;
+	body1->acceleration.y -= body0->mass_GC * acceleration.y;
+	body1->acceleration.z -= body0->mass_GC * acceleration.z;
 }
 
-static inline void updateSpeedAndPosition(EphemeridesBody_t* body, double dt)
+static inline void updateSpeedAndPosition(Body_t* body, double dt)
 {
-	body->velocity[X] += body->acceleration[X] * dt;
-	body->velocity[Y] += body->acceleration[Y] * dt;
-	body->velocity[Z] += body->acceleration[Z] * dt;
+	body->velocity.x += body->acceleration.x * dt;
+	body->velocity.y += body->acceleration.y * dt;
+	body->velocity.z += body->acceleration.z * dt;
 
-	body->position[X] += body->velocity[X] * dt;
-	body->position[Y] += body->velocity[Y] * dt;
-	body->position[Z] += body->velocity[Z] * dt;
+	body->position.x += body->velocity.x * dt;
+	body->position.y += body->velocity.y * dt;
+	body->position.z += body->velocity.z * dt;
 }
 
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
 {
 	int i, axis;
+	double* acceleration = (double*) &sim->Spaceship.body.acceleration;
+
 	for (i = 0, axis = 0; i < 6; i++, axis = i % 3)
 	{
 		// i = 0,1,2 Para los ejes en sentido positivo (teclas U, I y O)
 		// i = 3,4,5 Para los ejes en sentido negativo (teclas J, K y L)
 		if (IsKeyDown(movement_keys[i]))
 		{
-			sim->spaceship.acceleration[axis] += (i < 3) ? SPACESHIP_ACCELERATION : -SPACESHIP_ACCELERATION;
+			acceleration[axis] += (i < 3) ? SPACESHIP_ACCELERATION : -SPACESHIP_ACCELERATION;
 		}
 	}
 }
@@ -194,34 +194,44 @@ void updateOrbitalSim(OrbitalSim_t* sim)
 
 	unsigned int i, j;
 
-	for (i = 0, j = sim->bodyNum + sim->asteroidsNum; i < j; i++)
+	for (i = 0; i < sim->bodyNum; i++)
 	{
-		sim->EphemeridesBody[i].acceleration[X] = 0;
-		sim->EphemeridesBody[i].acceleration[Y] = 0;
-		sim->EphemeridesBody[i].acceleration[Z] = 0;
+		sim->PlanetarySystem[i].body.acceleration.x = 0.0;
+		sim->PlanetarySystem[i].body.acceleration.y = 0.0;
+		sim->PlanetarySystem[i].body.acceleration.z = 0.0;
+	}
+	for (i = 0; i < sim->asteroidsNum; i++)
+	{
+		sim->Asteroids[i].acceleration.x = 0.0;
+		sim->Asteroids[i].acceleration.y = 0.0;
+		sim->Asteroids[i].acceleration.z = 0.0;
 	}
 
-	sim->spaceship.acceleration[X] = 0;
-	sim->spaceship.acceleration[Y] = 0;
-	sim->spaceship.acceleration[Z] = 0;
+	sim->Spaceship.body.acceleration.x = 0.0;
+	sim->Spaceship.body.acceleration.y = 0.0;
+	sim->Spaceship.body.acceleration.z = 0.0;
 	updateSpaceShipUserInputs(sim);
 
 	for (i = 0; i < sim->bodyNum; i++)
 	{
 		for (j = 0; j < sim->asteroidsNum; j++)
 		{
-			calculateAccelerations(sim->EphemeridesBody + i, sim->Asteroids + j);
+			calculateAccelerations(&sim->PlanetarySystem[i].body, sim->Asteroids + j);
 		}
 		for (j = i + 1; j < sim->bodyNum; j++)
 		{
-			calculateAccelerations(sim->EphemeridesBody + i, sim->EphemeridesBody + j);
+			calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->PlanetarySystem[j].body);
 		}
-		calculateAccelerations(sim->EphemeridesBody + i, &sim->spaceship);
+		calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->Spaceship.body);
 	}
 
-	for (i = 0, j = sim->bodyNum + sim->asteroidsNum; i < j; i++)
+	for (i = 0; i < sim->bodyNum; i++)
 	{
-		updateSpeedAndPosition(sim->EphemeridesBody + i, sim->dt);
+		updateSpeedAndPosition(&sim->PlanetarySystem[i].body, sim->dt);
 	}
-	updateSpeedAndPosition(&sim->spaceship, sim->dt);
+	for (i = 0; i < sim->asteroidsNum; i++)
+	{
+		updateSpeedAndPosition(sim->Asteroids + i, sim->dt);
+	}
+	updateSpeedAndPosition(&sim->Spaceship.body, sim->dt);
 }

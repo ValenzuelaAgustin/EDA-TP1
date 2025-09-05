@@ -16,9 +16,9 @@ typedef struct
 {
 	double simulationSpeed;		// In simulated seconds per real second
 	double dt;			// In seconds ( has to be updated with the frametime to match the simulation speed )
-	EphemeridesBody_t* EphemeridesBody;
-	EphemeridesBody_t* Asteroids;
-	EphemeridesBody_t spaceship;
+	EphemeridesBody_t* PlanetarySystem;
+	Body_t* Asteroids;
+	EphemeridesBody_t Spaceship;
 	unsigned int bodyNum;
 	unsigned int asteroidsNum;
 	int started;
