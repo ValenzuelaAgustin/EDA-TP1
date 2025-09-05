@@ -73,6 +73,12 @@ const launchOptions_t launchOptions[] =
 		0,
 		0,
 		{0, 1}
+	},
+	{
+		"-easter_egg",
+		0,
+		0,
+		{0, 1}
 	}
 };
 

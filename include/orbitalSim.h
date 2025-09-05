@@ -30,7 +30,7 @@ typedef struct
  * @param float The time step
  * @return The orbital simulation
  */
-OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroidsNum);
+OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroidsNum, int easter_egg);
 
 /**
  * @brief Destroys an orbital simulation

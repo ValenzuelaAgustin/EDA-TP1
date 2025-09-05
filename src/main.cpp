@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
 	simulationSpeed = launchOptionsValues[DAYS_PER_SIMULATION_SECOND] * SECONDS_PER_DAY;
 	solarSystem[JUPITER].body.mass_GC *= (launchOptionsValues[MASSIVE_JUPITER]) ? 1E3 : 1.0;
 
-	OrbitalSim_t* sim = constructOrbitalSim(simulationSpeed, launchOptionsValues[ASTEROIDS_AMMOUNT]);
+	OrbitalSim_t* sim = constructOrbitalSim(simulationSpeed, launchOptionsValues[ASTEROIDS_AMMOUNT], launchOptionsValues[EASTER_EGG]);
 
 #ifndef TEST_UPDATE_ORBITAL_SIM
 	view_t* view = constructView(	0,
@@ -113,7 +113,7 @@ double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double targ
 		sim_updates_per_frame += PIDC * frametime_PID(target_frametime, frametime);
 		sim_updates_per_frame = (sim_updates_per_frame > 1) ? sim_updates_per_frame : 1;
 
-		end_condition = (frametime >= 0.9 * target_frametime && frametime <= 1.1 * target_frametime) ? end_condition + 1 : end_condition;
+		end_condition = (frametime >= 0.9 * target_frametime && frametime <= 1.1 * target_frametime) ? end_condition + 1 : 0;
 	}
 
 	return sim_updates_per_frame;

@@ -54,7 +54,7 @@ static float getRandomFloat(float min, float max)
  * @param body An orbital body
  * @param centerMass The mass of the most massive object in the star system
  */
-static void configureAsteroid(Body_t* body, float centerMass)
+static void configureAsteroid(Body_t* body, float centerMass, int easter_egg)
 {
 	// Logit distribution
 	float x = getRandomFloat(0, 1);
@@ -65,7 +65,8 @@ static void configureAsteroid(Body_t* body, float centerMass)
 	float phi = getRandomFloat(0, 2.0F * (float)M_PI);
 
 	// Surprise!
-	// phi = 0;
+	if (easter_egg)
+		phi = 0;
 
 	// https://en.wikipedia.org/wiki/Circular_orbit#Velocity
 	float v = sqrtf(centerMass / r) * getRandomFloat(0.6F, 1.2F);
@@ -82,7 +83,7 @@ static void configureAsteroid(Body_t* body, float centerMass)
 	body->velocity.z = v * cosf(phi);
 }
 
-OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroidsNum)
+OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroidsNum, int easter_egg)
 {
 	if (simulationSpeed <= 0)
 		return NULL;
@@ -114,10 +115,10 @@ OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroids
 	}
 	for (i = 0; i < ptr->asteroidsNum; i++)
 	{
-		configureAsteroid(ptr->Asteroids + i, ptr->PlanetarySystem[SOL].body.mass_GC);
+		configureAsteroid(ptr->Asteroids + i, ptr->PlanetarySystem[SOL].body.mass_GC, easter_egg);
 	}
 
-	configureAsteroid(&ptr->Spaceship.body, ptr->PlanetarySystem[SOL].body.mass_GC);
+	configureAsteroid(&ptr->Spaceship.body, ptr->PlanetarySystem[SOL].body.mass_GC, 0);
 	ptr->Spaceship.color = GREEN;
 	ptr->Spaceship.radius = 120;
 	ptr->Spaceship.body.mass_GC = 5E6 * GRAVITATIONAL_CONSTANT;

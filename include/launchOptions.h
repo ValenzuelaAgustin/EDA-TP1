@@ -23,7 +23,8 @@ enum
 	SHOW_VELOCITY_VECTORS,
 	SHOW_ACCELERATION_VECTORS,
 	MASSIVE_JUPITER,
-	SPAWN_BLACKHOLE
+	SPAWN_BLACKHOLE,
+	EASTER_EGG
 };
 
 void searchLaunchOptions(int argc, char* argv[], int* launchOptionsValues);
