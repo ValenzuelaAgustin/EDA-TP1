@@ -29,6 +29,7 @@ int main(int argc, char* argv[])
 {
 	int i;
 	int launchOptionsValues[launchOptionsAmmount];
+	double time_direction = 1.0;
 	double simulationSpeed;
 	double target_frametime;
 	double frametime;
@@ -60,12 +61,12 @@ int main(int argc, char* argv[])
 	{
 		for (i = 0; i < sim_updates_per_frame; i++)
 			updateOrbitalSim(sim);
-		simulationSpeed *= (renderView(view, sim)) ? -1.0 : 1.0;
+		time_direction = (renderView(view, sim)) ? -1.0 : 1.0;
 
 		frametime = GetFrameTime();
 		//sim_updates_per_frame += PIDC * frametime_PID(target_frametime, frametime);
 		//sim_updates_per_frame = (sim_updates_per_frame > 1) ? sim_updates_per_frame : 1;
-		sim->dt = simulationSpeed * frametime / sim_updates_per_frame;
+		sim->dt = time_direction * simulationSpeed * frametime / sim_updates_per_frame;
 	}
 
 	destroyView(view);
