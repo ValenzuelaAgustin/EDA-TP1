@@ -6,11 +6,13 @@
  */
 
 #include "view.h"
-#include "raymath.h"
 #include "nmath.h"
+#include <math.h>
 #include <time.h>
-#include <stdarg.h>
 #include <stdio.h>
+
+#define SECONDS_PER_DAY (time_t)(24 * 60 * 60)
+#define SECONDS_PER_YEAR (time_t)(365 * SECONDS_PER_DAY)
 
 #define MIN_WIDTH 800
 #define MIN_HEIGHT 600
@@ -98,66 +100,47 @@ static control_t controls[] =
 };
 
 
-static void drawBody(Body_t* body, float radius, Color color, int render_mode);
-
 /**
  * @brief Converts a timestamp (number of seconds since 1/1/2022)
  *		to an ISO date ("YYYY-MM-DD")
  *
  * @param timestamp the timestamp
- * @param started wether the simulation has started
  * @return The ISO date (a raylib string)
  */
-static const char* getISODate(float timestamp, int started)
+static const char* getISODate(time_t timestamp);
+
+/**
+ * 
+ */
+static void drawBody(Body_t* body, float radius, Color color, int render_mode);
+
+/**
+ * 
+ */
+static const char* getElapsedSimTime(time_t timestamp, char buffer[]);
+
+
+static const char* getISODate(time_t timestamp)
 {
-	static time_t old_timestamp = 0.0;
-	time_t new_timestamp = 0.0;
-	if (!started)
-	{
-		old_timestamp = (time_t)timestamp;
-		return TextFormat("0000-00-00");
-	}
-	new_timestamp = (time_t)timestamp - old_timestamp;
-	if(started)
-	{
-		// Timestamp epoch: 1/1/2022
-		struct tm unichEpochTM = {0, 0, 0, 1, 0, 122};
+	// Timestamp epoch: 1/1/2022
+	struct tm unichEpochTM = {0, 0, 0, 1, 0, 122};
 
-		// Convert timestamp to UNIX timestamp (number of seconds since 1/1/1970)
-		time_t unixEpoch = mktime(&unichEpochTM);
-		time_t unixTimestamp = unixEpoch + (time_t)new_timestamp;
+	// Convert timestamp to UNIX timestamp (number of seconds since 1/1/1970)
+	time_t unixEpoch = mktime(&unichEpochTM);
+	time_t unixTimestamp = unixEpoch + timestamp;
 
-		// Returns ISO date
-		struct tm* localTM = localtime(&unixTimestamp);
-		return TextFormat("%04d-%02d-%02d",
-						1900 + localTM->tm_year, localTM->tm_mon + 1, localTM->tm_mday);
-	}
+	// Returns ISO date
+	struct tm* localTM = localtime(&unixTimestamp);
+	return TextFormat("%04d-%02d-%02d",
+					1900 + localTM->tm_year, localTM->tm_mon + 1, localTM->tm_mday);
 }
 
-static const char* get_simTime_elapsed (float timestamp, int started)
+static const char* getElapsedSimTime(time_t timestamp, char buffer[])
 {
-	static float old_timestamp;
-	float new_timestamp;
+	time_t years = timestamp / SECONDS_PER_YEAR;
+	time_t days = (timestamp % SECONDS_PER_YEAR) / SECONDS_PER_DAY;
 
-	if(!started)
-	{
-		old_timestamp = timestamp;
-	}
-	new_timestamp = timestamp - old_timestamp;
-	if(started)
-	{
-		time_t copy_timestamp = (time_t)new_timestamp;
-
-		struct tm* localTM = localtime(&copy_timestamp);
-		return TextFormat("%04d years, %02d months, %02d days", localTM->tm_year - 70, localTM->tm_mon, localTM->tm_mday);
-	}
-	else
-		return TextFormat("0000 years, 00 months, 00 days");
-}
-
-char* print_simTime_elapsed (const char* simTime, char buffer [])
-{
-	sprintf(buffer, "Elapsed Sim Time: %s ", simTime);
+	sprintf(buffer, "Elapsed Sim Time: %04lld years, %03lld days", years, days);
 	return buffer;
 }
 
@@ -283,12 +266,8 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	// Fill in your 2D drawing code here:
 	DrawFPS(10,10);
 
-	if(sim->started)
-		DrawText(getISODate(clock(), sim->started),10, 30, 20, RAYWHITE);
-	else
-		DrawText("0000-00-00", 10, 30, 20, RAYWHITE);
-
-	DrawText(print_simTime_elapsed(get_simTime_elapsed(clock(), sim->started), buffer), 10, 50, 17, RAYWHITE);
+	DrawText(getISODate((time_t)sim->time_elapsed),10, 30, 20, RAYWHITE);
+	DrawText(getElapsedSimTime((time_t)sim->time_elapsed, buffer), 10, 50, 20, RAYWHITE);
 
 	// Show or hide controls menu
 	DrawText(controls[SHOW_CONTROLS].description, view->width - CONTROLS_X_MARGIN, 10, 20, CONTROLS_COLOR);
@@ -296,15 +275,17 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	{
 		DrawText("Move Spaceship: U, I, O, J, K, L", view->width - CONTROLS_X_MARGIN, 30, 20, CONTROLS_COLOR);
 		int yCoord = 50;
-		for(unsigned i = 0; i < CONTROLS_AMMOUNT; i++){
-			if(controls[i].key == TOGGLE_SHOW_CONTROLS){
+		for (unsigned i = 0; i < CONTROLS_AMMOUNT; i++)
+		{
+			if(controls[i].key == TOGGLE_SHOW_CONTROLS)
+			{
 				yCoord -= 20; // Avoid blank space between control descriptions.
 				continue;
 			}
-			DrawText(controls[i].description, view->width-CONTROLS_X_MARGIN, yCoord+CONTROLS_Y_MARGIN*i, 20, CONTROLS_COLOR);
+			DrawText(controls[i].description, view->width - CONTROLS_X_MARGIN, yCoord + CONTROLS_Y_MARGIN * i, 20, CONTROLS_COLOR);
 		}
-		
-		DrawText("Toggle Fullscreen: F11", view->width - CONTROLS_X_MARGIN, yCoord+CONTROLS_Y_MARGIN*CONTROLS_AMMOUNT, 20, CONTROLS_COLOR);
+
+		DrawText("Toggle Fullscreen: F11", view->width - CONTROLS_X_MARGIN, yCoord + CONTROLS_Y_MARGIN * CONTROLS_AMMOUNT, 20, CONTROLS_COLOR);
 	}
 
 	EndDrawing();

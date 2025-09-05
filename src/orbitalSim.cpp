@@ -74,11 +74,8 @@ static inline void updateSpeedAndPosition(Body_t* body, double dt);
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim);
 
 
-OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroidsNum, int easter_egg)
+OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg)
 {
-	if (simulationSpeed <= 0)
-		return NULL;
-
 	OrbitalSim_t* ptr = new OrbitalSim_t;
 	if (!ptr)
 		return NULL;
@@ -95,9 +92,8 @@ OrbitalSim_t* constructOrbitalSim(double simulationSpeed, unsigned int asteroids
 		return NULL;
 	}
 
-	ptr->dt = 0;
-	ptr->simulationSpeed = simulationSpeed;
-	ptr->started = 0;
+	ptr->dt = 0.0;
+	ptr->time_elapsed = 0.0;
 
 	unsigned int i;
 	for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
@@ -133,6 +129,7 @@ void updateOrbitalSim(OrbitalSim_t* sim)
 
 	unsigned int i, j;
 
+	sim->time_elapsed += sim->dt;
 	initializeAccelerations(sim);
 	updateSpaceShipUserInputs(sim);
 
