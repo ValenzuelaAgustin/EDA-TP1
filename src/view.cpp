@@ -31,7 +31,7 @@
 
 // Spaceship
 //#define SPACESHIP_CAMERA_DISTANCE {3.f, 3.f, 3.f}
-#define CAMERA_DISTANCE_SCALAR 1.5f
+#define CAMERA_DISTANCE_SCALAR 3.f
 
 static Vector3 camLastPosition, camLastTarget;
 static int saveLastCam = 0, returnToLastCam = 0, cameraMode = CAMERA_FREE;
@@ -56,24 +56,10 @@ enum
 	PERFORMANCE
 };
 
-// Bodies
-// enum
-// {
-// 	SPACESHIP,
-// 	SOL,
-// 	MERCURIO,
-// 	VENUS,
-// 	TIERRA,
-// 	MARTE,
-// 	JUPITER,
-// 	SATURNO,
-// 	URANO,
-// 	NEPTUNO
-// };
-
 typedef struct 
 {
-	int key, value;
+	int key;
+	unsigned value;
 	char description[50];
 } control_t;
 

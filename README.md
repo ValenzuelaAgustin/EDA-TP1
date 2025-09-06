@@ -10,12 +10,11 @@
 
 ## Verificación del timestep
 
-Se pudo obtener un valor adecuado de timeStep al realizar diversas simulaciones dejando fijo el valor de fps en 60 y variando la magnitud del factor que multiplica a la constante SECONDS_PER_DAY en la inicializacion de la variable timeMultiplier. Se noto principalmente que valores mayores a 50 en este factor generaban movimientos inusuales en los cuerpos como por ejemplo inclinaciones en sus orbitas y trayectorias bruscamente impulsadas, mientras que valores menores a 50 dieron lugar a simulaciones poco fluidas. Es por estos motivos que se tomo un valor de 50 para el factor, lo que resulto en un valor de (SECONDS_PER_DAY * 5/6) asignado a la variable timeStep.
+
 
 ## Verificación del tipo de datos float
 
 Para almacenar las masas, aceleraciones, velocidades y posiciones se optó por el tipo de dato double en lugar de float. Esto permitió evitar casteos implícitos y errores de redondeo, ya que las propiedades de los cuerpos se utilizan en cálculos junto con otras variables de tipo double. Es esencial evitar dichos casteos, dado que en algunas funciones, como por ejemplo `calculateAcceleration` y `updateSpeedAndPosition`, se requiere de precisión para evitar la acumulación de errores durante las iteraciones de updateOrbitalSim. La falta de exactitud en los cálculos puede causar órbitas inestables y movimientos erráticos de los cuerpos en la simulación.
-
 
 ## Complejidad computacional con asteroides
 
@@ -42,13 +41,19 @@ En el archivo `orbitalSim.cpp` se incluye un Easter Egg en las siguientes lineas
 //phi = 0;
 ```
 Si estas lineas se descomentan, phi pasa a valer cero. Phi representa el angulo polar en el plano XZ para ubicar a un asteroide alrededor del centro de masa, por lo cual, si phi es cero todos los asteroides se alinearan sobre el eje X y su velocidad inicial sera perpendicular al eje X.
+Para poder visualizar el easter egg dentro de la simulacion, se debera ejecutar el programa de la siguiente manera:
+`out\orbitalSim.exe -easter_egg`
 
 ## Nave espacial manejada por el usuario
 
 Se añadio a la simulacion un cuerpo de color verde el cual representa a una nave espacial que puede ser controlada con las teclas U, I y O para moverla en direcciones positivas por cada eje y J, K y L para moverlo en las direcciones opuestas.
 
-## Implementacion de colisiones plasticas entre los cuerpos
+## Modos de Camara
+
+Fue implementada la posibilidad de cambiar el modo de la camara entre "libre" y "tercera persona" oprimiendo la tecla `F4`, a su vez se puede cambiar el planeta al que se esta enfocando con la tecla `T`.
 
 ## Visualizacion de los vectores de cada cuerpo
 
-Se añadieron opciones para activar y desactivar la visualizacion de los vectores de velocidad y aceleracion de cada cuerpo en tiempo real. Esto se puede realizar de dos modos, el primero es al ejecutar el programa desde la carpeta principal añadiendo los parametros de la siguiente manera: `out\orbitalSim.exe -show_velocity_vectors -show_acceleration_vectors`, el segundo metodo es presionando la tecla F9 (para activar/desactivar los vectores de velocidad) o la tecla F10 (para activar/desactivar los vectores de aceleracion) dentro de la simulacion.
+Se añadieron opciones para activar y desactivar la visualizacion de los vectores de velocidad y aceleracion de cada cuerpo en tiempo real. Esto se puede realizar de dos modos, el primero es al ejecutar el programa desde la carpeta principal añadiendo los parametros de la siguiente manera: 
+`out\orbitalSim.exe -show_velocity_vectors -show_acceleration_vectors`
+El segundo metodo es presionando la tecla F9 (para activar/desactivar los vectores de velocidad) o la tecla F10 (para activar/desactivar los vectores de aceleracion) dentro de la simulacion.
