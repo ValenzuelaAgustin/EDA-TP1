@@ -15,6 +15,7 @@
 
 typedef struct
 {
+	const char* name;		// Name
 	double mass_GC;			// [m^3 / s^2]
 	vector3D_t position;		// [m]
 	vector3D_t velocity;		// [m/s]
@@ -23,7 +24,6 @@ typedef struct
 
 typedef struct
 {
-//	const char* name;		// Name
 	Color color;			// Raylib color
 	float radius;			// [m]
 	Body_t body;

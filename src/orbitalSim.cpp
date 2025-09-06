@@ -109,6 +109,7 @@ OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg)
 	ptr->Spaceship.color = GREEN;
 	ptr->Spaceship.radius = 120;
 	ptr->Spaceship.body.mass_GC = 5E6 * GRAVITATIONAL_CONSTANT;
+	ptr->Spaceship.body.name = "Spaceship";
 
 	return ptr; // This should return your orbital sim
 }

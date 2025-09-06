@@ -115,7 +115,7 @@ double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double targ
 		sim_updates_per_frame += PIDC * frametime_PID(target_frametime, frametime);
 		sim_updates_per_frame = (sim_updates_per_frame > 1) ? sim_updates_per_frame : 1;
 
-		end_condition = (frametime >= 0.9 * target_frametime && frametime <= 1.1 * target_frametime) ? end_condition + 1 : 0;
+		end_condition = (frametime >= 0.9 * target_frametime && frametime <= 1.1 * target_frametime) ? end_condition + 1 : end_condition;
 	}
 
 	return sim_updates_per_frame;

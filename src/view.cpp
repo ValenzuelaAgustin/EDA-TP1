@@ -39,13 +39,14 @@ static int saveLastCam = 0, returnToLastCam = 0, cameraMode = CAMERA_FREE;
 enum
 {
 	SHOW_CONTROLS,
-	SPACESHIP_CAMERA_MODE,
+	CAMERA_MODE,
 	SPACESHIP_RENDER_MODE,
 	EBODIES_RENDER_MODE,
 	ASTEROIDS_RENDER_MODE,
 	SHOW_VELOCITY_VECTORS,
 	SHOW_ACCELERATION_VECTORS,
 	TOGGLE_REWIND,
+	SWITCH_BODY,
 	CONTROLS_AMMOUNT // Dejar siempre al final (cantidad total de controles)
 };
 
@@ -54,6 +55,21 @@ enum
 	QUALITY,
 	PERFORMANCE
 };
+
+// Bodies
+// enum
+// {
+// 	SPACESHIP,
+// 	SOL,
+// 	MERCURIO,
+// 	VENUS,
+// 	TIERRA,
+// 	MARTE,
+// 	JUPITER,
+// 	SATURNO,
+// 	URANO,
+// 	NEPTUNO
+// };
 
 typedef struct 
 {
@@ -70,11 +86,11 @@ static control_t controls[] =
 		1,
 		"Show/Hide Controls: F4"
 	},
-	// SPACESHIP_CAMERA_MODE
+	// CAMERA_MODE
 	{
-		TOGGLE_SPACESHIP_CAMERA_KEY,
+		TOGGLE_CAMERA_MODE_KEY,
 		0,
-		"Toggle Spaceship Camera: F5"
+		"Toggle Camera Mode: F5"
 	},
 	// SPACESHIP_RENDER_MODE
 	{
@@ -111,6 +127,12 @@ static control_t controls[] =
 		TOGGLE_REWIND_KEY,
 		0,
 		"Toggle Rewind: R"
+	},
+	// SWITCH_BODY
+	{
+		SWITCH_BODY_CAMERA_KEY,
+		0,
+		"Switch Camera Target: T"
 	}
 };
 
@@ -244,25 +266,33 @@ static void drawBody(Body_t* body, float radius, Color color, int render_mode)
 
 int renderView(view_t* view, OrbitalSim_t* sim)
 {
-	if (IsKeyPressed(TOGGLE_FULLSCREEN_KEY))
-	{
-		ToggleFullscreen();
-	}
-
 	// Check for controls toggle
 	for(unsigned i = 0; i < CONTROLS_AMMOUNT; i++)
 	{
 		if(IsKeyPressed(controls[i].key))
+		switch(controls[i].key)
 		{
-			controls[i].value = !controls[i].value;
+			case TOGGLE_FULLSCREEN_KEY:
+				ToggleFullscreen();
+				break;
+			case SWITCH_BODY_CAMERA_KEY:
+				controls[i].value < sim->bodyNum ? controls[i].value++ : controls[i].value = 0;
+				break;
+			default:
+				controls[i].value = !controls[i].value;
+				break;
 		}
 	}
 
 	// Camera mode toggle
-	if(controls[SPACESHIP_CAMERA_MODE].value){
-		Vector3 spaceshipPos = Vector3Scale(toVector3(sim->Spaceship.body.position), 1E-11);
-		Vector3 spaceshipDir = Vector3Add(Vector3Scale(toVector3(sim->Spaceship.body.velocity), 1E-4), spaceshipPos);
-		switch(saveLastCam){
+	Body_t currentBody;
+	controls[SWITCH_BODY].value < sim->bodyNum ? currentBody = sim->PlanetarySystem[controls[SWITCH_BODY].value].body : currentBody = sim->Spaceship.body;
+	if(controls[CAMERA_MODE].value)
+	{
+		Vector3 bodyPosition = Vector3Scale(toVector3(currentBody.position), 1E-11);
+		Vector3 bodyDirection = Vector3Add(Vector3Scale(toVector3(currentBody.velocity), 1E-4), bodyPosition);
+		switch(saveLastCam)
+		{
 			case 0:
 				camLastPosition = view->camera.position;
 				camLastTarget = view->camera.target;
@@ -273,16 +303,18 @@ int renderView(view_t* view, OrbitalSim_t* sim)
 			case 1:
 				view->camera.position = Vector3Add(
 					Vector3ClampValue(
-						Vector3Subtract(spaceshipPos, spaceshipDir), CAMERA_DISTANCE_SCALAR, CAMERA_DISTANCE_SCALAR
+						Vector3Subtract(bodyPosition, bodyDirection), CAMERA_DISTANCE_SCALAR, CAMERA_DISTANCE_SCALAR
 					),
-					spaceshipPos
+					bodyPosition
 				);
-				view->camera.target = spaceshipPos;
+				view->camera.target = bodyPosition;
 				break;
 		}
 	}
-	else{
-		if(returnToLastCam){
+	else
+	{
+		if(returnToLastCam)
+		{
 			view->camera.position = camLastPosition;
 			view->camera.target = camLastTarget;
 			returnToLastCam = 0;
@@ -319,7 +351,10 @@ int renderView(view_t* view, OrbitalSim_t* sim)
 
 	DrawText(getISODate((time_t)sim->time_elapsed),10, 30, 20, RAYWHITE);
 	DrawText(getElapsedSimTime((time_t)sim->time_elapsed, buffer), 10, 50, 20, RAYWHITE);
-
+	DrawText(
+		TextFormat("Camera Target: %s", currentBody.name),
+		10, 70, 20, RAYWHITE
+	);
 	// Show or hide controls menu
 	DrawText(controls[SHOW_CONTROLS].description, view->width - CONTROLS_X_MARGIN, 10, 20, CONTROLS_COLOR);
 	if(controls[SHOW_CONTROLS].value)
@@ -335,7 +370,6 @@ int renderView(view_t* view, OrbitalSim_t* sim)
 			}
 			DrawText(controls[i].description, view->width - CONTROLS_X_MARGIN, yCoord + CONTROLS_Y_MARGIN * i, 20, CONTROLS_COLOR);
 		}
-
 		DrawText("Toggle Fullscreen: F11", view->width - CONTROLS_X_MARGIN, yCoord + CONTROLS_Y_MARGIN * CONTROLS_AMMOUNT, 20, CONTROLS_COLOR);
 	}
 
