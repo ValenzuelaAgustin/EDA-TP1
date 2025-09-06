@@ -7,8 +7,9 @@
 
 #include "view.h"
 #include "nmath.h"
-#include <raymath.h>
+#include "keyBinds.h"
 #include <math.h>
+#include <raymath.h>
 #include <time.h>
 #include <stdio.h>
 
@@ -21,107 +22,44 @@
 #define DEFAULT_WINDOW_HEIGHT 720
 #define WINDOW_TITLE "EDA Orbital Simulation"
 
-#define ASTEROIDS_COLOR GRAY
-#define ASTEROIDS_RADIUS 2E3F
-
-// Controls
-#define CONTROLS_X_MARGIN 370
-#define CONTROLS_Y_MARGIN 20
-#define CONTROLS_COLOR CLITERAL(Color){0, 228, 48, 150} 
-
-// Spaceship
-//#define SPACESHIP_CAMERA_DISTANCE {3.f, 3.f, 3.f}
-#define CAMERA_DISTANCE_SCALAR 3.f
-
-static Vector3 camLastPosition, camLastTarget;
-static int saveLastCam = 0, returnToLastCam = 0, cameraMode = CAMERA_FREE;
-
-enum
-{
-	SHOW_CONTROLS,
-	CAMERA_MODE,
-	SPACESHIP_RENDER_MODE,
-	EBODIES_RENDER_MODE,
-	ASTEROIDS_RENDER_MODE,
-	SHOW_VELOCITY_VECTORS,
-	SHOW_ACCELERATION_VECTORS,
-	TOGGLE_REWIND,
-	SWITCH_BODY,
-	CONTROLS_AMMOUNT // Dejar siempre al final (cantidad total de controles)
-};
-
 enum
 {
 	QUALITY,
 	PERFORMANCE
 };
 
-typedef struct 
-{
-	int key;
-	unsigned value;
-	char description[50];
-} control_t;
+// Spaceship constants
+#define CAMERA_DISTANCE 1.5f
 
+// Asteroids constants
+#define ASTEROIDS_COLOR GRAY
+#define ASTEROIDS_RADIUS 2E3F
+
+// 
+#define POSITION_SCALE_FACTOR 1E-11
+#define VELOCITY_SCALE_FACTOR 1E-4
+#define ACCELERATION_SCALE_FACTOR 1E3
+
+// Controls
+#define CONTROLS_X_MARGIN 370
+#define CONTROLS_Y_MARGIN 20
+#define CONTROLS_COLOR CLITERAL(Color){0, 228, 48, 150}
+
+
+/**
+ * Private variables
+*/
+
+static unsigned int keybinds_values[KEYBINDS_AMMOUNT];
+static Vector3 last_camera_position, last_camera_target;
+static int camera_mode = CAMERA_FREE;
 static char buffer[128];
-static control_t controls[] =
-{
-	// SHOW_CONTROLS
-	{
-		TOGGLE_SHOW_CONTROLS_KEY,
-		1,
-		"Show/Hide Controls: F4"
-	},
-	// CAMERA_MODE
-	{
-		TOGGLE_CAMERA_MODE_KEY,
-		0,
-		"Toggle Camera Mode: F5"
-	},
-	// SPACESHIP_RENDER_MODE
-	{
-		TOGGLE_SPACESHIP_RENDER_MODE_KEY,
-		QUALITY,
-		"Toggle Spaceship Render Mode: F6"
-	},
-	// EBODIES_RENDER_MODE
-	{
-		TOGGLE_EBODIES_RENDER_MODE_KEY,
-		QUALITY,
-		"Toggle Bodies Render Mode: F7"
-	},
-	// ASTEROIDS_RENDER_MODE
-	{
-		TOGGLE_ASTEROIDS_RENDER_MODE_KEY,
-		PERFORMANCE,
-		"Toggle Asteroids Render Mode: F8"
-	},
-	// SHOW_VELOCITY_VECTORS
-	{
-		TOGGLE_SHOW_VELOCITY_KEY,
-		0,
-		"Show/Hide Velocities: F9"
-	},
-	// SHOW_ACCELERATION_VECTORS
-	{
-		TOGGLE_SHOW_ACCELERATION_KEY,
-		0,
-		"Show/Hide Accelerations: F10"
-	},
-	// REWIND
-	{
-		TOGGLE_REWIND_KEY,
-		0,
-		"Toggle Rewind: R"
-	},
-	// SWITCH_BODY
-	{
-		SWITCH_BODY_CAMERA_KEY,
-		0,
-		"Switch Camera Target: T"
-	}
-};
 
+
+/**
+ * @brief Returns the vector parsed in the raylib data type Vector3
+ */
+static Vector3 toVector3(vector3D_t vector);
 
 /**
  * @brief Converts a timestamp (number of seconds since 1/1/2022)
@@ -132,19 +70,120 @@ static control_t controls[] =
  */
 static const char* getISODate(time_t timestamp);
 
-// Returns the vector parsed in the raylib data type Vector3
-static Vector3 toVector3(vector3D_t vector);
-
-/**
- * 
- */
-static void drawBody(Body_t* body, float radius, Color color, int render_mode);
-
 /**
  * 
  */
 static const char* getElapsedSimTime(time_t timestamp, char buffer[]);
 
+/**
+ * 
+ */
+static void updateUserInputs(unsigned int bodyNum);
+
+/**
+ * 
+ */
+static void updateCameraSettings(view_t* view, OrbitalSim_t* sim);
+
+/**
+ * 
+ */
+static void drawBody(Body_t* body, float radius, Color color, unsigned int render_mode);
+
+/**
+ * 
+ */
+static void drawOrbitalSimuationEntities(OrbitalSim_t* sim);
+
+/**
+ * 
+ */
+static void printKeybinds(view_t* view);
+
+
+view_t* constructView(int fps, int fullscreen, int width, int height, int show_velocity_vectors, int show_acceleration_vectors)
+{
+	if (width < MIN_WIDTH)
+		width = DEFAULT_WINDOW_WIDTH;
+	if (height < MIN_HEIGHT)
+		height = DEFAULT_WINDOW_HEIGHT;
+
+	view_t* view = new view_t();
+	if (!view)
+		return NULL;
+
+	InitWindow(width, height, WINDOW_TITLE);
+	if (fullscreen)
+		ToggleFullscreen();
+
+	keybinds_values[SHOW_VELOCITY_VECTORS] = show_velocity_vectors;
+	keybinds_values[SHOW_ACCELERATION_VECTORS] = show_acceleration_vectors;
+	SetTargetFPS(fps);
+
+	DisableCursor();
+	view->camera.position = {10.0f, 10.0f, 10.0f};
+	view->camera.target = {0.0f, 0.0f, 0.0f};
+	view->camera.up = {0.0f, 1.0f, 0.0f};
+	view->camera.fovy = 45.0f;
+	view->camera.projection = CAMERA_PERSPECTIVE;
+	view->width = width;
+	view->height = height;
+
+	last_camera_position = view->camera.position;
+	last_camera_target = view->camera.target;
+
+	return view;
+}
+
+void destroyView(view_t* view)
+{
+	CloseWindow();
+
+	delete view;
+}
+
+bool isViewRendering(view_t* view)
+{
+	return !WindowShouldClose();
+}
+
+int renderView(view_t* view, OrbitalSim_t* sim)
+{
+	updateUserInputs(sim->bodyNum);
+
+	updateCameraSettings(view, sim);
+	UpdateCamera(&view->camera, camera_mode);
+
+	BeginDrawing();
+
+	ClearBackground(BLACK);
+
+	// Fill in your 3D drawing code here:
+
+	BeginMode3D(view->camera);
+	DrawGrid(10, 10.0f);
+	drawOrbitalSimuationEntities(sim);
+	EndMode3D();
+
+	// Fill in your 2D drawing code here:
+	DrawFPS(10,10);
+	DrawText(getISODate((time_t)sim->time_elapsed),10, 30, 20, RAYWHITE);
+	DrawText(getElapsedSimTime((time_t)sim->time_elapsed, buffer), 10, 50, 20, RAYWHITE);
+	printKeybinds(view);
+	EndDrawing();
+
+	return keybinds_values[TOGGLE_REWIND];
+}
+
+static Vector3 toVector3(vector3D_t vector)
+{
+	return Vector3
+	{
+		(float)vector.x,
+		(float)vector.y,
+		(float)vector.z
+	};
+}
 
 static const char* getISODate(time_t timestamp)
 {
@@ -170,62 +209,78 @@ static const char* getElapsedSimTime(time_t timestamp, char buffer[])
 	return buffer;
 }
 
-view_t* constructView(int fps, int fullscreen, int width, int height, int show_velocity_vectors, int show_acceleration_vectors)
+static void updateUserInputs(unsigned int bodyNum)
 {
-	if (width < MIN_WIDTH)
-		width = DEFAULT_WINDOW_WIDTH;
-	if (height < MIN_HEIGHT)
-		height = DEFAULT_WINDOW_HEIGHT;
-
-	view_t* view = new view_t();
-	if (!view)
-		return NULL;
-
-	InitWindow(width, height, WINDOW_TITLE);
-	if (fullscreen)
-		ToggleFullscreen();
-
-	controls[SHOW_VELOCITY_VECTORS].value = show_velocity_vectors;
-	controls[SHOW_ACCELERATION_VECTORS].value = show_acceleration_vectors;
-	SetTargetFPS(fps);
-
-	DisableCursor();
-	view->camera.position = {10.0f, 10.0f, 10.0f};
-	view->camera.target = {0.0f, 0.0f, 0.0f};
-	view->camera.up = {0.0f, 1.0f, 0.0f};
-	view->camera.fovy = 45.0f;
-	view->camera.projection = CAMERA_PERSPECTIVE;
-	view->width = width;
-	view->height = height;
-
-	return view;
+	for(unsigned int i = 0; i < KEYBINDS_AMMOUNT; i++)
+	{
+		if(!IsKeyPressed(keybinds[i].key))
+		{
+			continue;
+		}
+		switch (keybinds[i].key)
+		{
+		case TOGGLE_FULLSCREEN_KEY:
+			ToggleFullscreen();
+			break;
+		case SWITCH_BODY_CAMERA_KEY:
+			keybinds_values[i]++;
+			keybinds_values[i] = (keybinds_values[i] <= bodyNum) ? keybinds_values[i] : 0;
+			break;
+		default:
+			keybinds_values[i] = !keybinds_values[i];
+			break;
+		}
+	}
 }
 
-void destroyView(view_t* view)
+static void updateCameraSettings(view_t* view, OrbitalSim_t* sim)
 {
-	CloseWindow();
+	if (!keybinds_values[CAMERA_MODE])
+	{
+		if (camera_mode == CAMERA_THIRD_PERSON)
+		{
+			view->camera.position = last_camera_position;
+			view->camera.target = last_camera_target;
+		}
+		camera_mode = CAMERA_FREE;
+		return;
+	}
+	if (camera_mode == CAMERA_FREE)
+	{
+		last_camera_position = view->camera.position;
+		last_camera_target = view->camera.target;
+	}
+	camera_mode = CAMERA_THIRD_PERSON;
 
-	delete view;
+	unsigned int target_body = keybinds_values[SWITCH_BODY];
+	Vector3 position, normalized_velocity;
+	Body_t body;
+	float norm;
+
+	if (target_body < sim->bodyNum)
+	{
+		body = sim->PlanetarySystem[target_body].body;
+	}
+	else
+	{
+		body = sim->Spaceship.body;
+	}
+
+	norm = 1.0f / sqrtf(DOT_PRODUCT(body.velocity, body.velocity));
+	position = Vector3Scale(toVector3(body.position), POSITION_SCALE_FACTOR);
+	normalized_velocity = Vector3Scale(toVector3(body.velocity), norm);
+
+	view->camera.position = Vector3Add(position, Vector3Scale(normalized_velocity, -CAMERA_DISTANCE));
+	view->camera.target = position;
 }
 
-bool isViewRendering(view_t* view)
+static void drawBody(Body_t* body, float radius, Color color, unsigned int render_mode)
 {
-	return !WindowShouldClose();
-}
+	Vector3 position;
 
-static Vector3 toVector3(vector3D_t vector){
-	return Vector3{
-		(float)vector.x,
-		(float)vector.y,
-		(float)vector.z
-	};
-}
-
-static void drawBody(Body_t* body, float radius, Color color, int render_mode)
-{
-	Vector3 position, velocity, acceleration;
-
-	position = Vector3Scale(toVector3(body->position), 1E-11);
+	position.x = body->position.x * POSITION_SCALE_FACTOR;
+	position.y = body->position.y * POSITION_SCALE_FACTOR;
+	position.z = body->position.z * POSITION_SCALE_FACTOR;
 
 	switch (render_mode)
 	{
@@ -238,128 +293,50 @@ static void drawBody(Body_t* body, float radius, Color color, int render_mode)
 		break;
 	}
 
-	if (controls[SHOW_VELOCITY_VECTORS].value)
+	if (keybinds_values[SHOW_VELOCITY_VECTORS])
 	{
-		velocity = Vector3Add(Vector3Scale(toVector3(body->velocity), 1E-4), position);
+		Vector3 velocity;
+		velocity.x = body->velocity.x * VELOCITY_SCALE_FACTOR + position.x;
+		velocity.y = body->velocity.y * VELOCITY_SCALE_FACTOR + position.y;
+		velocity.z = body->velocity.z * VELOCITY_SCALE_FACTOR + position.z;
+
 		DrawLine3D(position, velocity, BLUE);
 	}
-	if (controls[SHOW_ACCELERATION_VECTORS].value)
+	if (keybinds_values[SHOW_ACCELERATION_VECTORS])
 	{
-		acceleration = Vector3Add(Vector3Scale(toVector3(body->acceleration), 1E3), position);
+		Vector3 acceleration;
+		acceleration.x = body->acceleration.x * ACCELERATION_SCALE_FACTOR + position.x;
+		acceleration.y = body->acceleration.y * ACCELERATION_SCALE_FACTOR + position.y;
+		acceleration.z = body->acceleration.z * ACCELERATION_SCALE_FACTOR + position.z;
+
 		DrawLine3D(position, acceleration, RED);
 	}
 }
 
-int renderView(view_t* view, OrbitalSim_t* sim)
+static void drawOrbitalSimuationEntities(OrbitalSim_t* sim)
 {
-	// Check for controls toggle
-	for(unsigned i = 0; i < CONTROLS_AMMOUNT; i++)
-	{
-		if(IsKeyPressed(controls[i].key))
-		switch(controls[i].key)
-		{
-			case TOGGLE_FULLSCREEN_KEY:
-				ToggleFullscreen();
-				break;
-			case SWITCH_BODY_CAMERA_KEY:
-				controls[i].value < sim->bodyNum ? controls[i].value++ : controls[i].value = 0;
-				break;
-			default:
-				controls[i].value = !controls[i].value;
-				break;
-		}
-	}
-
-	// Camera mode toggle
-	Body_t currentBody;
-	controls[SWITCH_BODY].value < sim->bodyNum ? currentBody = sim->PlanetarySystem[controls[SWITCH_BODY].value].body : currentBody = sim->Spaceship.body;
-	if(controls[CAMERA_MODE].value)
-	{
-		Vector3 bodyPosition = Vector3Scale(toVector3(currentBody.position), 1E-11);
-		Vector3 bodyDirection = Vector3Add(Vector3Scale(toVector3(currentBody.velocity), 1E-4), bodyPosition);
-		switch(saveLastCam)
-		{
-			case 0:
-				camLastPosition = view->camera.position;
-				camLastTarget = view->camera.target;
-				saveLastCam = 1;
-				returnToLastCam = 1;
-				cameraMode = CAMERA_THIRD_PERSON;
-				break;
-			case 1:
-				view->camera.position = Vector3Add(
-					Vector3ClampValue(
-						Vector3Subtract(bodyPosition, bodyDirection), CAMERA_DISTANCE_SCALAR, CAMERA_DISTANCE_SCALAR
-					),
-					bodyPosition
-				);
-				view->camera.target = bodyPosition;
-				break;
-		}
-	}
-	else
-	{
-		if(returnToLastCam)
-		{
-			view->camera.position = camLastPosition;
-			view->camera.target = camLastTarget;
-			returnToLastCam = 0;
-			saveLastCam = 0;
-			cameraMode = CAMERA_FREE;
-		}
-	}
-
-	UpdateCamera(&view->camera, cameraMode);
-
-	BeginDrawing();
-
-	ClearBackground(BLACK);
-	BeginMode3D(view->camera);
-
-	// Fill in your 3D drawing code here:
-
-	DrawGrid(15, 5.0f);
-
 	for (unsigned int i = 0; i < sim->bodyNum; i++) 
 	{
-		drawBody(&sim->PlanetarySystem[i].body, sim->PlanetarySystem[i].radius, sim->PlanetarySystem[i].color, controls[EBODIES_RENDER_MODE].value);
+		drawBody(&sim->PlanetarySystem[i].body, sim->PlanetarySystem[i].radius, sim->PlanetarySystem[i].color, keybinds_values[EBODIES_RENDER_MODE]);
 	}
 	for (unsigned int i = 0; i < sim->asteroidsNum; i++) 
 	{
-		drawBody(sim->Asteroids + i, ASTEROIDS_RADIUS, ASTEROIDS_COLOR, controls[ASTEROIDS_RENDER_MODE].value);
+		drawBody(sim->Asteroids + i, ASTEROIDS_RADIUS, ASTEROIDS_COLOR, keybinds_values[ASTEROIDS_RENDER_MODE]);
 	}
-	drawBody(&sim->Spaceship.body, sim->Spaceship.radius, sim->Spaceship.color, controls[SPACESHIP_RENDER_MODE].value);
+	drawBody(&sim->Spaceship.body, sim->Spaceship.radius, sim->Spaceship.color, keybinds_values[SPACESHIP_RENDER_MODE]);
+}
 
-	EndMode3D();
+static void printKeybinds(view_t* view)
+{
+	DrawText(keybinds[SHOW_KEYBINDS].description, view->width - CONTROLS_X_MARGIN, 10, 20, CONTROLS_COLOR);
 
-	// Fill in your 2D drawing code here:
-	DrawFPS(10,10);
+	if(!keybinds_values[SHOW_KEYBINDS])
+		return;
 
-	DrawText(getISODate((time_t)sim->time_elapsed),10, 30, 20, RAYWHITE);
-	DrawText(getElapsedSimTime((time_t)sim->time_elapsed, buffer), 10, 50, 20, RAYWHITE);
-	DrawText(
-		TextFormat("Camera Target: %s", currentBody.name),
-		10, 70, 20, RAYWHITE
-	);
-	// Show or hide controls menu
-	DrawText(controls[SHOW_CONTROLS].description, view->width - CONTROLS_X_MARGIN, 10, 20, CONTROLS_COLOR);
-	if(controls[SHOW_CONTROLS].value)
+	int yCoord = 30;
+	DrawText("Move Spaceship: U, I, O, J, K, L", view->width - CONTROLS_X_MARGIN, yCoord, 20, CONTROLS_COLOR);
+	for (unsigned int i = SHOW_KEYBINDS + 1; i < KEYBINDS_AMMOUNT; i++)
 	{
-		DrawText("Move Spaceship: U, I, O, J, K, L", view->width - CONTROLS_X_MARGIN, 30, 20, CONTROLS_COLOR);
-		int yCoord = 50;
-		for (unsigned i = 0; i < CONTROLS_AMMOUNT; i++)
-		{
-			if(controls[i].key == TOGGLE_SHOW_CONTROLS_KEY)
-			{
-				yCoord -= 20; // Avoid blank space between control descriptions.
-				continue;
-			}
-			DrawText(controls[i].description, view->width - CONTROLS_X_MARGIN, yCoord + CONTROLS_Y_MARGIN * i, 20, CONTROLS_COLOR);
-		}
-		DrawText("Toggle Fullscreen: F11", view->width - CONTROLS_X_MARGIN, yCoord + CONTROLS_Y_MARGIN * CONTROLS_AMMOUNT, 20, CONTROLS_COLOR);
+		DrawText(keybinds[i].description, view->width - CONTROLS_X_MARGIN, yCoord + CONTROLS_Y_MARGIN * i, 20, CONTROLS_COLOR);
 	}
-
-	EndDrawing();
-
-	return controls[TOGGLE_REWIND].value;
 }

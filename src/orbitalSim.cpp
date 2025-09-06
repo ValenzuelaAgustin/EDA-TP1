@@ -10,25 +10,14 @@
 
 #include "orbitalSim.h"
 #include "nmath.h"
+#include "keyBinds.h"
 #include <stdlib.h>
 #include <math.h>
 
 #define ASTEROIDS_MEAN_RADIUS 4E11F
 
 // Spaceship defines
-#define SPACESHIP_XP_KEY KEY_U
-#define SPACESHIP_YP_KEY KEY_I
-#define SPACESHIP_ZP_KEY KEY_O
-#define SPACESHIP_XN_KEY KEY_J
-#define SPACESHIP_YN_KEY KEY_K
-#define SPACESHIP_ZN_KEY KEY_L
-#define SPACESHIP_ACCELERATION 1.0
-
-static const int movement_keys[] =
-{
-	SPACESHIP_XP_KEY, SPACESHIP_YP_KEY, SPACESHIP_ZP_KEY,
-	SPACESHIP_XN_KEY, SPACESHIP_YN_KEY, SPACESHIP_ZN_KEY
-};
+#define SPACESHIP_ACCELERATION 1E-3
 
 /**
  * @brief Gets a uniform random value in a range
@@ -109,7 +98,6 @@ OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg)
 	ptr->Spaceship.color = GREEN;
 	ptr->Spaceship.radius = 120;
 	ptr->Spaceship.body.mass_GC = 5E6 * GRAVITATIONAL_CONSTANT;
-	ptr->Spaceship.body.name = "Spaceship";
 
 	return ptr; // This should return your orbital sim
 }

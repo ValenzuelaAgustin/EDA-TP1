@@ -3,10 +3,10 @@
 EphemeridesBody_t solarSystem[] =
 {
 	{
+//		"Sol",
 		GOLD,
 		695700E+3,
 		{
-			"Sol",
 			1988500E+24 * GRAVITATIONAL_CONSTANT,
 			{-1.283674643550172E+09, 2.589397504295033E+07, 5.007104996950605E+08},
 			{-5.809369653802155E-00, 2.513455442031695E-01, -1.461959576560110E+01},
@@ -14,10 +14,10 @@ EphemeridesBody_t solarSystem[] =
 		}
 	},
 	{
+//		"Mercurio",
 		GRAY,
 		2440E+3,
 		{
-			"Mercurio",
 			0.330103E+24 * GRAVITATIONAL_CONSTANT,
 			{5.242617205495467E+10, -5.398976570474024E+09, -5.596063357617276E+09},
 			{-3.931719860392732E+03, 4.493726800433638E+03, 5.056613955108243E+04},
@@ -25,10 +25,10 @@ EphemeridesBody_t solarSystem[] =
 		}
 	},
 	{
+//		"Venus",
 		BEIGE,
 		6051.84E+3,
 		{
-			"Venus",
 			4.86731E+24 * GRAVITATIONAL_CONSTANT,
 			{-1.143612889654620E+10, 2.081921801192194E+09, 1.076180391552140E+11},
 			{-3.498958532524220E+04, 1.971012081662609E+03, -3.509011592387367E+03},
@@ -36,10 +36,10 @@ EphemeridesBody_t solarSystem[] =
 		}
 	},
 	{
+//		"Tierra",
 		BLUE,
 		6371.01E+3,
 		{
-			"Tierra",
 			5.97217E+24 * GRAVITATIONAL_CONSTANT,
 			{-2.741147560901964E+10, 1.907499306293577E+07, 1.452697499646169E+11},
 			{-2.981801522121922E+04, 1.781036907294364E+00, -5.415519940416356E+03},
@@ -47,10 +47,10 @@ EphemeridesBody_t solarSystem[] =
 		}
 	},
 	{
+//		"Marte",
 		RED,
 		3389.92E+3,
 		{
-			"Marte",
 			0.641691E+24 * GRAVITATIONAL_CONSTANT,
 			{-1.309510737126251E+11, -7.714450109843910E+08, -1.893127398896606E+11},
 			{2.090994471204196E+04, -7.557181497936503E+02, -1.160503586188451E+04},
@@ -58,10 +58,10 @@ EphemeridesBody_t solarSystem[] =
 		}
 	},
 	{
+//		"Jupiter",
 		BEIGE,
 		69911E+3,
 		{
-			"Jupiter",
 			1898.125E+24 * GRAVITATIONAL_CONSTANT,
 			{6.955554713494443E+11, -1.444959769995748E+10, -2.679620040967891E+11},
 			{4.539612624165795E+03, -1.547160200183022E+02, 1.280513202430234E+04},
@@ -69,10 +69,10 @@ EphemeridesBody_t solarSystem[] =
 		}
 	},
 	{
+//		"Saturno",
 		LIGHTGRAY,
 		58232E+3,
 		{
-			"Saturno",
 			568.317E+24 * GRAVITATIONAL_CONSTANT,
 			{1.039929189378534E+12, -2.303100000185490E+10, -1.056650101932204E+12},
 			{6.345150006906061E+03, -3.704447055166629E+02, 6.756117358248296E+03},
@@ -80,10 +80,10 @@ EphemeridesBody_t solarSystem[] =
 		}
 	},
 	{
+//		"Urano",
 		SKYBLUE,
 		25362E+3,
 		{
-			"Urano",
 			86.8099E+24 * GRAVITATIONAL_CONSTANT,
 			{2.152570437700128E+12, -2.039611192913723E+10, 2.016888245555490E+12},
 			{-4.705853565766252E+03, 7.821724397220797E+01, 4.652144641704226E+03},
@@ -91,10 +91,10 @@ EphemeridesBody_t solarSystem[] =
 		}
 	},
 	{
+//		"Neptuno",
 		DARKBLUE,
 		24624E+3,
 		{
-			"Neptuno",
 			102.4092E+24 * GRAVITATIONAL_CONSTANT,
 			{4.431790029686977E+12, -8.954348456482631E+10, -6.114486878028781E+11},
 			{7.066237951457524E+02, -1.271365751559108E+02, 5.417076605926207E+03},
@@ -108,10 +108,10 @@ const unsigned int SOLARSYSTEM_BODYNUM = sizeof(solarSystem) / sizeof(Ephemeride
 EphemeridesBody_t alphaCentauriSystem[] =
 {
 	{
+//		"Alfa Centauri A",
 		YELLOW,
 		834840.0,
 		{
-			"Alfa Centauri A",
 			2167000E+24 * GRAVITATIONAL_CONSTANT,
 			{7.76412948E+11, 0.0, 0.0},
 			{0.0, 0.0, 7.120E+03},
@@ -119,10 +119,10 @@ EphemeridesBody_t alphaCentauriSystem[] =
 		}
 	},
 	{
+//		"Ala Centauri B",
 		GOLD,
 		626130,
 		{
-			"Ala Centauri B",
 			1789000E+24 * GRAVITATIONAL_CONSTANT,
 			{-9.20026904E+11, 0.0, 0.0},
 			{0.0, 0.0, -8.430E+03},
