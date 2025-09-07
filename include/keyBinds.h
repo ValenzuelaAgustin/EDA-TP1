@@ -8,12 +8,14 @@
 typedef struct 
 {
 	int key;
-	char description[50];
+	const char* description;
 } keybind_t;
 
 extern const keybind_t keybinds[];
+extern unsigned int keybinds_values[];
 
 extern const int movement_keys[];
+extern int movement_key_is_down[];
 extern const unsigned int movement_keys_ammount;
 
 enum
@@ -23,8 +25,8 @@ enum
 	SPACESHIP_RENDER_MODE,
 	EBODIES_RENDER_MODE,
 	ASTEROIDS_RENDER_MODE,
-	SHOW_VELOCITY_VECTORS,
-	SHOW_ACCELERATION_VECTORS,
+	TOGGLE_SHOW_VELOCITY_VECTORS,
+	TOGGLE_SHOW_ACCELERATION_VECTORS,
 	TOGGLE_REWIND,
 	SWITCH_BODY,
 	TOGGLE_FULLSCREEN,

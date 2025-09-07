@@ -248,7 +248,7 @@ static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
 	{
 		// i = 0,1,2 Para los ejes en sentido positivo (teclas U, I y O)
 		// i = 3,4,5 Para los ejes en sentido negativo (teclas J, K y L)
-		if (IsKeyDown(movement_keys[i]))
+		if (movement_key_is_down[i])
 		{
 			acceleration[axis] += (i < 3) ? SPACESHIP_ACCELERATION : -SPACESHIP_ACCELERATION;
 		}

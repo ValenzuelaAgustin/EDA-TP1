@@ -27,6 +27,12 @@ enum
 	EASTER_EGG
 };
 
+/**
+ * @brief 
+ * @param argc 
+ * @param argv 
+ * @param launchOptionsValues 
+ */
 void searchLaunchOptions(int argc, char* argv[], int* launchOptionsValues);
 
 #endif

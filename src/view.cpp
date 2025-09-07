@@ -50,7 +50,6 @@ enum
  * Private variables
 */
 
-static unsigned int keybinds_values[KEYBINDS_AMMOUNT];
 static Vector3 last_camera_position, last_camera_target;
 static int camera_mode = CAMERA_FREE;
 static char buffer[128];
@@ -87,13 +86,6 @@ static const char* getISODate(time_t timestamp);
  * @return 
  */
 static const char* getElapsedSimTime(time_t timestamp, char buffer[]);
-
-/**
- * @brief 
- * 
- * @param bodyNum
- */
-static void updateUserInputs(unsigned int bodyNum);
 
 /**
  * @brief 
@@ -146,8 +138,8 @@ view_t* constructView(int fps, int fullscreen, int width, int height, int show_v
 	if (fullscreen)
 		ToggleFullscreen();
 
-	keybinds_values[SHOW_VELOCITY_VECTORS] = show_velocity_vectors;
-	keybinds_values[SHOW_ACCELERATION_VECTORS] = show_acceleration_vectors;
+	keybinds_values[TOGGLE_SHOW_VELOCITY_VECTORS] = show_velocity_vectors;
+	keybinds_values[TOGGLE_SHOW_ACCELERATION_VECTORS] = show_acceleration_vectors;
 	SetTargetFPS(fps);
 
 	DisableCursor();
@@ -180,8 +172,6 @@ bool isViewRendering(view_t* view)
 
 int renderView(view_t* view, OrbitalSim_t* sim)
 {
-	updateUserInputs(sim->bodyNum);
-
 	updateCameraSettings(view, sim);
 	UpdateCamera(&view->camera, camera_mode);
 
@@ -244,30 +234,6 @@ static const char* getElapsedSimTime(time_t timestamp, char buffer[])
 	return buffer;
 }
 
-static void updateUserInputs(unsigned int bodyNum)
-{
-	for(unsigned int i = 0; i < KEYBINDS_AMMOUNT; i++)
-	{
-		if(!IsKeyPressed(keybinds[i].key))
-		{
-			continue;
-		}
-		switch (keybinds[i].key)
-		{
-		case TOGGLE_FULLSCREEN_KEY:
-			ToggleFullscreen();
-			break;
-		case SWITCH_BODY_CAMERA_KEY:
-			keybinds_values[i]++;
-			keybinds_values[i] = (keybinds_values[i] <= bodyNum) ? keybinds_values[i] : 0;
-			break;
-		default:
-			keybinds_values[i] = !keybinds_values[i];
-			break;
-		}
-	}
-}
-
 static void updateCameraSettings(view_t* view, OrbitalSim_t* sim)
 {
 	if (!keybinds_values[CAMERA_MODE])
@@ -328,7 +294,7 @@ static void drawBody(Body_t* body, float radius, Color color, unsigned int rende
 		break;
 	}
 
-	if (keybinds_values[SHOW_VELOCITY_VECTORS])
+	if (keybinds_values[TOGGLE_SHOW_VELOCITY_VECTORS])
 	{
 		Vector3 velocity;
 		velocity.x = body->velocity.x * VELOCITY_SCALE_FACTOR + position.x;
@@ -337,7 +303,7 @@ static void drawBody(Body_t* body, float radius, Color color, unsigned int rende
 
 		DrawLine3D(position, velocity, BLUE);
 	}
-	if (keybinds_values[SHOW_ACCELERATION_VECTORS])
+	if (keybinds_values[TOGGLE_SHOW_ACCELERATION_VECTORS])
 	{
 		Vector3 acceleration;
 		acceleration.x = body->acceleration.x * ACCELERATION_SCALE_FACTOR + position.x;

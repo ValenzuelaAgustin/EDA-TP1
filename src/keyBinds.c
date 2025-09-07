@@ -16,7 +16,7 @@
 #define SPACESHIP_YN_KEY KEY_K
 #define SPACESHIP_ZN_KEY KEY_L
 
-const keybind_t keybinds[] =
+const keybind_t keybinds[KEYBINDS_AMMOUNT] =
 {
 	// SHOW_KEYBINDS
 	{
@@ -43,12 +43,12 @@ const keybind_t keybinds[] =
 		TOGGLE_ASTEROIDS_RENDER_MODE_KEY,
 		"Toggle Asteroids Render Mode: F8"
 	},
-	// SHOW_VELOCITY_VECTORS
+	// TOGGLE_SHOW_VELOCITY_VECTORS
 	{
 		TOGGLE_SHOW_VELOCITY_KEY,
 		"Show/Hide Velocities: F9"
 	},
-	// SHOW_ACCELERATION_VECTORS
+	// TOGGLE_SHOW_ACCELERATION_VECTORS
 	{
 		TOGGLE_SHOW_ACCELERATION_KEY,
 		"Show/Hide Accelerations: F10"
@@ -70,6 +70,8 @@ const keybind_t keybinds[] =
 	}
 };
 
+unsigned int keybinds_values[KEYBINDS_AMMOUNT];
+
 const int movement_keys[] =
 {
 	SPACESHIP_XP_KEY, SPACESHIP_YP_KEY, SPACESHIP_ZP_KEY,
@@ -77,3 +79,5 @@ const int movement_keys[] =
 };
 
 const unsigned int movement_keys_ammount = sizeof(movement_keys) / sizeof(movement_keys[0]);
+
+int movement_key_is_down[movement_keys_ammount];

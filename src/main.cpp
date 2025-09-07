@@ -8,6 +8,7 @@
 #include "launchOptions.h"
 #include "orbitalSim.h"
 #include "view.h"
+#include "controller.h"
 #include <stdio.h>
 
 //#define TEST_UPDATE_ORBITAL_SIM
@@ -60,6 +61,8 @@ int main(int argc, char* argv[])
 
 	while (isViewRendering(view))
 	{
+		updateUserInputs(sim->bodyNum);
+
 		for (i = 0; i < sim_updates_per_frame; i++)
 			updateOrbitalSim(sim);
 
