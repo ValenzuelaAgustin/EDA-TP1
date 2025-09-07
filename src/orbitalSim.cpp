@@ -50,11 +50,25 @@ static inline void initializeAccelerations(OrbitalSim_t* sim);
 static inline void calculateAccelerations(Body_t* body0, Body_t* body1);
 
 /**
+ * @brief 
+ *
+ * @param sim 
+ */
+static inline void updateAccelerations(OrbitalSim_t* sim);
+
+/**
  * @brief Calculates the new speed and position for a given body
  * @param body pointer to the body
  * @param dt time step used to calculate discrete integrals
  */
-static inline void updateSpeedAndPosition(Body_t* body, double dt);
+static inline void calculateSpeedAndPosition(Body_t* body, double dt);
+
+/**
+ * @brief 
+ *
+ * @param sim
+ */
+static inline void updateSpeedsAndPositions(OrbitalSim_t* sim);
 
 /**
  * @brief 
@@ -116,34 +130,12 @@ void updateOrbitalSim(OrbitalSim_t* sim)
 	//if (!sim || !sim->EphemeridesBody || sim->bodyNum < 1 || sim->dt <= 0)
 	//	return;
 
-	unsigned int i, j;
-
 	sim->time_elapsed += sim->dt;
 	initializeAccelerations(sim);
 	updateSpaceShipUserInputs(sim);
 
-	for (i = 0; i < sim->bodyNum; i++)
-	{
-		for (j = 0; j < sim->asteroidsNum; j++)
-		{
-			calculateAccelerations(&sim->PlanetarySystem[i].body, sim->Asteroids + j);
-		}
-		for (j = i + 1; j < sim->bodyNum; j++)
-		{
-			calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->PlanetarySystem[j].body);
-		}
-		calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->Spaceship.body);
-	}
-
-	for (i = 0; i < sim->bodyNum; i++)
-	{
-		updateSpeedAndPosition(&sim->PlanetarySystem[i].body, sim->dt);
-	}
-	for (i = 0; i < sim->asteroidsNum; i++)
-	{
-		updateSpeedAndPosition(sim->Asteroids + i, sim->dt);
-	}
-	updateSpeedAndPosition(&sim->Spaceship.body, sim->dt);
+	updateAccelerations(sim);
+	updateSpeedsAndPositions(sim);
 }
 
 static float getRandomFloat(float min, float max)
@@ -228,7 +220,25 @@ static inline void calculateAccelerations(Body_t* body0, Body_t* body1)
 	body1->acceleration.z -= body0->mass_GC * acceleration.z;
 }
 
-static inline void updateSpeedAndPosition(Body_t* body, double dt)
+static inline void updateAccelerations(OrbitalSim_t* sim)
+{
+	unsigned int i, j;
+
+	for (i = 0; i < sim->bodyNum; i++)
+	{
+		for (j = 0; j < sim->asteroidsNum; j++)
+		{
+			calculateAccelerations(&sim->PlanetarySystem[i].body, sim->Asteroids + j);
+		}
+		for (j = i + 1; j < sim->bodyNum; j++)
+		{
+			calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->PlanetarySystem[j].body);
+		}
+		calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->Spaceship.body);
+	}
+}
+
+static inline void calculateSpeedAndPosition(Body_t* body, double dt)
 {
 	body->velocity.x += body->acceleration.x * dt;
 	body->velocity.y += body->acceleration.y * dt;
@@ -237,6 +247,21 @@ static inline void updateSpeedAndPosition(Body_t* body, double dt)
 	body->position.x += body->velocity.x * dt;
 	body->position.y += body->velocity.y * dt;
 	body->position.z += body->velocity.z * dt;
+}
+
+static inline void updateSpeedsAndPositions(OrbitalSim_t* sim)
+{
+	unsigned int i;
+
+	for (i = 0; i < sim->bodyNum; i++)
+	{
+		calculateSpeedAndPosition(&sim->PlanetarySystem[i].body, sim->dt);
+	}
+	for (i = 0; i < sim->asteroidsNum; i++)
+	{
+		calculateSpeedAndPosition(sim->Asteroids + i, sim->dt);
+	}
+	calculateSpeedAndPosition(&sim->Spaceship.body, sim->dt);
 }
 
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
