@@ -22,8 +22,9 @@ Inicialmente el programa se veia compuesto por un algoritmo en el cual los calcu
 - El primer cuerpo calculaba su aceleracion con respecto al segundo, al tercero, ... al ultimo. (n-1 revisiones).
 - El segundo cuerpo calculaba su aceleracion con respecto al tercero, al cuarto, ... al ultimo. (n-2 revisiones).<br>
 ...
-- El ultimo no calculaba su aceleracion con respecto a ningun cuerpo. (n-n = 0 revisiones). 
-Al sumar todos estos casos (n casos), se obtuvo la expresion: `(n.(n+1))/2` la cual muestra un polinomio de grado 2, por lo que se pudo considerar que la complejidad computacional del programa inicialmente estaba dada por una cota `O(n²)`.
+- El ultimo no calculaba su aceleracion con respecto a ningun cuerpo. (n-n = 0 revisiones).
+
+Al sumar todos estos casos (n casos), se obtuvo la expresion: `(n*(n+1))/2` la cual muestra un polinomio de grado 2, por lo que se pudo considerar que la complejidad computacional del programa inicialmente estaba dada por una cota `O(n²)`.
 
 ## Mejora de la complejidad computacional
 
