@@ -35,7 +35,7 @@ enum
 #define ASTEROIDS_COLOR GRAY
 #define ASTEROIDS_RADIUS 2E3F
 
-// 
+// Scale factors for display purposes
 #define POSITION_SCALE_FACTOR 1E-11
 #define VELOCITY_SCALE_FACTOR 1E-4
 #define ACCELERATION_SCALE_FACTOR 1E3
@@ -55,9 +55,16 @@ static Vector3 last_camera_position, last_camera_target;
 static int camera_mode = CAMERA_FREE;
 static char buffer[128];
 
+/**
+ * Private function declarations
+ */
 
 /**
  * @brief Returns the vector parsed in the raylib data type Vector3
+ * 
+ * @param vector 
+ * 
+ * @return 
  */
 static Vector3 toVector3(vector3D_t vector);
 
@@ -66,40 +73,63 @@ static Vector3 toVector3(vector3D_t vector);
  *		to an ISO date ("YYYY-MM-DD")
  *
  * @param timestamp the timestamp
+ * 
  * @return The ISO date (a raylib string)
  */
 static const char* getISODate(time_t timestamp);
 
 /**
+ * @brief 
  * 
+ * @param timestamp 
+ * @param buffer
+ * 
+ * @return 
  */
 static const char* getElapsedSimTime(time_t timestamp, char buffer[]);
 
 /**
+ * @brief 
  * 
+ * @param bodyNum
  */
 static void updateUserInputs(unsigned int bodyNum);
 
 /**
+ * @brief 
  * 
+ * @param view 
+ * @param sim 
  */
 static void updateCameraSettings(view_t* view, OrbitalSim_t* sim);
 
 /**
+ * @brief 
  * 
+ * @param body 
+ * @param radius 
+ * @param color 
+ * @param render_mode 
  */
 static void drawBody(Body_t* body, float radius, Color color, unsigned int render_mode);
 
 /**
+ * @brief 
  * 
+ * @param sim
  */
 static void drawOrbitalSimuationEntities(OrbitalSim_t* sim);
 
 /**
+ * @brief 
  * 
+ * @param view
  */
 static void printKeybinds(view_t* view);
 
+/**
+ * Public function definitions
+ */
 
 view_t* constructView(int fps, int fullscreen, int width, int height, int show_velocity_vectors, int show_acceleration_vectors)
 {
@@ -175,6 +205,10 @@ int renderView(view_t* view, OrbitalSim_t* sim)
 
 	return keybinds_values[TOGGLE_REWIND];
 }
+
+/**
+ * Private function definitions
+ */
 
 static Vector3 toVector3(vector3D_t vector)
 {
