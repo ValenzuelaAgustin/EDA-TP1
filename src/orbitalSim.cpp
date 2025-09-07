@@ -77,13 +77,13 @@ static inline void updateSpeedsAndPositions(OrbitalSim_t* sim);
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim);
 
 
-OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg)
+OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg, int System)
 {
 	OrbitalSim_t* ptr = new OrbitalSim_t;
 	if (!ptr)
 		return NULL;
 
-	ptr->bodyNum = SOLARSYSTEM_BODYNUM;
+	ptr->bodyNum = (System) ? ALPHACENTAURISYSTEM_BODYNUM : SOLARSYSTEM_BODYNUM;
 	ptr->asteroidsNum = asteroidsNum;
 	ptr->PlanetarySystem = (EphemeridesBody_t*)malloc(sizeof(EphemeridesBody_t) * ptr->bodyNum + sizeof(Body_t) * ptr->asteroidsNum);
 	ptr->Asteroids = (Body_t*) ((ptr->asteroidsNum) ? (ptr->PlanetarySystem + ptr->bodyNum) : NULL);
@@ -99,9 +99,9 @@ OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg)
 	ptr->time_elapsed = 0.0;
 
 	unsigned int i;
-	for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
+	for (i = 0; i < ptr->bodyNum; i++)
 	{
-		ptr->PlanetarySystem[i] = solarSystem[i];
+		ptr->PlanetarySystem[i] = (System) ? alphaCentauriSystem[i] : solarSystem[i];
 	}
 	for (i = 0; i < ptr->asteroidsNum; i++)
 	{

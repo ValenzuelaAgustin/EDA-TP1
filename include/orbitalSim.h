@@ -29,10 +29,11 @@ typedef struct
  *
  * @param asteroidsNum 
  * @param easter_egg 
+ * @param System 
  *
  * @return The orbital simulation
  */
-OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg);
+OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg, int System);
 
 /**
  * @brief Destroys an orbital simulation

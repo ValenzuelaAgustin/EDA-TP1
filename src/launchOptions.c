@@ -79,6 +79,12 @@ const launchOptions_t launchOptions[] =
 		0,
 		0,
 		{0, 1}
+	},
+	{
+		"-system",
+		1,
+		0,
+		{0, 1}
 	}
 };
 
