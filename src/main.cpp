@@ -110,6 +110,8 @@ double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double targ
 
 	while (isViewRendering(view) && end_condition < 100)
 	{
+		updateUserInputs(sim->bodyNum);
+
 		for (i = 0; i < sim_updates_per_frame; i++)
 			updateOrbitalSim(sim);
 		renderView(view, sim);
