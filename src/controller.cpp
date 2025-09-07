@@ -29,7 +29,7 @@ void updateUserInputs(unsigned int bodyNum)
 
 static void updateMovementKeysInptus()
 {
-	for (unsigned int i; i < movement_keys_ammount; i++)
+	for (unsigned int i = 0; i < movement_keys_ammount; i++)
 	{
 		movement_key_is_down[i] = IsKeyDown(movement_keys[i]);
 	}
