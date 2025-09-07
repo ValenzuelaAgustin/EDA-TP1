@@ -131,6 +131,7 @@ view_t* constructView(int fps, int fullscreen, int width, int height, int show_v
 
 	last_camera_position = view->camera.position;
 	last_camera_target = view->camera.target;
+	keybinds_values[ASTEROIDS_RENDER_MODE] = PERFORMANCE;
 
 	return view;
 }
