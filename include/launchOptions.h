@@ -24,11 +24,13 @@ enum
 	SHOW_ACCELERATION_VECTORS,
 	MASSIVE_JUPITER,
 	SPAWN_BLACKHOLE,
-	EASTER_EGG
+	EASTER_EGG,
+	SYSTEM
 };
 
 /**
  * @brief 
+ *
  * @param argc 
  * @param argv 
  * @param launchOptionsValues 

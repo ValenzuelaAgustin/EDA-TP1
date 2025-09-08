@@ -19,29 +19,43 @@
 #define INITIAL_SIM_UPDATES_PER_FRAME 100
 #define SECONDS_PER_DAY ( 24 * 60 * 60 )
 
-/*
-+fps_target 0 -fullscreen -w 2560 -h 1600 -days_per_simulation_second 10 -asteroids_ammount 500 -show_velocity_vectors -show_acceleration_vectors
-*/
+/**
+ * @brief 
+ *
+ * @param sim 
+ * @param view 
+ * @param target_frametime 
+ * @param PIDC 
+ *
+ * @return 
+ */
+static int getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC);
 
-double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC, int spawnBH);
-double frametime_PID(double target_frametime, double frametime);
+/**
+ * @brief 
+ *
+ * @param target_frametime 
+ * @param frametime 
+ *
+ * @return 
+ */
+static double frametime_PID(double target_frametime, double frametime);
 
 int main(int argc, char* argv[])
 {
-	int i;
 	int launchOptionsValues[launchOptionsAmmount];
 	int time_direction = 0;
 	int prev_time_direction = 0;
+	int sim_updates_per_frame;
 	double simulationSpeed;
 	double target_frametime;
-	double sim_updates_per_frame;
 	double PIDC;
 
 	searchLaunchOptions(argc, argv, launchOptionsValues);
 	simulationSpeed = launchOptionsValues[DAYS_PER_SIMULATION_SECOND] * SECONDS_PER_DAY;
 	solarSystem[JUPITER].body.mass_GC *= (launchOptionsValues[MASSIVE_JUPITER]) ? 1E3 : 1.0;
 
-	OrbitalSim_t* sim = constructOrbitalSim(launchOptionsValues[ASTEROIDS_AMMOUNT], launchOptionsValues[EASTER_EGG], launchOptionsValues[SPAWN_BLACKHOLE]);
+	OrbitalSim_t* sim = constructOrbitalSim(launchOptionsValues[ASTEROIDS_AMMOUNT], launchOptionsValues[EASTER_EGG], launchOptionsValues[SYSTEM], launchOptionsValues[SPAWN_BLACKHOLE]);
 
 #ifndef TEST_UPDATE_ORBITAL_SIM
 	view_t* view = constructView(	0,
@@ -57,17 +71,18 @@ int main(int argc, char* argv[])
 	target_frametime = 1.0 / launchOptionsValues[TARGET_FPS];
 	sim_updates_per_frame = getInitialSimUpdatesPerFrame(sim, view, target_frametime, PIDC, launchOptionsValues[SPAWN_BLACKHOLE]);
 	sim->dt = simulationSpeed * target_frametime / sim_updates_per_frame;
-	printf("\nsim_updates_per_frame = %.0lf\ndt = %.15lf seconds\n", sim_updates_per_frame, sim->dt);
+	printf("\nsim_updates_per_frame = %d\ndt = %.15lf seconds\n", sim_updates_per_frame, sim->dt);
 
 	while (isViewRendering(view))
 	{
 		updateUserInputs(sim->bodyNum);
 
-		for (i = 0; i < sim_updates_per_frame; i++)
+		for (int i = 0; i < sim_updates_per_frame; i++)
 			updateOrbitalSim(sim, launchOptionsValues[SPAWN_BLACKHOLE]);
 
+		renderView(view, sim);
 		prev_time_direction = time_direction;
-		time_direction = renderView(view, sim);
+		time_direction = keybinds_values[TOGGLE_REWIND];
 		if (time_direction == prev_time_direction)
 			continue;
 
@@ -99,34 +114,33 @@ int main(int argc, char* argv[])
 #endif
 }
 
-double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC, int spawnBH)
+static int getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC, int spawnBH)
 {
-	double frametime = 0;
 	double sim_updates_per_frame = INITIAL_SIM_UPDATES_PER_FRAME;
-	int i;
-	int end_condition = 0;
+	double frametime = 0;
 
 	sim->dt = 0;
 
-	while (isViewRendering(view) && end_condition < 100)
+	while (isViewRendering(view) && ((frametime < 0.999 * target_frametime) || (frametime > 1.001 * target_frametime)))
 	{
 		updateUserInputs(sim->bodyNum);
 
-		for (i = 0; i < sim_updates_per_frame; i++)
+		for (int i = 0; i < sim_updates_per_frame; i++)
 			updateOrbitalSim(sim, spawnBH);
-		renderView(view, sim);
 
+		renderView(view, sim);
 		frametime = GetFrameTime();
+		if (sim_updates_per_frame < 2.0 && frametime > target_frametime)	// if target frametime can not be obtained
+			break;
+
 		sim_updates_per_frame += PIDC * frametime_PID(target_frametime, frametime);
 		sim_updates_per_frame = (sim_updates_per_frame > 1) ? sim_updates_per_frame : 1;
-
-		end_condition = (frametime >= 0.9 * target_frametime && frametime <= 1.1 * target_frametime) ? end_condition + 1 : end_condition;
 	}
 
-	return sim_updates_per_frame;
+	return (int)sim_updates_per_frame;
 }
 
-double frametime_PID(double target_frametime, double frametime)
+static double frametime_PID(double target_frametime, double frametime)
 {
 	static double PC = 10;
 	static double IC = 10;

@@ -9,7 +9,7 @@
 #define _USE_MATH_DEFINES
 
 #include "orbitalSim.h"
-#include "nmath.h"
+#include "vector3D.h"
 #include "keyBinds.h"
 #include <stdlib.h>
 #include <math.h>
@@ -21,10 +21,15 @@
 #define SPACESHIP_ACCELERATION 1E-3
 
 /**
+ * Private function declarations
+ */
+
+/**
  * @brief Gets a uniform random value in a range
  *
  * @param min Minimum value
  * @param max Maximum value
+ *
  * @return The random value
  */
 static float getRandomFloat(float min, float max);
@@ -39,12 +44,15 @@ static void configureAsteroid(Body_t* body, float centerMass, int easter_egg);
 
 /**
  * @brief Sets PlanetarySystem, Asteroids and SpaceShip accelerations to 0
+ *		Must be called before updateAccelerations
+ *
  * @param sim Pointer to the simulation
  */
 static inline void initializeAccelerations(OrbitalSim_t* sim);
 
 /**
  * @brief Calculates the accelerations between two bodies
+ *
  * @param body0
  * @param body1
  */
@@ -58,28 +66,31 @@ static inline void calculateAccelerations(Body_t* body0, Body_t* body1);
 static inline void calculateAccelerationsOneWay(Body_t* body0, Body_t* body1);
 
 /**
- * @brief 
- * @param sim 
+ * @brief Calculates the acceleration for every body in the simulation
+ *
+ * @param sim Pointer to the simulation
  */
 static inline void updateAccelerations(OrbitalSim_t* sim);
 
 /**
  * @brief Calculates the new speed and position for a given body
+ *
  * @param body pointer to the body
  * @param dt time step used to calculate discrete integrals
  */
 static inline void calculateSpeedAndPosition(Body_t* body, double dt);
 
 /**
- * @brief 
+ * @brief Calculates the speed and position for every body in the simulation
  *
- * @param sim
+ * @param sim Pointer to the simulation
  */
 static inline void updateSpeedsAndPositions(OrbitalSim_t* sim);
 
 /**
- * @brief 
- * @param sim
+ * @brief Add the accelerations produced by the spaceship's engines.
+ *
+ * @param sim Pointer to the simulation
  */
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim);
 
@@ -89,57 +100,54 @@ static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim);
  */
 static inline void removeBody(OrbitalSim_t* sim);
 
+/**
+ * Public function definitions
+ */
 
-OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg, int spawnBlackHole)
+OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg, int System, int spawnBlackHole)
 {
-	OrbitalSim_t* ptr = new OrbitalSim_t;
-	if (!ptr)
+	OrbitalSim_t* sim = new OrbitalSim_t;
+	if (!sim)
 		return NULL;
 
-	ptr->bodyNum = SOLARSYSTEM_BODYNUM;
-	ptr->asteroidsNum = asteroidsNum;
-	ptr->PlanetarySystem = (EphemeridesBody_t*)malloc(sizeof(EphemeridesBody_t) * ptr->bodyNum + sizeof(Body_t) * ptr->asteroidsNum);
-	ptr->Asteroids = (Body_t*) ((ptr->asteroidsNum) ? (ptr->PlanetarySystem + ptr->bodyNum) : NULL);
+	sim->bodyNum = (System) ? ALPHACENTAURISYSTEM_BODYNUM : SOLARSYSTEM_BODYNUM;
+	sim->asteroidsNum = asteroidsNum;
+	sim->PlanetarySystem = (System) ? alphaCentauriSystem : solarSystem;
+	sim->Asteroids = (Body_t*) ((sim->asteroidsNum) ? (malloc(sizeof(Body_t) * sim->asteroidsNum)) : NULL);
 
-	if (!ptr->PlanetarySystem)
+	if (sim->asteroidsNum && !sim->Asteroids)
 	{
-		free(ptr->PlanetarySystem);
-		delete ptr;
+		delete sim;
 		return NULL;
 	}
 
-	ptr->dt = 0.0;
-	ptr->time_elapsed = 0.0;
+	sim->dt = 0.0;
+	sim->time_elapsed = 0.0;
 
-	unsigned int i;
-	for (i = 0; i < SOLARSYSTEM_BODYNUM; i++)
+	for (unsigned int i = 0; i < sim->asteroidsNum; i++)
 	{
-		ptr->PlanetarySystem[i] = solarSystem[i];
-	}
-	for (i = 0; i < ptr->asteroidsNum; i++)
-	{
-		configureAsteroid(ptr->Asteroids + i, ptr->PlanetarySystem[SOL].body.mass_GC, easter_egg);
+		configureAsteroid(sim->Asteroids + i, sim->PlanetarySystem[0].body.mass_GC, easter_egg);
 	}
 
 	if(spawnBlackHole)
-		ptr->BlackHole = BlackHole;
+		sim->BlackHole = BlackHole;
 	else
-		ptr->BlackHole = BlackHole_t{};
+		sim->BlackHole = BlackHole_t{};
 
-	configureAsteroid(&ptr->Spaceship.body, ptr->PlanetarySystem[SOL].body.mass_GC, 0);
-	ptr->Spaceship.color = GREEN;
-	ptr->Spaceship.radius = 120;
-	ptr->Spaceship.body.mass_GC = 5E6 * GRAVITATIONAL_CONSTANT;
+	configureAsteroid(&sim->Spaceship.body, sim->PlanetarySystem[0].body.mass_GC, 0);
+	sim->Spaceship.color = GREEN;
+	sim->Spaceship.radius = 120;
+	sim->Spaceship.body.mass_GC = 5E6 * GRAVITATIONAL_CONSTANT;
 
-	return ptr; // This should return your orbital sim
+	return sim;
 }
 
 void destroyOrbitalSim(OrbitalSim_t* sim)
 {
 	if (!sim)
 		return;
-	if (sim->PlanetarySystem)
-		free(sim->PlanetarySystem);
+	if (sim->Asteroids)
+		free(sim->Asteroids);
 	delete sim;
 }
 
@@ -157,6 +165,10 @@ void updateOrbitalSim(OrbitalSim_t* sim, int spawnBH)
 	if(spawnBH)
 		removeBody(sim);
 }
+
+/**
+ * Private function definitions
+ */
 
 static float getRandomFloat(float min, float max)
 {
@@ -228,7 +240,6 @@ static inline void calculateAccelerations(Body_t* body0, Body_t* body1)
 	acceleration.z = body1->position.z - body0->position.z;
 
 	inverse_distance_cubed = 1 / sqrt(DOT_PRODUCT(acceleration, acceleration));
-//	inverse_distance_cubed = Q_rsqrt(DOT_PRODUCT(acceleration, acceleration));
 	inverse_distance_cubed = inverse_distance_cubed * inverse_distance_cubed * inverse_distance_cubed;
 
 	acceleration.x *= inverse_distance_cubed;
@@ -317,10 +328,9 @@ static inline void updateSpeedsAndPositions(OrbitalSim_t* sim)
 
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
 {
-	int i, axis;
 	double* acceleration = (double*) &sim->Spaceship.body.acceleration;
 
-	for (i = 0, axis = 0; i < 6; i++, axis = i % 3)
+	for (int i = 0, axis = 0; i < 6; i++, axis = i % 3)
 	{
 		// i = 0,1,2 Para los ejes en sentido positivo (teclas U, I y O)
 		// i = 3,4,5 Para los ejes en sentido negativo (teclas J, K y L)

@@ -8,7 +8,7 @@
 #ifndef EPHEMERIDES_H
 #define EPHEMERIDES_H
 
-#include "nmath.h"
+#include "vector3D.h"
 #include <raylib.h>
 
 #define GRAVITATIONAL_CONSTANT 6.6743E-11	// [N * m^2 / Kg^2]

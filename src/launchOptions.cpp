@@ -79,12 +79,35 @@ const launchOptions_t launchOptions[] =
 		0,
 		0,
 		{0, 1}
+	},
+	{
+		"-system",
+		1,
+		0,
+		{0, 1}
 	}
 };
 
 const int launchOptionsAmmount = sizeof(launchOptions) / sizeof(launchOptions[0]);
 
+/**
+ * @brief 
+ *
+ * @param S0 
+ * @param S1 
+ *
+ * @return 
+ */
 static int scmp(const char* S0, const char* S1);
+
+/**
+ * @brief 
+ *
+ * @param str 
+ * @param number 
+ *
+ * @return 
+ */
 static int str2int(const char* str, int* number);
 
 void searchLaunchOptions(int argc, char* argv[], int* launchOptionsValues)

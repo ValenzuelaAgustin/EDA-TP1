@@ -4,8 +4,8 @@
 
 /**
  * @brief 
- * 
- * @param bodyNum
+ *
+ * @param bodyNum 
  */
 extern void updateUserInputs(unsigned int bodyNum);
 

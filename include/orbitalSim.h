@@ -14,7 +14,7 @@
  */
 typedef struct
 {
-	double dt;			// In seconds ( has to be updated with the frametime to match the simulation speed )
+	double dt;			// In seconds
 	double time_elapsed;		// In seconds
 	EphemeridesBody_t* PlanetarySystem;
 	Body_t* Asteroids;
@@ -29,10 +29,11 @@ typedef struct
  *
  * @param asteroidsNum 
  * @param easter_egg 
+ * @param System 
  *
  * @return The orbital simulation
  */
-OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg, int spawnBlackHole);
+OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg, int System, int spawnBlackHole);
 
 /**
  * @brief Destroys an orbital simulation

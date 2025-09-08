@@ -6,7 +6,7 @@
  */
 
 #include "view.h"
-#include "nmath.h"
+#include "vector3D.h"
 #include "keyBinds.h"
 #include <math.h>
 #include <raymath.h>
@@ -170,7 +170,7 @@ bool isViewRendering(view_t* view)
 	return !WindowShouldClose();
 }
 
-int renderView(view_t* view, OrbitalSim_t* sim)
+void renderView(view_t* view, OrbitalSim_t* sim)
 {
 	updateCameraSettings(view, sim);
 	UpdateCamera(&view->camera, camera_mode);
@@ -192,8 +192,6 @@ int renderView(view_t* view, OrbitalSim_t* sim)
 	DrawText(getElapsedSimTime((time_t)sim->time_elapsed, buffer), 10, 50, 20, RAYWHITE);
 	printKeybinds(view);
 	EndDrawing();
-
-	return keybinds_values[TOGGLE_REWIND];
 }
 
 /**
