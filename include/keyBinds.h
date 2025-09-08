@@ -1,3 +1,10 @@
+/**
+ * @brief Key binds for orbital simulation
+ * 
+ * @author Sofia Capiel
+ * @author Agustin Tomas Valenzuela
+ * @author Francisco Alonso Paredes
+ */
 #ifndef KEYBINDS_H
 #define KEYBINDS_H
 #include <raylib.h>

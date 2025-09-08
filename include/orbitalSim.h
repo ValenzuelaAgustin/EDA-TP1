@@ -1,6 +1,10 @@
 ﻿/**
  * @brief Orbital simulation
  * @author Marc S. Ressl
+ * 
+ * @author Sofia Capiel
+ * @author Agustin Tomas Valenzuela
+ * @author Francisco Alonso Paredes
  *
  * @copyright Copyright (c) 2022-2023
  */

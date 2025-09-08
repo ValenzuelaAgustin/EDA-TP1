@@ -1,3 +1,10 @@
+/**
+ * @brief 3D vector and dot product
+ * 
+ * @author Sofia Capiel
+ * @author Agustin Tomas Valenzuela
+ * @author Francisco Alonso Paredes
+ */
 #ifndef VECTOR3D_H
 #define VECTOR3D_H
 
