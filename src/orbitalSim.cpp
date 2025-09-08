@@ -343,50 +343,47 @@ static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
 
 static inline void removeBody (OrbitalSim_t* sim)
 {
-	int i, j;
-	double dist;
+	vector3D_t diff;
+	unsigned int i, j;
+	double distance_squared;
+	double absorbRadius_squared = sim->BlackHole.absorbRadius * sim->BlackHole.absorbRadius;
 
 	for(i = 0; i < sim->bodyNum; i++)
 	{
-		vector3D_t planetVec =
-		{
-			(sim->PlanetarySystem[i].body.position.x - sim->BlackHole.body.position.x),
-			(sim->PlanetarySystem[i].body.position.y - sim->BlackHole.body.position.y),
-			(sim->PlanetarySystem[i].body.position.z - sim->BlackHole.body.position.z),
-		};
-		dist = sqrt (DOT_PRODUCT(planetVec, planetVec));
+		diff.x = sim->PlanetarySystem[i].body.position.x - sim->BlackHole.body.position.x;
+		diff.y = sim->PlanetarySystem[i].body.position.y - sim->BlackHole.body.position.y;
+		diff.z = sim->PlanetarySystem[i].body.position.z - sim->BlackHole.body.position.z;
 
-		if(dist <= sim->BlackHole.absorbRadius)
+		distance_squared = DOT_PRODUCT(diff, diff);
+
+		if(distance_squared > absorbRadius_squared)
+			continue;
+
+		for(j = i; j < sim->bodyNum - 1; j++)
 		{
-			for(j = i; j < sim->bodyNum - 1; j++)
-			{
-				sim->PlanetarySystem[j] = sim->PlanetarySystem[j+1];
-			}
-			sim->bodyNum--;
-			i--;
+			sim->PlanetarySystem[j] = sim->PlanetarySystem[j+1];
 		}
+		sim->bodyNum--;
+		i--;
 	}
 
 	for(i = 0; i < sim->asteroidsNum; i++)
 	{
-		vector3D_t asteroidVec =
-		{
-			(sim->Asteroids[i].position.x - sim->BlackHole.body.position.x),
-			(sim->Asteroids[i].position.y - sim->BlackHole.body.position.y),
-			(sim->Asteroids[i].position.z - sim->BlackHole.body.position.z),
-		};
+		diff.x = sim->Asteroids[i].position.x - sim->BlackHole.body.position.x;
+		diff.y = sim->Asteroids[i].position.y - sim->BlackHole.body.position.y;
+		diff.z = sim->Asteroids[i].position.z - sim->BlackHole.body.position.z;
 
-		dist = sqrt (DOT_PRODUCT(asteroidVec, asteroidVec));
+		distance_squared = DOT_PRODUCT(diff, diff);
 
-		if(dist <= sim->BlackHole.absorbRadius)
+		if(distance_squared > absorbRadius_squared)
+			continue;
+
+		for(j = i; j < sim->asteroidsNum - 1; j++)
 		{
-			for(j = i; j < sim->asteroidsNum - 1; j++)
-			{
-				sim->Asteroids[j] = sim->Asteroids[j+1];
-			}
-			sim->asteroidsNum--;
-			i--;
+			sim->Asteroids[j] = sim->Asteroids[j+1];
 		}
+		sim->asteroidsNum--;
+		i--;
 	}
 	
 }
