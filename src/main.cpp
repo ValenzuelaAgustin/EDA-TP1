@@ -20,14 +20,14 @@
 #define SECONDS_PER_DAY ( 24 * 60 * 60 )
 
 /**
- * @brief 
+ * @brief Finds the number of updates per frame that the computer can perform
+ *			to achieve the desired frame rate.
+ * @param sim The orbital simulation
+ * @param view The view
+ * @param target_frametime The desired frametime
+ * @param PIDC Constant for the PID that will adjust the nummer of sim updates per frame
  *
- * @param sim 
- * @param view 
- * @param target_frametime 
- * @param PIDC 
- *
- * @return 
+ * @return SimUpdatesPerFrame (1 if even updating the simulation 1 time per frame the computer can not render the desired FPS)
  */
 static int getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC, int spawnBH);
 
@@ -121,7 +121,7 @@ static int getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double 
 
 	sim->dt = 0;
 
-	while (isViewRendering(view) && ((frametime < 0.999 * target_frametime) || (frametime > 1.001 * target_frametime)))
+	while (isViewRendering(view) && ((frametime < 0.99 * target_frametime) || (frametime > 1.01 * target_frametime)))
 	{
 		updateUserInputs(sim->bodyNum);
 
