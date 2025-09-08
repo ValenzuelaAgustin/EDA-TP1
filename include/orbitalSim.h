@@ -19,7 +19,7 @@ typedef struct
 	EphemeridesBody_t* PlanetarySystem;
 	Body_t* Asteroids;
 	EphemeridesBody_t Spaceship;
-	Body_t BlackHole;// IMPLEMENTAR y borrar este comentario
+	BlackHole_t BlackHole;
 	unsigned int bodyNum;
 	unsigned int asteroidsNum;
 } OrbitalSim_t;
@@ -32,7 +32,7 @@ typedef struct
  *
  * @return The orbital simulation
  */
-OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg);
+OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg, int spawnBlackHole);
 
 /**
  * @brief Destroys an orbital simulation
@@ -46,6 +46,6 @@ void destroyOrbitalSim(OrbitalSim_t* sim);
  *
  * @param sim The orbital simulation
  */
-void updateOrbitalSim(OrbitalSim_t* sim);
+void updateOrbitalSim(OrbitalSim_t* sim, int spawnBH);
 
 #endif

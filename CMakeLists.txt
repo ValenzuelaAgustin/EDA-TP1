@@ -16,7 +16,7 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     add_link_options(-fsanitize=undefined)
 endif()
 
-add_executable(orbitalsim src/main.cpp src/orbitalSim.cpp src/view.cpp src/ephemerides.c src/nmath.c)
+add_executable(orbitalsim src/main.cpp src/orbitalSim.cpp src/view.cpp src/ephemerides.c src/nmath.c src/launchOptions.c src/keyBinds.c src/controller.cpp)
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # Raylib

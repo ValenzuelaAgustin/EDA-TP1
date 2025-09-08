@@ -131,4 +131,15 @@ EphemeridesBody_t alphaCentauriSystem[] =
 	}
 };
 
+BlackHole_t BlackHole =
+{
+	5.8e10,
+	{
+		50000000E+24 * GRAVITATIONAL_CONSTANT,
+		{-5.0E+10, 6.0E+10, 2.0E+10},
+		{4.0E+3, 4.0E+3, 4.0E+3},
+		{0.0, 0.0, 0.0}
+	}
+};
+
 const unsigned int ALPHACENTAURISYSTEM_BODYNUM = sizeof(alphaCentauriSystem) / sizeof(EphemeridesBody_t);

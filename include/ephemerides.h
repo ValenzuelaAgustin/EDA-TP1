@@ -29,6 +29,12 @@ typedef struct
 	Body_t body;
 } EphemeridesBody_t;
 
+typedef struct 
+{
+	double absorbRadius;
+	Body_t body;
+} BlackHole_t;
+
 /**
  * @brief Solay system ephermerides for 2022-01-01T00:00:00Z
  * 
@@ -65,4 +71,5 @@ enum
 	ALFA_CENTAURI_B
 };
 
+extern BlackHole_t BlackHole;
 #endif

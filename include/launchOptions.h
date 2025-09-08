@@ -33,6 +33,15 @@ enum
  * @param argv 
  * @param launchOptionsValues 
  */
+
+ #ifdef __cplusplus
+extern "C" {
+#endif
+
 void searchLaunchOptions(int argc, char* argv[], int* launchOptionsValues);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

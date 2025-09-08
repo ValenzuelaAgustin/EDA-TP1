@@ -23,7 +23,7 @@
 +fps_target 0 -fullscreen -w 2560 -h 1600 -days_per_simulation_second 10 -asteroids_ammount 500 -show_velocity_vectors -show_acceleration_vectors
 */
 
-double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC);
+double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC, int spawnBH);
 double frametime_PID(double target_frametime, double frametime);
 
 int main(int argc, char* argv[])
@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 	simulationSpeed = launchOptionsValues[DAYS_PER_SIMULATION_SECOND] * SECONDS_PER_DAY;
 	solarSystem[JUPITER].body.mass_GC *= (launchOptionsValues[MASSIVE_JUPITER]) ? 1E3 : 1.0;
 
-	OrbitalSim_t* sim = constructOrbitalSim(launchOptionsValues[ASTEROIDS_AMMOUNT], launchOptionsValues[EASTER_EGG]);
+	OrbitalSim_t* sim = constructOrbitalSim(launchOptionsValues[ASTEROIDS_AMMOUNT], launchOptionsValues[EASTER_EGG], launchOptionsValues[SPAWN_BLACKHOLE]);
 
 #ifndef TEST_UPDATE_ORBITAL_SIM
 	view_t* view = constructView(	0,
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 	PIDC = (PIDC < 1) ? 1 : PIDC;
 
 	target_frametime = 1.0 / launchOptionsValues[TARGET_FPS];
-	sim_updates_per_frame = getInitialSimUpdatesPerFrame(sim, view, target_frametime, PIDC);
+	sim_updates_per_frame = getInitialSimUpdatesPerFrame(sim, view, target_frametime, PIDC, launchOptionsValues[SPAWN_BLACKHOLE]);
 	sim->dt = simulationSpeed * target_frametime / sim_updates_per_frame;
 	printf("\nsim_updates_per_frame = %.0lf\ndt = %.15lf seconds\n", sim_updates_per_frame, sim->dt);
 
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
 		updateUserInputs(sim->bodyNum);
 
 		for (i = 0; i < sim_updates_per_frame; i++)
-			updateOrbitalSim(sim);
+			updateOrbitalSim(sim, launchOptionsValues[SPAWN_BLACKHOLE]);
 
 		prev_time_direction = time_direction;
 		time_direction = renderView(view, sim);
@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
 
 	do
 	{
-		updateOrbitalSim(sim);
+		updateOrbitalSim(sim, launchOptionsValues[SPAWN_BLACKHOLE]);
 		counter++;
 		t1 = time(NULL);
 	} while (difftime(t1,t0) < TEST_TIME);
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 #endif
 }
 
-double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC)
+double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC, int spawnBH)
 {
 	double frametime = 0;
 	double sim_updates_per_frame = INITIAL_SIM_UPDATES_PER_FRAME;
@@ -113,7 +113,7 @@ double getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double targ
 		updateUserInputs(sim->bodyNum);
 
 		for (i = 0; i < sim_updates_per_frame; i++)
-			updateOrbitalSim(sim);
+			updateOrbitalSim(sim, spawnBH);
 		renderView(view, sim);
 
 		frametime = GetFrameTime();

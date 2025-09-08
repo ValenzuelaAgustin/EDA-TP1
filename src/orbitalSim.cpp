@@ -13,6 +13,7 @@
 #include "keyBinds.h"
 #include <stdlib.h>
 #include <math.h>
+#include <stdio.h>
 
 #define ASTEROIDS_MEAN_RADIUS 4E11F
 
@@ -50,8 +51,14 @@ static inline void initializeAccelerations(OrbitalSim_t* sim);
 static inline void calculateAccelerations(Body_t* body0, Body_t* body1);
 
 /**
+ * @brief Calculates the acceleration of one body
+ * @param body0
+ * @param body1
+ */
+static inline void calculateAccelerationsOneWay(Body_t* body0, Body_t* body1);
+
+/**
  * @brief 
- *
  * @param sim 
  */
 static inline void updateAccelerations(OrbitalSim_t* sim);
@@ -76,8 +83,14 @@ static inline void updateSpeedsAndPositions(OrbitalSim_t* sim);
  */
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim);
 
+/**
+ * @brief 
+ * @param sim
+ */
+static inline void removeBody(OrbitalSim_t* sim);
 
-OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg)
+
+OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg, int spawnBlackHole)
 {
 	OrbitalSim_t* ptr = new OrbitalSim_t;
 	if (!ptr)
@@ -108,6 +121,11 @@ OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg)
 		configureAsteroid(ptr->Asteroids + i, ptr->PlanetarySystem[SOL].body.mass_GC, easter_egg);
 	}
 
+	if(spawnBlackHole)
+		ptr->BlackHole = BlackHole;
+	else
+		ptr->BlackHole = BlackHole_t{};
+
 	configureAsteroid(&ptr->Spaceship.body, ptr->PlanetarySystem[SOL].body.mass_GC, 0);
 	ptr->Spaceship.color = GREEN;
 	ptr->Spaceship.radius = 120;
@@ -125,7 +143,7 @@ void destroyOrbitalSim(OrbitalSim_t* sim)
 	delete sim;
 }
 
-void updateOrbitalSim(OrbitalSim_t* sim)
+void updateOrbitalSim(OrbitalSim_t* sim, int spawnBH)
 {
 	//if (!sim || !sim->EphemeridesBody || sim->bodyNum < 1 || sim->dt <= 0)
 	//	return;
@@ -136,6 +154,8 @@ void updateOrbitalSim(OrbitalSim_t* sim)
 
 	updateAccelerations(sim);
 	updateSpeedsAndPositions(sim);
+	if(spawnBH)
+		removeBody(sim);
 }
 
 static float getRandomFloat(float min, float max)
@@ -192,6 +212,10 @@ static inline void initializeAccelerations(OrbitalSim_t* sim)
 	sim->Spaceship.body.acceleration.x = 0.0;
 	sim->Spaceship.body.acceleration.y = 0.0;
 	sim->Spaceship.body.acceleration.z = 0.0;
+
+	sim->BlackHole.body.acceleration.x = 0.0;
+	sim->BlackHole.body.acceleration.y = 0.0;
+	sim->BlackHole.body.acceleration.z = 0.0;
 }
 
 static inline void calculateAccelerations(Body_t* body0, Body_t* body1)
@@ -220,6 +244,27 @@ static inline void calculateAccelerations(Body_t* body0, Body_t* body1)
 	body1->acceleration.z -= body0->mass_GC * acceleration.z;
 }
 
+static inline void calculateAccelerationsOneWay(Body_t* body0, Body_t* body1)
+{
+    vector3D_t acceleration;
+    double inverse_distance_cubed;
+
+    acceleration.x = body1->position.x - body0->position.x;
+    acceleration.y = body1->position.y - body0->position.y;
+    acceleration.z = body1->position.z - body0->position.z;
+
+    inverse_distance_cubed = 1 / sqrt(DOT_PRODUCT(acceleration, acceleration));
+    inverse_distance_cubed = inverse_distance_cubed * inverse_distance_cubed * inverse_distance_cubed;
+
+    acceleration.x *= inverse_distance_cubed;
+    acceleration.y *= inverse_distance_cubed;
+    acceleration.z *= inverse_distance_cubed;
+
+    body0->acceleration.x += body1->mass_GC * acceleration.x;
+    body0->acceleration.y += body1->mass_GC * acceleration.y;
+    body0->acceleration.z += body1->mass_GC * acceleration.z;
+}
+
 static inline void updateAccelerations(OrbitalSim_t* sim)
 {
 	unsigned int i, j;
@@ -235,7 +280,12 @@ static inline void updateAccelerations(OrbitalSim_t* sim)
 			calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->PlanetarySystem[j].body);
 		}
 		calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->Spaceship.body);
+		calculateAccelerationsOneWay(&sim->PlanetarySystem[i].body, &sim->BlackHole.body);
 	}
+	for (j = 0; j < sim->asteroidsNum; j++)
+    {
+        calculateAccelerationsOneWay(sim->Asteroids + j, &sim->BlackHole.body);
+    }
 }
 
 static inline void calculateSpeedAndPosition(Body_t* body, double dt)
@@ -262,6 +312,7 @@ static inline void updateSpeedsAndPositions(OrbitalSim_t* sim)
 		calculateSpeedAndPosition(sim->Asteroids + i, sim->dt);
 	}
 	calculateSpeedAndPosition(&sim->Spaceship.body, sim->dt);
+	calculateSpeedAndPosition(&sim->BlackHole.body, sim->dt);
 }
 
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
@@ -278,4 +329,51 @@ static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
 			acceleration[axis] += (i < 3) ? SPACESHIP_ACCELERATION : -SPACESHIP_ACCELERATION;
 		}
 	}
+}
+
+static inline void removeBody (OrbitalSim_t* sim)
+{
+	int i, j;
+	double factor = 1e9;
+	double dx;
+	double dy;
+	double dz;
+	double dist;
+
+	for(i = 0; i < sim->bodyNum; i++)
+	{
+		dx = (sim->PlanetarySystem[i].body.position.x - sim->BlackHole.body.position.x) / factor;
+		dy = (sim->PlanetarySystem[i].body.position.y - sim->BlackHole.body.position.y) / factor;
+		dz = (sim->PlanetarySystem[i].body.position.z - sim->BlackHole.body.position.z) / factor;
+		dist = sqrt (dx*dx + dy*dy + dz*dz) * factor;
+
+		if(dist <= sim->BlackHole.absorbRadius)
+		{
+			for(j = i; j < sim->bodyNum - 1; j++)
+			{
+				sim->PlanetarySystem[j] = sim->PlanetarySystem[j+1];
+			}
+			sim->bodyNum--;
+			i--;
+		}
+	}
+
+	for(i = 0; i < sim->asteroidsNum; i++)
+	{
+		dx = (sim->Asteroids[i].position.x - sim->BlackHole.body.position.x) / factor;
+		dy = (sim->Asteroids[i].position.y - sim->BlackHole.body.position.y) / factor;
+		dz = (sim->Asteroids[i].position.z - sim->BlackHole.body.position.z) / factor;
+		dist = sqrt (dx*dx + dy*dy + dz*dz) * factor;
+
+		if(dist <= sim->BlackHole.absorbRadius)
+		{
+			for(j = i; j < sim->asteroidsNum - 1; j++)
+			{
+				sim->Asteroids[j] = sim->Asteroids[j+1];
+			}
+			sim->asteroidsNum--;
+			i--;
+		}
+	}
+	
 }
