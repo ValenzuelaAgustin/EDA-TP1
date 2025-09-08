@@ -24,12 +24,12 @@ typedef struct
  * @brief Constructs an orbital simulation view
  *
  * @param fps Frames per second for the view
- * @param fullscreen
+ * @param fullscreen 
  * @param width 
  * @param height 
  * @param show_velocity_vectors 
  * @param show_acceleration_vectors 
- * 
+ *
  * @return The view
  */
 view_t* constructView(int fps, int fullscreen, int width, int height, int show_velocity_vectors, int show_acceleration_vectors);

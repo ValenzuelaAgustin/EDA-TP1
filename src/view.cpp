@@ -6,7 +6,7 @@
  */
 
 #include "view.h"
-#include "nmath.h"
+#include "vector3D.h"
 #include "keyBinds.h"
 #include <math.h>
 #include <raymath.h>

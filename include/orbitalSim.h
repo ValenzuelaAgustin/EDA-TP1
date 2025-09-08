@@ -14,12 +14,11 @@
  */
 typedef struct
 {
-	double dt;			// In seconds ( has to be updated with the frametime to match the simulation speed )
+	double dt;			// In seconds
 	double time_elapsed;		// In seconds
 	EphemeridesBody_t* PlanetarySystem;
 	Body_t* Asteroids;
 	EphemeridesBody_t Spaceship;
-	Body_t BlackHole;// IMPLEMENTAR y borrar este comentario
 	unsigned int bodyNum;
 	unsigned int asteroidsNum;
 } OrbitalSim_t;
