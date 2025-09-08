@@ -323,7 +323,7 @@ static void drawOrbitalSimuationEntities(OrbitalSim_t* sim)
 		drawBody(sim->Asteroids + i, ASTEROIDS_RADIUS, ASTEROIDS_COLOR, keybinds_values[ASTEROIDS_RENDER_MODE]);
 	}
 	drawBody(&sim->Spaceship.body, sim->Spaceship.radius, sim->Spaceship.color, keybinds_values[SPACESHIP_RENDER_MODE]);
-	drawBody(&sim->BlackHole.body, sim->BlackHole.absorbRadius, PINK, keybinds_values[SPACESHIP_RENDER_MODE]);
+	drawBody(&sim->BlackHole.body, sim->BlackHole.absorbRadius, PINK, QUALITY);
 }
 
 static void printKeybinds(view_t* view)
