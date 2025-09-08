@@ -153,9 +153,6 @@ void destroyOrbitalSim(OrbitalSim_t* sim)
 
 void updateOrbitalSim(OrbitalSim_t* sim, int spawnBH)
 {
-	//if (!sim || !sim->EphemeridesBody || sim->bodyNum < 1 || sim->dt <= 0)
-	//	return;
-
 	sim->time_elapsed += sim->dt;
 	initializeAccelerations(sim);
 	updateSpaceShipUserInputs(sim);

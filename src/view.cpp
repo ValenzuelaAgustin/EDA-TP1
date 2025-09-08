@@ -179,14 +179,11 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 
 	ClearBackground(BLACK);
 
-	// Fill in your 3D drawing code here:
-
 	BeginMode3D(view->camera);
 	DrawGrid(10, 10.0f);
 	drawOrbitalSimuationEntities(sim);
 	EndMode3D();
 
-	// Fill in your 2D drawing code here:
 	DrawFPS(10,10);
 	DrawText(getISODate((time_t)sim->time_elapsed),10, 30, 20, RAYWHITE);
 	DrawText(getElapsedSimTime((time_t)sim->time_elapsed, buffer), 10, 50, 20, RAYWHITE);
@@ -225,7 +222,7 @@ static const char* getISODate(time_t timestamp)
 
 static const char* getElapsedSimTime(time_t timestamp, char buffer[])
 {
-	time_t years = timestamp / SECONDS_PER_YEAR;	// Falta agregar el caso de que el anio sea bisiesto ( agregarle un parametro a la funcion )
+	time_t years = timestamp / SECONDS_PER_YEAR;
 	time_t days = (timestamp % SECONDS_PER_YEAR) / SECONDS_PER_DAY;
 
 	sprintf(buffer, "Elapsed Sim Time: %04lld years, %03lld days", years, days);
