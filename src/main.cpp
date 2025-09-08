@@ -29,7 +29,7 @@
  *
  * @return 
  */
-static int getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC);
+static int getInitialSimUpdatesPerFrame(OrbitalSim_t* sim, view_t* view, double target_frametime, double PIDC, int spawnBH);
 
 /**
  * @brief 
