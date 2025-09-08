@@ -344,18 +344,17 @@ static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
 static inline void removeBody (OrbitalSim_t* sim)
 {
 	int i, j;
-	double factor = 1e9;
-	double dx;
-	double dy;
-	double dz;
 	double dist;
 
 	for(i = 0; i < sim->bodyNum; i++)
 	{
-		dx = (sim->PlanetarySystem[i].body.position.x - sim->BlackHole.body.position.x) / factor;
-		dy = (sim->PlanetarySystem[i].body.position.y - sim->BlackHole.body.position.y) / factor;
-		dz = (sim->PlanetarySystem[i].body.position.z - sim->BlackHole.body.position.z) / factor;
-		dist = sqrt (dx*dx + dy*dy + dz*dz) * factor;
+		vector3D_t planetVec =
+		{
+			(sim->PlanetarySystem[i].body.position.x - sim->BlackHole.body.position.x),
+			(sim->PlanetarySystem[i].body.position.y - sim->BlackHole.body.position.y),
+			(sim->PlanetarySystem[i].body.position.z - sim->BlackHole.body.position.z),
+		};
+		dist = sqrt (DOT_PRODUCT(planetVec, planetVec));
 
 		if(dist <= sim->BlackHole.absorbRadius)
 		{
@@ -370,10 +369,14 @@ static inline void removeBody (OrbitalSim_t* sim)
 
 	for(i = 0; i < sim->asteroidsNum; i++)
 	{
-		dx = (sim->Asteroids[i].position.x - sim->BlackHole.body.position.x) / factor;
-		dy = (sim->Asteroids[i].position.y - sim->BlackHole.body.position.y) / factor;
-		dz = (sim->Asteroids[i].position.z - sim->BlackHole.body.position.z) / factor;
-		dist = sqrt (dx*dx + dy*dy + dz*dz) * factor;
+		vector3D_t asteroidVec =
+		{
+			(sim->Asteroids[i].position.x - sim->BlackHole.body.position.x),
+			(sim->Asteroids[i].position.y - sim->BlackHole.body.position.y),
+			(sim->Asteroids[i].position.z - sim->BlackHole.body.position.z),
+		};
+
+		dist = sqrt (DOT_PRODUCT(asteroidVec, asteroidVec));
 
 		if(dist <= sim->BlackHole.absorbRadius)
 		{
