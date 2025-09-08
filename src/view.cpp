@@ -172,6 +172,12 @@ bool isViewRendering(view_t* view)
 
 void renderView(view_t* view, OrbitalSim_t* sim)
 {
+	if (keybinds_values[TOGGLE_FULLSCREEN])
+	{
+		ToggleFullscreen();
+		keybinds_values[TOGGLE_FULLSCREEN] = 0;
+	}
+
 	updateCameraSettings(view, sim);
 	UpdateCamera(&view->camera, camera_mode);
 

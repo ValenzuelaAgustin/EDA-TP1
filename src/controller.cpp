@@ -18,7 +18,7 @@ void updateUserInputs(unsigned int bodyNum)
 		switch (keybinds[i].key)
 		{
 		case TOGGLE_FULLSCREEN_KEY:
-			ToggleFullscreen();
+			keybinds_values[TOGGLE_FULLSCREEN] = 1;
 			break;
 		case SWITCH_BODY_CAMERA_KEY:
 			keybinds_values[i]++;
