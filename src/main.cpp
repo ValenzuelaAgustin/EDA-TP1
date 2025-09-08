@@ -80,8 +80,9 @@ int main(int argc, char* argv[])
 		for (int i = 0; i < sim_updates_per_frame; i++)
 			updateOrbitalSim(sim);
 
+		renderView(view, sim);
 		prev_time_direction = time_direction;
-		time_direction = renderView(view, sim);
+		time_direction = keybinds_values[TOGGLE_REWIND];
 		if (time_direction == prev_time_direction)
 			continue;
 

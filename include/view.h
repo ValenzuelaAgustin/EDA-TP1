@@ -56,6 +56,6 @@ bool isViewRendering(view_t* view);
  * @param view The view
  * @param sim The orbital sim
  */
-int renderView(view_t* view, OrbitalSim_t* sim);
+void renderView(view_t* view, OrbitalSim_t* sim);
 
 #endif
