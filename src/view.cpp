@@ -179,14 +179,11 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 
 	ClearBackground(BLACK);
 
-	// Fill in your 3D drawing code here:
-
 	BeginMode3D(view->camera);
 	DrawGrid(10, 10.0f);
 	drawOrbitalSimuationEntities(sim);
 	EndMode3D();
 
-	// Fill in your 2D drawing code here:
 	DrawFPS(10,10);
 	DrawText(getISODate((time_t)sim->time_elapsed),10, 30, 20, RAYWHITE);
 	DrawText(getElapsedSimTime((time_t)sim->time_elapsed, buffer), 10, 50, 20, RAYWHITE);
@@ -323,7 +320,7 @@ static void drawOrbitalSimuationEntities(OrbitalSim_t* sim)
 		drawBody(sim->Asteroids + i, ASTEROIDS_RADIUS, ASTEROIDS_COLOR, keybinds_values[ASTEROIDS_RENDER_MODE]);
 	}
 	drawBody(&sim->Spaceship.body, sim->Spaceship.radius, sim->Spaceship.color, keybinds_values[SPACESHIP_RENDER_MODE]);
-	drawBody(&sim->BlackHole.body, sim->BlackHole.absorbRadius, PINK, keybinds_values[SPACESHIP_RENDER_MODE]);
+	drawBody(&sim->BlackHole.body, sim->BlackHole.absorbRadius, PINK, QUALITY);
 }
 
 static void printKeybinds(view_t* view)

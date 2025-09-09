@@ -42,6 +42,8 @@ Al simular a Júpiter mil veces más masivo (1,898 × 10<sup>30</sup> kg), su ma
 Con un agujero negro ocurriria algo similar, pero con efectos mucho mas drasticos, ya que la masa de un agujero negro típico puede ser decenas de miles de millones de veces la del Sol.
 Se puede probar este fenomeno al ejecutar el programa con el siguiente comando:
 `out\orbitalSim.exe -massive_jupiter`
+Para ejecutar la simulacion creando un agujero negro:
+``out\orbitalSim.exe -spawn_blackhole`
 
 ## Simulacion con estrellas del sistema Alpha Centauri
 
