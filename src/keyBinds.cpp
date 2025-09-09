@@ -6,7 +6,7 @@
  * @author Francisco Alonso Paredes
  */
 
- #include "keyBinds.h"
+#include "keyBinds.h"
 
 #define TOGGLE_REWIND_KEY KEY_R
 #define TOGGLE_SHOW_KEYBINDS_KEY KEY_F4

@@ -9,7 +9,7 @@
  * @copyright Copyright (c) 2022-2023
  */
 
- #include "ephemerides.h"
+#include "ephemerides.h"
 
 EphemeridesBody_t solarSystem[] =
 {

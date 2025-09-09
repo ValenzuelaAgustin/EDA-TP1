@@ -2,22 +2,71 @@
 
 ## Integrantes del grupo y contribución al trabajo de cada integrante
 
-* Valenzuela Tomás Agustín 
-* Paredes Alonso Francisco 
-* Capiel Sofia 
+* **Valenzuela Tomás Agustín** 
 
-# Compilacion
+  Se encargó de:
+  - La optimización del cuello de botella presente en los cálculos físicos y en el renderizado.
+  - La implementación del cambio de flujo de la simulación.
+  - La implementación de la visualización de los vectores de velocidad y aceleración.
+  - La implementación de la nave espacial.
+  - La implementación del fenómeno con júpiter 1000 veces más masivo.
+  - La implementacion del sistema Alpha Centauri.
+
+* **Paredes Alonso Francisco**  
+
+  Se encargó de:
+  - La optimización del cuello de botella presente en el renderizado.
+  - La implementación de la selección de los modos de camara.
+  - La implementación del menú de controles.
+  - La implementación de la nave espacial.
+  - El desarrollo del README.md y la documentación del código.
+  
+* **Capiel Sofia**  
+
+  Se encargó de:
+  - La implementación del fenómeno causado por un agujero negro.
+  - La implementación del tiempo transcurrido en la simulación.
+  - El arreglo de un bug relacionado a la fecha de la simulación.
+  - El desarrollo del README.md y la documentación del código.
+
+# Índice:  
+- [Compilacion](#compilación)
+- [Puntos principales](#puntos-principales)
+  - [Verificación del time step](#verificación-del-time-step)
+  - [Verificación del tipo de datos float](#verificación-del-tipo-de-datos-float)
+  - [Complejidad computacional con asteroides](#complejidad-computacional-con-asteroides)
+  - [Mejora de la complejidad computacional](#mejora-de-la-complejidad-computacional)
+- [Bonus points](#bonus-points)
+  - [Simulación con Jupiter 1000 veces más masivo y con un agujero negro](#simulación-con-jupiter-1000-veces-más-masivo-y-con-un-agujero-negro)
+  - [Simulación con estrellas del sistema Alpha Centauri](#simulación-con-estrellas-del-sistema-alpha-centauri)
+  - [Easter egg](#easter-egg)
+  - [Nave espacial manejada por el usuario](#nave-espacial-manejada-por-el-usuario)
+  - [Modos de Camara](#modos-de-camara)
+  - [Visualización de los vectores de cada cuerpo](#visualización-de-los-vectores-de-cada-cuerpo)
+  - [Rewind de la Simulación](#rewind-de-la-simulación)
+  - [Parametros extra en la ejecución del programa](#parametros-extra-en-la-ejecución-del-programa)
+
+# Compilación
 
 Se puede compilar y ejecutar el proyecto tanto en Windows como en Linux utilizando make, desde la terminal introduciendo los siguientes comandos:
+## Para compilar:
 ```
 make
+```
+## Para ejecutar:
+### En windows:
+```
 out\orbitalSim.exe
+```
+### En Linux:
+```
+out/orbitalSim
 ```
 Para compilar y ejecutar desde Mac se puede utilizar la herramienta CMake junto con el archivo CMakeLists.txt desde Visual Studio.
 
 # Puntos principales
 
-## Verificación del time step (delta time)
+## Verificación del time step
 
 Se implemento un algoritmo, el cual inicialmente verifica cual es la cantidad de veces que la computadora puede actualizar la simulacion por fotograma, con el objetivo de conseguir la maxima precision para asegurar los fps pedidos por el usuario con `+fps_target` (si no se usa este parametro, los fps por defecto son 60) es por esto que al principio, la simulacion se encuentra quieta, hasta que se logra encontrar un valor preciso para `sim->dt` (variable utilizada como time step) y como consecuencia se estabilizan los fotogramas por segundo. Los beneficios de esta implementacion son notorios en relacion al metodo inicial ya que se busca un valor de time step lo suficientemente pequeño de forma tal que la simulacion se actualice la mayor cantidad de veces para aumentar la precision de los fenomenos fisicos.
 
@@ -45,19 +94,47 @@ Tambien se logro reducir el cuello de botella dado en los calculos fisicos del p
 
 # Bonus points
 
-## Simulacion con Jupiter 1000 veces mas masivo
+## Simulación con Jupiter 1000 veces más masivo y con un agujero negro
 
 Al simular a Júpiter mil veces más masivo (1,898 × 10<sup>30</sup> kg), su masa se aproxima a la del Sol (1,989 × 10<sup>30</sup> kg). Esto hace que Júpiter comience a comportarse como un cuerpo comparable en fuerza gravitatoria al Sol. Uno de los efectos observados en la simulación fue que las órbitas de los planetas y asteroides se deformaron, y algunos cuerpos previamente ligados al Sol pasaron a gravitar alrededor de Júpiter. Como el Sol dejó de ser el cuerpo dominante, el centro de masa del sistema se desplazó hacia Júpiter, y ambos comenzaron a orbitar alrededor de este nuevo centro de masa. Antes de este cambio, la masa de Júpiter era mucho menor que la del Sol, por lo que las contribuciones a la aceleración calculadas en `calculateAccelerations` eran despreciables, haciendo que el Sol esté prácticamente fijo.
-Con un agujero negro ocurriria algo similar, pero con efectos mucho mas drasticos, ya que la masa de un agujero negro típico puede ser decenas de miles de millones de veces la del Sol.
-Se puede probar este fenomeno al ejecutar el programa con el siguiente comando:
-`out\orbitalSim.exe -massive_jupiter`
+Se puede probar este fenómeno al ejecutar el programa con el siguiente comando:  
+
+En Windows:
+```
+out\orbitalSim.exe -massive_jupiter
+```
+
+En Linux:
+```
+out/orbitalSim -massive_jupiter
+```
+
+Con un agujero negro ocurriría algo similar, pero con efectos mucho mas drásticos, ya que la masa de un agujero negro típico puede ser decenas de miles de millones de veces la del Sol.
 Para ejecutar la simulacion creando un agujero negro:
-``out\orbitalSim.exe -spawn_blackhole`
 
-## Simulacion con estrellas del sistema Alpha Centauri
+En Windows:
+```
+out\orbitalSim.exe -spawn_blackhole
+```
 
-Se puede activar la simulacion en relacion al sistema Alpha Centauri utilizando el siguiente comando para ejecutar el programa:
-`out\orbitalSim.exe -system 1`
+En Linux:
+```
+out/orbitalSim -spawn_blackhole
+```
+
+## Simulación con estrellas del sistema Alpha Centauri
+
+Se puede activar la simulación en relación al sistema Alpha Centauri utilizando el siguiente comando para ejecutar el programa:
+
+En Windows:
+```
+out\orbitalSim.exe -system 1
+```
+
+En Linux:
+```
+out/orbitalSim -system 1
+```
 
 Para la implementacion de dicha funcionalidad se cambian los cuerpos asignados a renderizar en la simulacion al comienzo del programa. Si el parametro ingresado tiene un valor de `1`, se renderizarán las estrellas del sistema Alpha Centauri, mientras que si se ingresa un `0` (o no se utiliza el parametro) se renderizarán los planetas del sistema solar. 
 
@@ -66,11 +143,20 @@ Para la implementacion de dicha funcionalidad se cambian los cuerpos asignados a
 En el archivo `orbitalSim.cpp` se incluye un Easter Egg en las siguientes lineas de codigo:
 ```
 // Surprise!
-//phi = 0;
+// phi = 0;
 ```
 Si estas lineas se descomentan, phi pasa a valer cero. Phi representa el angulo polar en el plano XZ para ubicar a un asteroide alrededor del centro de masa, por lo cual, si phi es cero todos los asteroides se alinearan sobre el eje X y su velocidad inicial sera perpendicular al eje X.
 Para poder visualizar el easter egg dentro de la simulacion, se debera ejecutar el programa añadiendo el siguiente parametro de la forma:
-`out\orbitalSim.exe -easter_egg`
+
+En Windows:
+```
+out\orbitalSim.exe -easter_egg
+```
+
+En Linux:
+```
+out/orbiitalSim -easter_egg
+```
 
 ## Nave espacial manejada por el usuario
 
@@ -80,18 +166,27 @@ Se añadio a la simulacion un cuerpo de color verde el cual representa a una nav
 
 Fue implementada la posibilidad de cambiar el modo de la camara entre "libre" y "tercera persona" oprimiendo la tecla `F4`, a su vez se puede cambiar el planeta al que se esta enfocando con la tecla `T`.
 
-## Visualizacion de los vectores de cada cuerpo
+## Visualización de los vectores de cada cuerpo
 
-Se añadieron opciones para activar y desactivar la visualizacion de los vectores de velocidad y aceleracion de cada cuerpo en tiempo real. Esto se puede realizar de dos modos, el primero es al ejecutar el programa desde la carpeta principal añadiendo los parametros de la siguiente manera: 
-`out\orbitalSim.exe -show_velocity_vectors -show_acceleration_vectors`
-El segundo metodo es presionando la tecla F9 (para activar/desactivar los vectores de velocidad) o la tecla F10 (para activar/desactivar los vectores de aceleracion) dentro de la simulacion.
+Se añadieron opciones para activar y desactivar la visualización de los vectores de velocidad y aceleración de cada cuerpo en tiempo real. Esto se puede realizar de dos modos, el primero es al ejecutar el programa desde la carpeta principal añadiendo los parametros de la siguiente manera: 
 
-## Rewind de la Simulacion
+En Windows:
+```
+out\orbitalSim.exe -show_velocity_vectors -show_acceleration_vectors
+```
+En Linux:
+```
+out/orbitalSim -show_velocity_vectors -show_acceleration_vectors
+```
 
-Fue implementada la posibilidad de invertir el flujo de la simulacion presionando la tecla `R`.
-Esto se pudo realizar al multiplicar la velocidad de la simulacion por `1` o `-1` dependiendo del estado al que se quiere pasar (flujo normal o flujo inverso) seleccionado mediante la tecla mencionada.
+El segundo metodo es presionando la tecla `F9` (para activar/desactivar los vectores de velocidad) o la tecla `F10` (para activar/desactivar los vectores de aceleracion) dentro de la simulación.
 
-## Parametros extra en la ejecucion del programa
+## Rewind de la Simulación
+
+Fue implementada la posibilidad de invertir el flujo de la simulación presionando la tecla `R`.
+Esto se pudo realizar al multiplicar la velocidad de la simulación por `1` o `-1` dependiendo del estado al que se quiere pasar (flujo normal o flujo inverso) seleccionado mediante la tecla mencionada.
+
+## Parametros extra en la ejecución del programa
 
 Fueron añadidos parametros que se pueden utilizar al momento de ejecutar el programa, algunos ya fueron mencionados antes, sin embargo aqui hay una lista completa:
 - `+fps_target <numero>` Permite cambiar la cantidad de fps para la simulacion (minimo: 15, maximo: 240), el valor por defecto es 60.
@@ -103,6 +198,6 @@ Fueron añadidos parametros que se pueden utilizar al momento de ejecutar el pro
 - `-show_velocity_vectors` Permite visualizar los vectores de velocidad en cada cuerpo.
 - `-show_acceleration_vectors` Permite visualizar los vectores de aceleracion en cada cuerpo.
 - `-massive_jupiter` Permite simular el fenomeno en el cual jupiter es 1000 veces mas masivo.
-- `-spawn_blackhole` Permite simular la aparicion de un agujero negro en la simulacion.
+- `-spawn_blackhole` Permite simular la aparicion de un agujero negro en el programa.
 - `-easter_egg` Permite simular el easter egg (phi = 0).
 - `-system <1/0>` Permite seleccionar el sistema que se desea simular, `1` equivale al sistema Alpha Centauri, `0` (valor por defecto) equivale al sistema solar.

@@ -6,7 +6,7 @@
  * @author Francisco Alonso Paredes
  */
 
- #include "controller.h"
+#include "controller.h"
 
 /**
  * @brief Updates the controls values based on the user's input.
