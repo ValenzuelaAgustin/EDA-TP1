@@ -1,3 +1,11 @@
+/**
+ * @brief Key binds for orbital simulation
+ * 
+ * @author Sofia Capiel
+ * @author Agustin Tomas Valenzuela
+ * @author Francisco Alonso Paredes
+ */
+
 #include "keyBinds.h"
 
 #define TOGGLE_REWIND_KEY KEY_R

@@ -1,3 +1,11 @@
+/**
+ * @brief Launch options for orbital simulation
+ * 
+ * @author Sofia Capiel
+ * @author Agustin Tomas Valenzuela
+ * @author Francisco Alonso Paredes
+ */
+
 #include "launchOptions.h"
 
 #define INT_MIN_VALUE ( 1 << (sizeof(int) * 8 - 1) )
