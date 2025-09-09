@@ -1,3 +1,10 @@
+/**
+ * @brief Launch options for orbital simulation
+ * 
+ * @author Sofia Capiel
+ * @author Agustin Tomas Valenzuela
+ * @author Francisco Alonso Paredes
+ */
 #ifndef LAUNCH_OPTIONS_H
 #define LAUNCH_OPTIONS_H
 

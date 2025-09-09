@@ -1,3 +1,13 @@
+/**
+ * @brief  Updates keybinds values based on user input
+ * 
+ * @author Sofia Capiel
+ * @author Agustin Tomas Valenzuela
+ * @author Francisco Alonso Paredes
+ */
+
+
+
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 #include "keyBinds.h"
