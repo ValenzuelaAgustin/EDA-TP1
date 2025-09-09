@@ -21,87 +21,87 @@
 #define SPACESHIP_ACCELERATION 1E-3
 
 /**
- * Private function declarations
+ * Private function definitions.
  */
 
 /**
- * @brief Gets a uniform random value in a range
+ * @brief Gets a uniform random value in a range.
  *
- * @param min Minimum value
- * @param max Maximum value
+ * @param min Minimum value.
+ * @param max Maximum value.
  *
- * @return The random value
+ * @return The random value.
  */
 static float getRandomFloat(float min, float max);
 
 /**
- * @brief Configures an asteroid
+ * @brief Configures an asteroid.
  *
- * @param body An orbital body
- * @param centerMass The mass of the most massive object in the star system
+ * @param body An orbital body.
+ * @param centerMass The mass of the most massive object in the star system.
  */
 static void configureAsteroid(Body_t* body, float centerMass, int easter_egg);
 
 /**
  * @brief Sets PlanetarySystem, Asteroids and SpaceShip accelerations to 0
- *		Must be called before updateAccelerations
+ *		Must be called before updateAccelerations.
  *
- * @param sim Pointer to the simulation
+ * @param sim Pointer to the simulation.
  */
 static inline void initializeAccelerations(OrbitalSim_t* sim);
 
 /**
- * @brief Calculates the accelerations between two bodies
+ * @brief Calculates the accelerations between two bodies.
  *
- * @param body0
- * @param body1
+ * @param body0 First body.
+ * @param body1 Second body.
  */
 static inline void calculateAccelerations(Body_t* body0, Body_t* body1);
 
 /**
  * @brief Calculates the acceleration of one body
- * @param body0
- * @param body1
+ * @param body0 First body.
+ * @param body1 Second body.
  */
 static inline void calculateAccelerationsOneWay(Body_t* body0, Body_t* body1);
 
 /**
- * @brief Calculates the acceleration for every body in the simulation
+ * @brief Calculates the acceleration for every body in the simulation.
  *
- * @param sim Pointer to the simulation
+ * @param sim Pointer to the simulation.
  */
 static inline void updateAccelerations(OrbitalSim_t* sim);
 
 /**
- * @brief Calculates the new speed and position for a given body
+ * @brief Calculates the new speed and position for a given body.
  *
- * @param body pointer to the body
- * @param dt time step used to calculate discrete integrals
+ * @param body Pointer to the body.
+ * @param dt Time step used to calculate discrete integrals.
  */
 static inline void calculateSpeedAndPosition(Body_t* body, double dt);
 
 /**
- * @brief Calculates the speed and position for every body in the simulation
+ * @brief Calculates the speed and position for every body in the simulation.
  *
- * @param sim Pointer to the simulation
+ * @param sim Pointer to the simulation.
  */
 static inline void updateSpeedsAndPositions(OrbitalSim_t* sim);
 
 /**
  * @brief Add the accelerations produced by the spaceship's engines.
  *
- * @param sim Pointer to the simulation
+ * @param sim Pointer to the simulation.
  */
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim);
 
 /**
- * @brief 
- * @param sim
+ * @brief Removes a body of the simulation.
+ * @param sim Pointer to the simulation.
  */
 static inline void removeBody(OrbitalSim_t* sim);
 
 /**
- * Public function definitions
+ * Public function definitions.
  */
 
 OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg, int System, int spawnBlackHole)
@@ -153,9 +153,6 @@ void destroyOrbitalSim(OrbitalSim_t* sim)
 
 void updateOrbitalSim(OrbitalSim_t* sim, int spawnBH)
 {
-	//if (!sim || !sim->EphemeridesBody || sim->bodyNum < 1 || sim->dt <= 0)
-	//	return;
-
 	sim->time_elapsed += sim->dt;
 	initializeAccelerations(sim);
 	updateSpaceShipUserInputs(sim);
@@ -165,10 +162,6 @@ void updateOrbitalSim(OrbitalSim_t* sim, int spawnBH)
 	if(spawnBH)
 		removeBody(sim);
 }
-
-/**
- * Private function definitions
- */
 
 static float getRandomFloat(float min, float max)
 {

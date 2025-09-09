@@ -1,7 +1,8 @@
 #include "controller.h"
 
 /**
- * @brief 
+ * @brief Updates the controls values based on the user's input.
+ * @param bodyNum The number of bodies in the simulation.
  */
 static void updateMovementKeysInptus();
 
@@ -30,6 +31,9 @@ void updateUserInputs(unsigned int bodyNum)
 	}
 }
 
+/**
+ * @brief Updates the value of the keys used to control the spaceship.
+ **/
 static void updateMovementKeysInptus()
 {
 	for (unsigned int i = 0; i < movement_keys_ammount; i++)

@@ -28,18 +28,17 @@ enum
 	SYSTEM
 };
 
-/**
- * @brief 
- *
- * @param argc 
- * @param argv 
- * @param launchOptionsValues 
- */
-
  #ifdef __cplusplus
 extern "C" {
 #endif
 
+/**
+ * @brief Validates the entered parameters (launch options) in the execution of the program.
+ *
+ * @param argc The ammount of the entered parameters.
+ * @param argv The array of the entered parameters.
+ * @param launchOptionsValues Array with the values of each parameter (parsed to assign each value).
+ */
 void searchLaunchOptions(int argc, char* argv[], int* launchOptionsValues);
 
 #ifdef __cplusplus

@@ -21,40 +21,40 @@ typedef struct
 } view_t;
 
 /**
- * @brief Constructs an orbital simulation view
+ * @brief Constructs an orbital simulation view.
  *
  * @param fps Frames per second for the view
- * @param fullscreen 
- * @param width 
- * @param height 
- * @param show_velocity_vectors 
- * @param show_acceleration_vectors 
+ * @param fullscreen Sets the window to fullscreen.
+ * @param width Sets a value to the window's width.
+ * @param height Sets a value to the window's height.
+ * @param show_velocity_vectors Activates the velocity vectors.
+ * @param show_acceleration_vectors Activates the acceleration vectors.
  *
- * @return The view
+ * @return The view.
  */
 view_t* constructView(int fps, int fullscreen, int width, int height, int show_velocity_vectors, int show_acceleration_vectors);
 
 /**
- * @brief Destroys an orbital simulation view
+ * @brief Destroys an orbital simulation view.
  *
- * @param view The view
+ * @param view The view.
  */
 void destroyView(view_t* view);
 
 /**
- * @brief Should the view still render?
+ * @brief Checks if the view should still render.
  *
- * @param view 
+ * @param view Pointer to the view object.
  *
- * @return Should rendering continue?
+ * @return Returns 1 if the rendering should continue, in the opposite case returns 0.
  */
 bool isViewRendering(view_t* view);
 
 /**
- * @brief Renders an orbital simulation
+ * @brief Renders an orbital simulation.
  *
- * @param view The view
- * @param sim The orbital sim
+ * @param view The view.
+ * @param sim The orbital sim.
  */
 void renderView(view_t* view, OrbitalSim_t* sim);
 

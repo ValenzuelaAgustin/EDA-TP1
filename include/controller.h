@@ -3,9 +3,9 @@
 #include "keyBinds.h"
 
 /**
- * @brief 
+ * @brief Updates the user inputs.
  *
- * @param bodyNum 
+ * @param bodyNum Number of bodies in the simulation.
  */
 extern void updateUserInputs(unsigned int bodyNum);
 

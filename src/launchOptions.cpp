@@ -91,22 +91,22 @@ const launchOptions_t launchOptions[] =
 const int launchOptionsAmmount = sizeof(launchOptions) / sizeof(launchOptions[0]);
 
 /**
- * @brief 
+ * @brief Compares to strings.
  *
- * @param S0 
- * @param S1 
+ * @param S0 First string.
+ * @param S1 Second string.
  *
- * @return 
+ * @return 0 if the strings are equal, 1 if not.
  */
 static int scmp(const char* S0, const char* S1);
 
 /**
- * @brief 
+ * @brief Converts a string to an integer.
  *
- * @param str 
- * @param number 
+ * @param str The string parsed to convert.
+ * @param number A pointer to an integer where the result is stored.
  *
- * @return 
+ * @return NAN if the string isnt a valid number, 0 if the operation is successfull.
  */
 static int str2int(const char* str, int* number);
 

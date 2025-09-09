@@ -10,7 +10,7 @@
 #include "ephemerides.h"
 
 /**
- * @brief Orbital simulation definition
+ * @brief Orbital simulation definition.
  */
 typedef struct
 {
@@ -25,27 +25,27 @@ typedef struct
 } OrbitalSim_t;
 
 /**
- * @brief Constructs an orbital simulation
+ * @brief Constructs an orbital simulation.
  *
- * @param asteroidsNum 
- * @param easter_egg 
- * @param System 
+ * @param asteroidsNum The ammount of asteroids in the simulation.
+ * @param easter_egg Activates or deactivates the easter egg.
+ * @param System Selects the system to simulate (solar system or alpha centauri sistem).
  *
- * @return The orbital simulation
+ * @return The orbital simulation.
  */
 OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg, int System, int spawnBlackHole);
 
 /**
- * @brief Destroys an orbital simulation
+ * @brief Destroys an orbital simulation.
  *
- * @param sim 
+ * @param sim Pointer to the simulation.
  */
 void destroyOrbitalSim(OrbitalSim_t* sim);
 
 /**
- * @brief Simulates a timestep
+ * @brief Simulates a timestep.
  *
- * @param sim The orbital simulation
+ * @param sim Pointer to the simulation.
  */
 void updateOrbitalSim(OrbitalSim_t* sim, int spawnBH);
 

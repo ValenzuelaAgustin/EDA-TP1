@@ -61,9 +61,9 @@ static char buffer[128];
 /**
  * @brief Returns the vector parsed in the raylib data type Vector3
  * 
- * @param vector 
+ * @param vector The vector wishing to convert.
  * 
- * @return 
+ * @return The values of the vector entered in a Vector3 data type.
  */
 static Vector3 toVector3(vector3D_t vector);
 
@@ -78,49 +78,49 @@ static Vector3 toVector3(vector3D_t vector);
 static const char* getISODate(time_t timestamp);
 
 /**
- * @brief 
+ * @brief Gets the elapsed time of the simulation.
  * 
- * @param timestamp 
- * @param buffer
+ * @param timestamp The current time stamp of the simulation.
+ * @param buffer The buffer where the return string is stored.
  * 
- * @return 
+ * @return Returns the value of the buffer formatted in a message to print.
  */
 static const char* getElapsedSimTime(time_t timestamp, char buffer[]);
 
 /**
- * @brief 
+ * @brief Updates the settings of the camera.
  * 
- * @param view 
- * @param sim 
+ * @param view Pointer to the view object containing the camera.
+ * @param sim Pointer to the simulation.
  */
 static void updateCameraSettings(view_t* view, OrbitalSim_t* sim);
 
 /**
- * @brief 
+ * @brief Draws a body in the simulation.
  * 
- * @param body 
- * @param radius 
- * @param color 
- * @param render_mode 
+ * @param body The body wishing to draw.
+ * @param radius The radius of the body.
+ * @param color The color of the body.
+ * @param render_mode The mode of the rendering (QUALITY or PERFORMANCE).
  */
 static void drawBody(Body_t* body, float radius, Color color, unsigned int render_mode);
 
 /**
- * @brief 
+ * @brief Draws all the entities of the simulation.
  * 
- * @param sim
+ * @param sim Pointer to the simulation.
  */
 static void drawOrbitalSimuationEntities(OrbitalSim_t* sim);
 
 /**
- * @brief 
+ * @brief Prints the keybinds to show the features available.
  * 
- * @param view
+ * @param view Pointer to view object containing the camera.
  */
 static void printKeybinds(view_t* view);
 
 /**
- * Public function definitions
+ * Public function definitions.
  */
 
 view_t* constructView(int fps, int fullscreen, int width, int height, int show_velocity_vectors, int show_acceleration_vectors)
@@ -225,7 +225,7 @@ static const char* getISODate(time_t timestamp)
 
 static const char* getElapsedSimTime(time_t timestamp, char buffer[])
 {
-	time_t years = timestamp / SECONDS_PER_YEAR;	// Falta agregar el caso de que el anio sea bisiesto ( agregarle un parametro a la funcion )
+	time_t years = timestamp / SECONDS_PER_YEAR;
 	time_t days = (timestamp % SECONDS_PER_YEAR) / SECONDS_PER_DAY;
 
 	sprintf(buffer, "Elapsed Sim Time: %04lld years, %03lld days", years, days);
