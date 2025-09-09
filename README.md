@@ -6,15 +6,24 @@
 * Paredes Alonso Francisco 
 * Capiel Sofia 
 
+# Compilacion
+
+Se puede compilar y ejecutar el proyecto tanto en Windows como en Linux utilizando make, desde la terminal introduciendo los siguientes comandos:
+```
+make
+out\orbitalSim.exe
+```
+Para compilar y ejecutar desde Mac se puede utilizar la herramienta CMake junto con el archivo CMakeLists.txt desde Visual Studio.
+
 # Puntos principales
 
 ## Verificación del time step (delta time)
 
-Se implemento un algoritmo, el cual inicialmente verifica cual es la cantidad de veces que la computadora puede actualizar la simulacion por fotograma, con el objetivo de conseguir la maxima precision para asegurar los fps pedidos por el usuario con `+fps_target` (si no se usa este parametro, los fps por defecto son 60) es por esto que al principio, la simulacion se encuentra quieta, hasta que se logra encontrar un valor preciso para `sim->dt` (variable utilizada como time step) y como consecuencia se estabilizan los fotogramas por segundo. Los beneficios de esta implementacion son notorios en relacion al metodo inicial ya que el valor del time step es independiente de la cantidad de dias que pasan en la simulacion por segundo.
+Se implemento un algoritmo, el cual inicialmente verifica cual es la cantidad de veces que la computadora puede actualizar la simulacion por fotograma, con el objetivo de conseguir la maxima precision para asegurar los fps pedidos por el usuario con `+fps_target` (si no se usa este parametro, los fps por defecto son 60) es por esto que al principio, la simulacion se encuentra quieta, hasta que se logra encontrar un valor preciso para `sim->dt` (variable utilizada como time step) y como consecuencia se estabilizan los fotogramas por segundo. Los beneficios de esta implementacion son notorios en relacion al metodo inicial ya que se busca un valor de time step lo suficientemente pequeño de forma tal que la simulacion se actualice la mayor cantidad de veces para aumentar la precision de los fenomenos fisicos.
 
 ## Verificación del tipo de datos float
 
-Para almacenar las masas, aceleraciones, velocidades y posiciones se optó por el tipo de dato double en lugar de float. Esto permitió evitar casteos implícitos y errores de redondeo, ya que las propiedades de los cuerpos se utilizan en cálculos junto con otras variables de tipo double. Es esencial evitar dichos casteos, dado que en algunas funciones, como por ejemplo `calculateAcceleration` y `updateSpeedAndPosition`, se requiere de precisión para evitar la acumulación de errores durante las iteraciones de updateOrbitalSim. La falta de exactitud en los cálculos puede causar órbitas inestables y movimientos erráticos de los cuerpos en la simulación.
+Para almacenar las masas, aceleraciones, velocidades y posiciones se optó por el tipo de dato double en lugar de float. esto fue con el objetivo de mantener la precision (15 decimales en vez de 7) al enfrentar un largo plazo de tiempo en la simulacion. Ademas permitió registrar cada pequeña variacion en dichas magnitudes por más insignificante que fuera y al asignar a las masas también este tipo de datos, se evitó toda clase de casteo implicito o error de redondeo al momento de realizar cálculos. Es esencial evitar dichos casteos, dado que en algunas funciones, como por ejemplo `calculateAcceleration` y `updateSpeedAndPosition`, se requiere de precisión para evitar la propagación de errores durante las iteraciones de updateOrbitalSim. La falta de exactitud en los cálculos puede causar órbitas inestables y movimientos erráticos de los cuerpos en la simulación.
 
 ## Complejidad computacional con asteroides
 
@@ -50,6 +59,8 @@ Para ejecutar la simulacion creando un agujero negro:
 Se puede activar la simulacion en relacion al sistema Alpha Centauri utilizando el siguiente comando para ejecutar el programa:
 `out\orbitalSim.exe -system 1`
 
+Para la implementacion de dicha funcionalidad se cambian los cuerpos asignados a renderizar en la simulacion al comienzo del programa. Si el parametro ingresado tiene un valor de `1`, se renderizarán las estrellas del sistema Alpha Centauri, mientras que si se ingresa un `0` (o no se utiliza el parametro) se renderizarán los planetas del sistema solar. 
+
 ## Easter egg
 
 En el archivo `orbitalSim.cpp` se incluye un Easter Egg en las siguientes lineas de codigo:
@@ -78,6 +89,7 @@ El segundo metodo es presionando la tecla F9 (para activar/desactivar los vector
 ## Rewind de la Simulacion
 
 Fue implementada la posibilidad de invertir el flujo de la simulacion presionando la tecla `R`.
+Esto se pudo realizar al multiplicar la velocidad de la simulacion por `1` o `-1` dependiendo del estado al que se quiere pasar (flujo normal o flujo inverso) seleccionado mediante la tecla mencionada.
 
 ## Parametros extra en la ejecucion del programa
 
