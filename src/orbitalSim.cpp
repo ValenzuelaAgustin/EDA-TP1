@@ -254,23 +254,23 @@ static inline void calculateAccelerations(Body_t* body0, Body_t* body1)
 
 static inline void calculateAccelerationsOneWay(Body_t* body0, Body_t* body1)
 {
-    vector3D_t acceleration;
-    double inverse_distance_cubed;
+	vector3D_t acceleration;
+	double inverse_distance_cubed;
 
-    acceleration.x = body1->position.x - body0->position.x;
-    acceleration.y = body1->position.y - body0->position.y;
-    acceleration.z = body1->position.z - body0->position.z;
+	acceleration.x = body1->position.x - body0->position.x;
+	acceleration.y = body1->position.y - body0->position.y;
+	acceleration.z = body1->position.z - body0->position.z;
 
-    inverse_distance_cubed = 1 / sqrt(DOT_PRODUCT(acceleration, acceleration));
-    inverse_distance_cubed = inverse_distance_cubed * inverse_distance_cubed * inverse_distance_cubed;
+	inverse_distance_cubed = 1 / sqrt(DOT_PRODUCT(acceleration, acceleration));
+	inverse_distance_cubed = inverse_distance_cubed * inverse_distance_cubed * inverse_distance_cubed;
 
-    acceleration.x *= inverse_distance_cubed;
-    acceleration.y *= inverse_distance_cubed;
-    acceleration.z *= inverse_distance_cubed;
+	acceleration.x *= inverse_distance_cubed;
+	acceleration.y *= inverse_distance_cubed;
+	acceleration.z *= inverse_distance_cubed;
 
-    body0->acceleration.x += body1->mass_GC * acceleration.x;
-    body0->acceleration.y += body1->mass_GC * acceleration.y;
-    body0->acceleration.z += body1->mass_GC * acceleration.z;
+	body0->acceleration.x += body1->mass_GC * acceleration.x;
+	body0->acceleration.y += body1->mass_GC * acceleration.y;
+	body0->acceleration.z += body1->mass_GC * acceleration.z;
 }
 
 static inline void updateAccelerations(OrbitalSim_t* sim)
@@ -291,9 +291,9 @@ static inline void updateAccelerations(OrbitalSim_t* sim)
 		calculateAccelerationsOneWay(&sim->PlanetarySystem[i].body, &sim->BlackHole.body);
 	}
 	for (j = 0; j < sim->asteroidsNum; j++)
-    {
-        calculateAccelerationsOneWay(sim->Asteroids + j, &sim->BlackHole.body);
-    }
+	{
+		calculateAccelerationsOneWay(sim->Asteroids + j, &sim->BlackHole.body);
+	}
 }
 
 static inline void calculateSpeedAndPosition(Body_t* body, double dt)
