@@ -1,6 +1,10 @@
 /**
  * @brief Orbital simulation
  * @author Marc S. Ressl
+ * 
+ * @author Sofia Capiel
+ * @author Agustin Tomas Valenzuela
+ * @author Francisco Alonso Paredes
  *
  * @copyright Copyright (c) 2022-2023
  */
@@ -17,8 +21,8 @@
 
 #define ASTEROIDS_MEAN_RADIUS 4E11F
 
-// Spaceship defines
-#define SPACESHIP_ACCELERATION 1E-3
+// SpaceShip defines
+#define SpaceShip_ACCELERATION 1E-3
 
 /**
  * Private function definitions.
@@ -88,7 +92,7 @@ static inline void calculateSpeedAndPosition(Body_t* body, double dt);
 static inline void updateSpeedsAndPositions(OrbitalSim_t* sim);
 
 /**
- * @brief Add the accelerations produced by the spaceship's engines.
+ * @brief Add the accelerations produced by the SpaceShip's engines.
  *
  * @param sim Pointer to the simulation.
  */
@@ -122,7 +126,7 @@ OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg, int
 	}
 
 	sim->dt = 0.0;
-	sim->time_elapsed = 0.0;
+	sim->timeElapsed = 0.0;
 
 	for (unsigned int i = 0; i < sim->asteroidsNum; i++)
 	{
@@ -134,10 +138,10 @@ OrbitalSim_t* constructOrbitalSim(unsigned int asteroidsNum, int easter_egg, int
 	else
 		sim->BlackHole = BlackHole_t{};
 
-	configureAsteroid(&sim->Spaceship.body, sim->PlanetarySystem[0].body.mass_GC, 0);
-	sim->Spaceship.color = GREEN;
-	sim->Spaceship.radius = 120;
-	sim->Spaceship.body.mass_GC = 5E6 * GRAVITATIONAL_CONSTANT;
+	configureAsteroid(&sim->SpaceShip.body, sim->PlanetarySystem[0].body.mass_GC, 0);
+	sim->SpaceShip.color = GREEN;
+	sim->SpaceShip.radius = 120;
+	sim->SpaceShip.body.mass_GC = 5E6 * GRAVITATIONAL_CONSTANT;
 
 	return sim;
 }
@@ -153,7 +157,7 @@ void destroyOrbitalSim(OrbitalSim_t* sim)
 
 void updateOrbitalSim(OrbitalSim_t* sim, int spawnBH)
 {
-	sim->time_elapsed += sim->dt;
+	sim->timeElapsed += sim->dt;
 	initializeAccelerations(sim);
 	updateSpaceShipUserInputs(sim);
 
@@ -214,9 +218,9 @@ static inline void initializeAccelerations(OrbitalSim_t* sim)
 		sim->Asteroids[i].acceleration.z = 0.0;
 	}
 
-	sim->Spaceship.body.acceleration.x = 0.0;
-	sim->Spaceship.body.acceleration.y = 0.0;
-	sim->Spaceship.body.acceleration.z = 0.0;
+	sim->SpaceShip.body.acceleration.x = 0.0;
+	sim->SpaceShip.body.acceleration.y = 0.0;
+	sim->SpaceShip.body.acceleration.z = 0.0;
 
 	sim->BlackHole.body.acceleration.x = 0.0;
 	sim->BlackHole.body.acceleration.y = 0.0;
@@ -283,7 +287,7 @@ static inline void updateAccelerations(OrbitalSim_t* sim)
 		{
 			calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->PlanetarySystem[j].body);
 		}
-		calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->Spaceship.body);
+		calculateAccelerations(&sim->PlanetarySystem[i].body, &sim->SpaceShip.body);
 		calculateAccelerationsOneWay(&sim->PlanetarySystem[i].body, &sim->BlackHole.body);
 	}
 	for (j = 0; j < sim->asteroidsNum; j++)
@@ -315,21 +319,21 @@ static inline void updateSpeedsAndPositions(OrbitalSim_t* sim)
 	{
 		calculateSpeedAndPosition(sim->Asteroids + i, sim->dt);
 	}
-	calculateSpeedAndPosition(&sim->Spaceship.body, sim->dt);
+	calculateSpeedAndPosition(&sim->SpaceShip.body, sim->dt);
 	calculateSpeedAndPosition(&sim->BlackHole.body, sim->dt);
 }
 
 static inline void updateSpaceShipUserInputs(OrbitalSim_t* sim)
 {
-	double* acceleration = (double*) &sim->Spaceship.body.acceleration;
+	double* acceleration = (double*) &sim->SpaceShip.body.acceleration;
 
 	for (int i = 0, axis = 0; i < 6; i++, axis = i % 3)
 	{
 		// i = 0,1,2 Para los ejes en sentido positivo (teclas U, I y O)
 		// i = 3,4,5 Para los ejes en sentido negativo (teclas J, K y L)
-		if (movement_key_is_down[i])
+		if (movementKeyIsDown[i])
 		{
-			acceleration[axis] += (i < 3) ? SPACESHIP_ACCELERATION : -SPACESHIP_ACCELERATION;
+			acceleration[axis] += (i < 3) ? SpaceShip_ACCELERATION : -SpaceShip_ACCELERATION;
 		}
 	}
 }

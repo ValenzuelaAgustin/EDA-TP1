@@ -1,4 +1,12 @@
-#include "launchOptions.h"
+/**
+ * @brief Launch options for orbital simulation
+ * 
+ * @author Sofia Capiel
+ * @author Agustin Tomas Valenzuela
+ * @author Francisco Alonso Paredes
+ */
+
+ #include "launchOptions.h"
 
 #define INT_MIN_VALUE ( 1 << (sizeof(int) * 8 - 1) )
 #define INT_MAX_VALUE (~INT_MIN_VALUE)
@@ -45,7 +53,7 @@ const launchOptions_t launchOptions[] =
 		{1, 365}
 	},
 	{
-		"-asteroids_ammount",
+		"-asteroids_amount",
 		1,
 		0,
 		{0, 20000}
@@ -88,17 +96,17 @@ const launchOptions_t launchOptions[] =
 	}
 };
 
-const int launchOptionsAmmount = sizeof(launchOptions) / sizeof(launchOptions[0]);
+const int launchOptionsAmount = sizeof(launchOptions) / sizeof(launchOptions[0]);
 
 /**
- * @brief Compares to strings.
+ * @brief Compares two strings.
  *
  * @param S0 First string.
  * @param S1 Second string.
  *
  * @return 0 if the strings are equal, 1 if not.
  */
-static int scmp(const char* S0, const char* S1);
+static int stringCompare(const char* S0, const char* S1);
 
 /**
  * @brief Converts a string to an integer.
@@ -117,13 +125,13 @@ void searchLaunchOptions(int argc, char* argv[], int* launchOptionsValues)
 
 	int i, j;
 
-	for (i = 0; i < launchOptionsAmmount; i++)
+	for (i = 0; i < launchOptionsAmount; i++)
 	{
 		launchOptionsValues[i] = launchOptions[i].defaultValue;
 
 		for (j = 1; j < argc; j++)
 		{
-			if (scmp(launchOptions[i].name, argv[j]))
+			if (stringCompare(launchOptions[i].name, argv[j]))
 				continue;
 			if (!launchOptions[i].hasArgument)
 			{
@@ -140,7 +148,7 @@ void searchLaunchOptions(int argc, char* argv[], int* launchOptionsValues)
 	}
 }
 
-static int scmp(const char* S0, const char* S1)
+static int stringCompare(const char* S0, const char* S1)
 {
 	if (!S0 || !S1)
 		return 0;

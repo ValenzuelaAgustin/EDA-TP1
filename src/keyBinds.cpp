@@ -1,4 +1,12 @@
-#include "keyBinds.h"
+/**
+ * @brief Key binds for orbital simulation
+ * 
+ * @author Sofia Capiel
+ * @author Agustin Tomas Valenzuela
+ * @author Francisco Alonso Paredes
+ */
+
+ #include "keyBinds.h"
 
 #define TOGGLE_REWIND_KEY KEY_R
 #define TOGGLE_SHOW_KEYBINDS_KEY KEY_F4
@@ -16,7 +24,7 @@
 #define SPACESHIP_YN_KEY KEY_K
 #define SPACESHIP_ZN_KEY KEY_L
 
-const keybind_t keybinds[KEYBINDS_AMMOUNT] =
+const keybind_t keybinds[KEYBINDS_AMOUNT] =
 {
 	// SHOW_KEYBINDS
 	{
@@ -70,14 +78,14 @@ const keybind_t keybinds[KEYBINDS_AMMOUNT] =
 	}
 };
 
-unsigned int keybinds_values[KEYBINDS_AMMOUNT];
+unsigned int keybindsValues[KEYBINDS_AMOUNT];
 
-const int movement_keys[] =
+const int movementKeys[] =
 {
 	SPACESHIP_XP_KEY, SPACESHIP_YP_KEY, SPACESHIP_ZP_KEY,
 	SPACESHIP_XN_KEY, SPACESHIP_YN_KEY, SPACESHIP_ZN_KEY
 };
 
-const unsigned int movement_keys_ammount = sizeof(movement_keys) / sizeof(movement_keys[0]);
+const unsigned int movementKeysAmount = sizeof(movementKeys) / sizeof(movementKeys[0]);
 
-int movement_key_is_down[movement_keys_ammount];
+int movementKeyIsDown[movementKeysAmount];

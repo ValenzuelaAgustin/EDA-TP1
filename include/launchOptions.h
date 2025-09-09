@@ -5,6 +5,7 @@
  * @author Agustin Tomas Valenzuela
  * @author Francisco Alonso Paredes
  */
+
 #ifndef LAUNCH_OPTIONS_H
 #define LAUNCH_OPTIONS_H
 
@@ -17,7 +18,7 @@ typedef struct
 } launchOptions_t;
 
 extern const launchOptions_t launchOptions[];
-extern const int launchOptionsAmmount;
+extern const int launchOptionsAmount;
 
 enum
 {
@@ -26,7 +27,7 @@ enum
 	WIDTH,
 	HEIGHT,
 	DAYS_PER_SIMULATION_SECOND,
-	ASTEROIDS_AMMOUNT,
+	ASTEROIDS_AMOUNT,
 	SHOW_VELOCITY_VECTORS,
 	SHOW_ACCELERATION_VECTORS,
 	MASSIVE_JUPITER,
@@ -38,7 +39,7 @@ enum
 /**
  * @brief Validates the entered parameters (launch options) in the execution of the program.
  *
- * @param argc The ammount of the entered parameters.
+ * @param argc The amount of the entered parameters.
  * @param argv The array of the entered parameters.
  * @param launchOptionsValues Array with the values of each parameter (parsed to assign each value).
  */

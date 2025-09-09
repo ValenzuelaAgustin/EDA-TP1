@@ -5,8 +5,10 @@
  * @author Agustin Tomas Valenzuela
  * @author Francisco Alonso Paredes
  */
+
 #ifndef KEYBINDS_H
 #define KEYBINDS_H
+
 #include <raylib.h>
 
 #define SWITCH_BODY_CAMERA_KEY KEY_T
@@ -19,11 +21,11 @@ typedef struct
 } keybind_t;
 
 extern const keybind_t keybinds[];
-extern unsigned int keybinds_values[];
+extern unsigned int keybindsValues[];
 
-extern const int movement_keys[];
-extern int movement_key_is_down[];
-extern const unsigned int movement_keys_ammount;
+extern const int movementKeys[];
+extern int movementKeyIsDown[];
+extern const unsigned int movementKeysAmount;
 
 enum
 {
@@ -37,7 +39,7 @@ enum
 	TOGGLE_REWIND,
 	SWITCH_BODY,
 	TOGGLE_FULLSCREEN,
-	KEYBINDS_AMMOUNT // Dejar siempre al final (cantidad total de keybinds)
+	KEYBINDS_AMOUNT // Keep it in the end of this enum (amount of keybinds)
 };
 
 #endif

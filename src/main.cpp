@@ -43,7 +43,7 @@ static double frametime_PID(double target_frametime, double frametime);
 
 int main(int argc, char* argv[])
 {
-	int launchOptionsValues[launchOptionsAmmount];
+	int launchOptionsValues[launchOptionsAmount];
 	int time_direction = 0;
 	int prev_time_direction = 0;
 	int sim_updates_per_frame;
@@ -55,7 +55,7 @@ int main(int argc, char* argv[])
 	simulationSpeed = launchOptionsValues[DAYS_PER_SIMULATION_SECOND] * SECONDS_PER_DAY;
 	solarSystem[JUPITER].body.mass_GC *= (launchOptionsValues[MASSIVE_JUPITER]) ? 1E3 : 1.0;
 
-	OrbitalSim_t* sim = constructOrbitalSim(launchOptionsValues[ASTEROIDS_AMMOUNT], launchOptionsValues[EASTER_EGG], launchOptionsValues[SYSTEM], launchOptionsValues[SPAWN_BLACKHOLE]);
+	OrbitalSim_t* sim = constructOrbitalSim(launchOptionsValues[ASTEROIDS_AMOUNT], launchOptionsValues[EASTER_EGG], launchOptionsValues[SYSTEM], launchOptionsValues[SPAWN_BLACKHOLE]);
 
 #ifndef TEST_UPDATE_ORBITAL_SIM
 	view_t* view = constructView(	0,
@@ -82,7 +82,7 @@ int main(int argc, char* argv[])
 
 		renderView(view, sim);
 		prev_time_direction = time_direction;
-		time_direction = keybinds_values[TOGGLE_REWIND];
+		time_direction = keybindsValues[TOGGLE_REWIND];
 		if (time_direction == prev_time_direction)
 			continue;
 

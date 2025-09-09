@@ -1,6 +1,10 @@
 /**
  * @brief Implements an orbital simulation view
  * @author Marc S. Ressl
+ * 
+ * @author Sofia Capiel
+ * @author Agustin Tomas Valenzuela
+ * @author Francisco Alonso Paredes
  *
  * @copyright Copyright (c) 2022-2023
  */
@@ -28,7 +32,7 @@ enum
 	PERFORMANCE
 };
 
-// Spaceship constants
+// SpaceShip constants
 #define CAMERA_DISTANCE 1.5f
 
 // Asteroids constants
@@ -138,8 +142,8 @@ view_t* constructView(int fps, int fullscreen, int width, int height, int show_v
 	if (fullscreen)
 		ToggleFullscreen();
 
-	keybinds_values[TOGGLE_SHOW_VELOCITY_VECTORS] = show_velocity_vectors;
-	keybinds_values[TOGGLE_SHOW_ACCELERATION_VECTORS] = show_acceleration_vectors;
+	keybindsValues[TOGGLE_SHOW_VELOCITY_VECTORS] = show_velocity_vectors;
+	keybindsValues[TOGGLE_SHOW_ACCELERATION_VECTORS] = show_acceleration_vectors;
 	SetTargetFPS(fps);
 
 	DisableCursor();
@@ -153,7 +157,7 @@ view_t* constructView(int fps, int fullscreen, int width, int height, int show_v
 
 	last_camera_position = view->camera.position;
 	last_camera_target = view->camera.target;
-	keybinds_values[ASTEROIDS_RENDER_MODE] = PERFORMANCE;
+	keybindsValues[ASTEROIDS_RENDER_MODE] = PERFORMANCE;
 
 	return view;
 }
@@ -172,10 +176,10 @@ bool isViewRendering(view_t* view)
 
 void renderView(view_t* view, OrbitalSim_t* sim)
 {
-	if (keybinds_values[TOGGLE_FULLSCREEN])
+	if (keybindsValues[TOGGLE_FULLSCREEN])
 	{
 		ToggleFullscreen();
-		keybinds_values[TOGGLE_FULLSCREEN] = 0;
+		keybindsValues[TOGGLE_FULLSCREEN] = 0;
 	}
 
 	updateCameraSettings(view, sim);
@@ -191,8 +195,8 @@ void renderView(view_t* view, OrbitalSim_t* sim)
 	EndMode3D();
 
 	DrawFPS(10,10);
-	DrawText(getISODate((time_t)sim->time_elapsed),10, 30, 20, RAYWHITE);
-	DrawText(getElapsedSimTime((time_t)sim->time_elapsed, buffer), 10, 50, 20, RAYWHITE);
+	DrawText(getISODate((time_t)sim->timeElapsed),10, 30, 20, RAYWHITE);
+	DrawText(getElapsedSimTime((time_t)sim->timeElapsed, buffer), 10, 50, 20, RAYWHITE);
 	printKeybinds(view);
 	EndDrawing();
 }
@@ -237,7 +241,7 @@ static const char* getElapsedSimTime(time_t timestamp, char buffer[])
 
 static void updateCameraSettings(view_t* view, OrbitalSim_t* sim)
 {
-	if (!keybinds_values[CAMERA_MODE])
+	if (!keybindsValues[CAMERA_MODE])
 	{
 		if (camera_mode == CAMERA_THIRD_PERSON)
 		{
@@ -254,7 +258,7 @@ static void updateCameraSettings(view_t* view, OrbitalSim_t* sim)
 	}
 	camera_mode = CAMERA_THIRD_PERSON;
 
-	unsigned int target_body = keybinds_values[SWITCH_BODY];
+	unsigned int target_body = keybindsValues[SWITCH_BODY];
 	Vector3 position, normalized_velocity;
 	Body_t body;
 	float norm;
@@ -265,7 +269,7 @@ static void updateCameraSettings(view_t* view, OrbitalSim_t* sim)
 	}
 	else
 	{
-		body = sim->Spaceship.body;
+		body = sim->SpaceShip.body;
 	}
 
 	norm = 1.0f / sqrtf(DOT_PRODUCT(body.velocity, body.velocity));
@@ -295,7 +299,7 @@ static void drawBody(Body_t* body, float radius, Color color, unsigned int rende
 		break;
 	}
 
-	if (keybinds_values[TOGGLE_SHOW_VELOCITY_VECTORS])
+	if (keybindsValues[TOGGLE_SHOW_VELOCITY_VECTORS])
 	{
 		Vector3 velocity;
 		velocity.x = body->velocity.x * VELOCITY_SCALE_FACTOR + position.x;
@@ -304,7 +308,7 @@ static void drawBody(Body_t* body, float radius, Color color, unsigned int rende
 
 		DrawLine3D(position, velocity, BLUE);
 	}
-	if (keybinds_values[TOGGLE_SHOW_ACCELERATION_VECTORS])
+	if (keybindsValues[TOGGLE_SHOW_ACCELERATION_VECTORS])
 	{
 		Vector3 acceleration;
 		acceleration.x = body->acceleration.x * ACCELERATION_SCALE_FACTOR + position.x;
@@ -319,13 +323,13 @@ static void drawOrbitalSimuationEntities(OrbitalSim_t* sim)
 {
 	for (unsigned int i = 0; i < sim->bodyNum; i++) 
 	{
-		drawBody(&sim->PlanetarySystem[i].body, sim->PlanetarySystem[i].radius, sim->PlanetarySystem[i].color, keybinds_values[EBODIES_RENDER_MODE]);
+		drawBody(&sim->PlanetarySystem[i].body, sim->PlanetarySystem[i].radius, sim->PlanetarySystem[i].color, keybindsValues[EBODIES_RENDER_MODE]);
 	}
 	for (unsigned int i = 0; i < sim->asteroidsNum; i++) 
 	{
-		drawBody(sim->Asteroids + i, ASTEROIDS_RADIUS, ASTEROIDS_COLOR, keybinds_values[ASTEROIDS_RENDER_MODE]);
+		drawBody(sim->Asteroids + i, ASTEROIDS_RADIUS, ASTEROIDS_COLOR, keybindsValues[ASTEROIDS_RENDER_MODE]);
 	}
-	drawBody(&sim->Spaceship.body, sim->Spaceship.radius, sim->Spaceship.color, keybinds_values[SPACESHIP_RENDER_MODE]);
+	drawBody(&sim->SpaceShip.body, sim->SpaceShip.radius, sim->SpaceShip.color, keybindsValues[SPACESHIP_RENDER_MODE]);
 	drawBody(&sim->BlackHole.body, sim->BlackHole.absorbRadius, PINK, QUALITY);
 }
 
@@ -333,12 +337,12 @@ static void printKeybinds(view_t* view)
 {
 	DrawText(keybinds[SHOW_KEYBINDS].description, view->width - CONTROLS_X_MARGIN, 10, 20, CONTROLS_COLOR);
 
-	if(!keybinds_values[SHOW_KEYBINDS])
+	if(!keybindsValues[SHOW_KEYBINDS])
 		return;
 
 	int yCoord = 30;
-	DrawText("Move Spaceship: U, I, O, J, K, L", view->width - CONTROLS_X_MARGIN, yCoord, 20, CONTROLS_COLOR);
-	for (unsigned int i = SHOW_KEYBINDS + 1; i < KEYBINDS_AMMOUNT; i++)
+	DrawText("Move SpaceShip: U, I, O, J, K, L", view->width - CONTROLS_X_MARGIN, yCoord, 20, CONTROLS_COLOR);
+	for (unsigned int i = SHOW_KEYBINDS + 1; i < KEYBINDS_AMOUNT; i++)
 	{
 		DrawText(keybinds[i].description, view->width - CONTROLS_X_MARGIN, yCoord + CONTROLS_Y_MARGIN * i, 20, CONTROLS_COLOR);
 	}
