@@ -82,8 +82,8 @@ Fue implementada la posibilidad de invertir el flujo de la simulacion presionand
 Fueron añadidos parametros que se pueden utilizar al momento de ejecutar el programa, algunos ya fueron mencionados antes, sin embargo aqui hay una lista completa:
 - `+fps_target <numero>` Permite cambiar la cantidad de fps para la simulacion (minimo: 15, maximo: 240), el valor por defecto es 60.
 - `-fullscreen` Indica que se inicie la simulacion en pantalla completa
-- `-w <numero>` Permite cambiar el ancho de la ventana (minimo: 400, maxmimo: 7680), el valor por defecto es 1280.
-- `-h <numero>` Permite cambiar el alto de la ventana (minimo: 400, maxmimo: 4320), el valor por defecto es 720.
+- `-w <numero>` Permite cambiar el ancho de la ventana (minimo: 400, maximo: 7680), el valor por defecto es 1280.
+- `-h <numero>` Permite cambiar el alto de la ventana (minimo: 400, maximo: 4320), el valor por defecto es 720.
 - `-days_per_simulation_second <numero>` Permite cambiar la cantidad de dias que pasan dentro de la simulacion por cada segundo (minimo: 1, maximo: 365), el valor por defecto es 10.
 - `-asteroids_ammount <numero>` Permite agregar la cantidad de asteroides especificada (minimo: 0, maximo: 20000), el valor por defecto es 0.
 - `-show_velocity_vectors` Permite visualizar los vectores de velocidad en cada cuerpo.
