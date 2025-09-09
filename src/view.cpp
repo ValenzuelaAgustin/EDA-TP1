@@ -323,7 +323,8 @@ static void drawOrbitalSimuationEntities(OrbitalSim_t* sim)
 {
 	for (unsigned int i = 0; i < sim->bodyNum; i++) 
 	{
-		drawBody(&sim->PlanetarySystem[i].body, sim->PlanetarySystem[i].radius, sim->PlanetarySystem[i].color, keybindsValues[EBODIES_RENDER_MODE]);
+		drawBody(	&sim->PlanetarySystem[i].body, sim->PlanetarySystem[i].radius,
+				sim->PlanetarySystem[i].color, keybindsValues[EBODIES_RENDER_MODE]);
 	}
 	for (unsigned int i = 0; i < sim->asteroidsNum; i++) 
 	{

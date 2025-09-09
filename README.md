@@ -10,7 +10,10 @@
   - La implementación de la visualización de los vectores de velocidad y aceleración.
   - La implementación de la nave espacial.
   - La implementación del fenómeno con júpiter 1000 veces más masivo.
-  - La implementacion del sistema Alpha Centauri.
+  - La implementación del sistema Alpha Centauri.
+  - La implementación de los parametros de lanzamiento.
+  - La implementación de un PID para equilibrar presicion de simulacion con los FPS.
+  - La creación de un MakeFile;
 
 * **Paredes Alonso Francisco**  
 

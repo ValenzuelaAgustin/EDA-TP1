@@ -59,7 +59,10 @@ int main(int argc, char* argv[])
 	simulationSpeed = launchOptionsValues[DAYS_PER_SIMULATION_SECOND] * SECONDS_PER_DAY;
 	solarSystem[JUPITER].body.mass_GC *= (launchOptionsValues[MASSIVE_JUPITER]) ? 1E3 : 1.0;
 
-	OrbitalSim_t* sim = constructOrbitalSim(launchOptionsValues[ASTEROIDS_AMOUNT], launchOptionsValues[EASTER_EGG], launchOptionsValues[SYSTEM], launchOptionsValues[SPAWN_BLACKHOLE]);
+	OrbitalSim_t* sim = constructOrbitalSim(launchOptionsValues[ASTEROIDS_AMOUNT],
+						launchOptionsValues[EASTER_EGG],
+						launchOptionsValues[SYSTEM],
+						launchOptionsValues[SPAWN_BLACKHOLE]);
 
 #ifndef TEST_UPDATE_ORBITAL_SIM
 	view_t* view = constructView(	0,
@@ -150,14 +153,14 @@ static double frametime_PID(double target_frametime, double frametime)
 	static double IC = 10;
 	static double DC = 10;
 
-	static double I = 0;
+	static double I = 0;				// Stores the accumulated error
 	static double prev_dif = 0;
 
-	double dif = target_frametime - frametime;
-	double D = dif - prev_dif;
+	double P = target_frametime - frametime;	// Stores the current error
+	double D = P - prev_dif;			// Stores the difference between the prev error and the current one
 
-	prev_dif = dif;
-	I += dif;
+	prev_dif = P;
+	I += P;
 
-	return dif * PC + I * IC + D * DC;
+	return P * PC + I * IC + D * DC;
 }
